@@ -1,4 +1,4 @@
-name := "xtc-demo"
+name := "translator-5"
 
 version := "1.0"
 
@@ -60,12 +60,12 @@ execc := """output/a.out""".!
 val runxtc = inputKey[Unit]("Run a command on your Boot class.")
 runxtc := Def.inputTaskDyn {
   val args = sbt.complete.DefaultParsers.spaceDelimited("<arg>").parsed
-  val cmd = s" edu.nyu.oop.Boot ${args.mkString(" ")}"
+  val cmd = s" edu.nyu.oop.SimpleXtc ${args.mkString(" ")}"
   (runMain in Compile).toTask(cmd)
 }.evaluated
 
 // Dumps configuration located in the properties file to console
 val conf = inputKey[Unit]("Output application configuration")
 conf := Def.inputTaskDyn {
-  (runMain in Compile).toTask(s" edu.nyu.oop.Boot -printConfig src/test/java/inputs/test000/Test000.java")
+  (runMain in Compile).toTask(s" edu.nyu.oop.SimpleXtc -printConfig LinkedList.java")
 }.evaluated

@@ -1,0 +1,68 @@
+compile
+run
+run LinkedList.java
+ls
+compile
+run LinkedList.java
+compile
+run LinkedList.java
+compile
+run LinkedList.java
+run LinkedList.java countMethods
+test countMethods
+runxtc -countMethods LinkedList.java
+compile & run LinkedList.kava
+compile
+run LinkedList.java
+compile
+run LinkedList.java
+run LinkedList.java countMethods
+run LinkedList.java test.countMethods
+run LinkedList.java test countMethods
+run LinkedList.java --countMethods
+compile
+run countMethods LinkedList.java
+package edu.nyu.oop;
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.List;
+import edu.nyu.oop.util.JavaFiveImportParser;
+import edu.nyu.oop.util.NodeUtil;
+import edu.nyu.oop.util.XtcProps;
+import org.slf4j.Logger;
+import xtc.tree.GNode;
+import xtc.tree.Node;
+import xtc.util.Tool;
+import xtc.lang.JavaPrinter;
+import xtc.parser.ParseException;
+/**
+ * A 'Tool' is an entry point to a program that uses Xtc. It configures the user interface, defining
+ * the set of valid commands, provides feedback to the user about their inputs
+ * and delegates to other classes based on the commands input by the user to classes that know
+ * how to handle them.
+ */
+public class Boot extends Tool {
+    private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
+    @Override
+    public String getName() {
+        return XtcProps.get("app.name");
+    }
+    @Override
+    public String getCopy() {
+        return XtcProps.get("group.name");
+    }
+    @Override
+    public void    public void    upe    public void     D    public void    public nt    public void    pu      public void    pust"    public void    public void    upe    pub      public void    public void  tM   ods", false, "Visit all the met    public void    publtea    public void    puis    public void    prc    public void    p}
+    public void    public voi    public void    public voi   are  
+                                                                                                    ma                                                                             ta                                                                                             lo                     ow  IO                                s                                                                                t            ga                             l                                             f(!            ut                            tP                                          n    lle            ce                                                                                                    ma                                                                             ta                                                                                             lo                     ow  IO                                s  e.                                                                 .
+runxtc -printJavaAst LinkedList.java
+runxtc -countMethods LinkedList.java
+runsimplextc -countMethods LinkedList.java
+simplextc
+xtc
+xtc -countMethods LinkedList.java
+exit
+runxtc -countMethods LinkedList.java
+runxtc -importPackages LinkedList.java
+exit
