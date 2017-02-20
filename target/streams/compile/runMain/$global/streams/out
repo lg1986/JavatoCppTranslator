@@ -1,4 +1,0 @@
-[0m[[0minfo[0m] [0mRunning edu.nyu.oop.CreateAstParser -createAllAST LinkedList.java[0m
-[0m[[0minfo[0m] [0mMethod Counter, v. 2.4.0, In-class demo of translator.[0m
-[0m[[0minfo[0m] [0mProcessing LinkedList.java ...[0m
-[0m[[0minfo[0m] [0mImportDeclaration(null, QualifiedIdentifier("xtc", "parser", "Result"), null)[0m
