@@ -1,5 +1,5 @@
 package inputs.homework2;
-import xtc.parser.Result;
+import inputs.test000.Test000;
 
 public class LinkedList {
 
