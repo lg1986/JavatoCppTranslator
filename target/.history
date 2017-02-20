@@ -66,3 +66,16 @@ exit
 runxtc -countMethods LinkedList.java
 runxtc -importPackages LinkedList.java
 exit
+runxtc -importPackages LinkedList.java
+compile
+runxtc -importPackages LinkedList.java
+ls
+clear
+runxtc -importPackages LinkedList.java
+exit
+runxtc -createAllAST LinkedList.java
+exit
+runxtc -createAllAST LinkedList.java
+exit
+runxtc -createAllAST LinkedList.java
+exit

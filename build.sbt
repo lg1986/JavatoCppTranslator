@@ -60,12 +60,12 @@ execc := """output/a.out""".!
 val runxtc = inputKey[Unit]("Run a command on your Boot class.")
 runxtc := Def.inputTaskDyn {
   val args = sbt.complete.DefaultParsers.spaceDelimited("<arg>").parsed
-  val cmd = s" edu.nyu.oop.SimpleXtc ${args.mkString(" ")}"
+  val cmd = s" edu.nyu.oop.CreateAstParser ${args.mkString(" ")}"
   (runMain in Compile).toTask(cmd)
 }.evaluated
 
 // Dumps configuration located in the properties file to console
 val conf = inputKey[Unit]("Output application configuration")
 conf := Def.inputTaskDyn {
-  (runMain in Compile).toTask(s" edu.nyu.oop.SimpleXtc -printConfig LinkedList.java")
+  (runMain in Compile).toTask(s" edu.nyu.oop.Boot -printConfig LinkedList.java")
 }.evaluated

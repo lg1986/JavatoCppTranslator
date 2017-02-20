@@ -7,7 +7,7 @@
 [0m[[0mdebug[0m] [0m== resolving dependencies for default#translator-5;1.0 [compile][0m
 [0m[[0mdebug[0m] [0m== resolving dependencies default#translator-5;1.0->org.scala-lang#scala-library;2.11.7 [compile->default(compile)][0m
 [0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.11.7 ...[0m
-[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@15a7e59e[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@49be6fd8[0m
 [0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.11.7[0m
 [0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.11.7 in sbt-chain[0m
 [0m[[0mdebug[0m] [0m	[2.11.7] org.scala-lang#scala-library;2.11.7[0m
@@ -402,7 +402,7 @@
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-xml_2.11;1.0.4!scala-xml_2.11.jar(bundle)[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang.modules#scala-parser-combinators_2.11;1.0.4!scala-parser-combinators_2.11.jar(bundle)[0m
 [0m[[0mdebug[0m] [0m	[NOT REQUIRED] jline#jline;2.12.1!jline.jar[0m
-[0m[[0mdebug[0m] [0m:: resolution report :: resolve 95ms :: artifacts dl 5ms[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 87ms :: artifacts dl 5ms[0m
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 compile produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-compile.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 runtime produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-runtime.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 test produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-test.xml[0m
@@ -416,5 +416,5 @@
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 docs produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-docs.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 pom produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-pom.xml[0m
 [0m[[0mdebug[0m] [0m	report for default#translator-5;1.0 scala-tool produced in /Users/rishabh/Desktop/OOP/translator-5/target/resolution-cache/reports/default-translator-5-scala-tool.xml[0m
-[0m[[0mdebug[0m] [0m	resolve done (95ms resolve - 5ms download)[0m
+[0m[[0mdebug[0m] [0m	resolve done (87ms resolve - 5ms download)[0m
 [0m[[0minfo[0m] [0mDone updating.[0m

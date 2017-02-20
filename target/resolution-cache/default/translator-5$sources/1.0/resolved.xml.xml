@@ -4,7 +4,7 @@
 		module="translator-5$sources"
 		revision="1.0"
 		status="integration"
-		publication="20170218112517"
+		publication="20170219182525"
 	/>
 	<configurations>
 		<conf name="compile" visibility="public" description=""/>
