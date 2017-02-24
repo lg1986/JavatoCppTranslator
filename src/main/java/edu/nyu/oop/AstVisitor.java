@@ -22,6 +22,9 @@ public class AstVisitor extends Visitor {
 
     private completeAST asts = new completeAST();
 
+    // getFile - it gets the File object.
+    // the src/test/java folder is where all
+    // the dependcies and the test files are
     public File getFile(Node k){
         String file_path = "src/test/java/";
         for(int i = 0; i<k.size()-1; i++){
@@ -32,6 +35,7 @@ public class AstVisitor extends Visitor {
         return f;
     }
 
+    // Double dispact visitImport declaration
     public void visitImportDeclaration(GNode n){
         Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1)));
         System.out.println(dependency.toString());
@@ -39,12 +43,14 @@ public class AstVisitor extends Visitor {
         visit(dependency);
     }
 
+    // This is "double" dispatch
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) dispatch((Node) o);
         }
     }
 
+    // This is the first dispact
     public void getAllASTs(Node n){
         super.dispatch(n);
     }

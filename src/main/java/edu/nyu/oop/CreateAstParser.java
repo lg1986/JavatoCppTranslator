@@ -20,11 +20,11 @@ import java.io.Reader;
 public class CreateAstParser extends Tool {
 
     public String getName() {
-        return "Method Counter";
+        return "AST Dependencies Creator";
     }
 
     public String getCopy() {
-        return "In-class demo of translator.";
+        return "AST Dependencies Creator";
     }
 
     public void init() {
@@ -45,10 +45,10 @@ public class CreateAstParser extends Tool {
         return NodeUtil.parseJavaFile(file);
     }
 
+    // Just by the definition of the tool
     public void process(Node node){
         new AstVisitor().getAllASTs(node);
     }
-
 
     public static void main(String[] args) {
         new CreateAstParser().run(args);

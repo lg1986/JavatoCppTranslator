@@ -93,13 +93,11 @@ public class Boot extends Tool {
             runtime.console().flush();
         }
 
+        // This is the command to createAllAST
+        // Just run - runxtc -createAllAST src/test/java/inputs/homework2/LinkedList.java
         if(runtime.test("createAllAST")){
             runtime.console().format(n).pln().flush();
         }
-
-        // if (runtime.test("Your command here.")) { ... don't forget to add it to init()
-
-        // TODO - Add a command for your scope visitor here.
 
     }
 
