@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 
 /**
@@ -39,9 +41,18 @@ public class AstVisitor extends Visitor {
 
     // Double dispact visitImport declaration
     public void visitImportDeclaration(GNode n){
-        Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1)));
+        Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1))); // Creating new dependency
+        try {
+
+            FileOutputStream file = new FileOutputStream("src/main/java/edu/nyu/oop/outputs/AstVisitorOutputs.txt"); // Creating new output file
+            file.write(dependency.toString().getBytes()); // Writing to AstVisitorOutputs.txt
+            file.close(); // Closing file
+        }
+        catch (IOException ex) {
+            System.out.println (ex.toString());
+        }
         System.out.println(dependency.toString());
-        asts.addAST(dependency);
+        asts.addAST(dependency); // Adding to asts
         visit(dependency);
     }
 
