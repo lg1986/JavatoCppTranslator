@@ -49,7 +49,7 @@ public class AstVisitorTest {
                 "src/test/java/inputs/test005/Test005.java");
         GNode dependecyNode2 = (GNode) XtcTestUtils.loadTestFile(
                 "src/test/java/inputs/test005/Test005.java");
-        
+
         assertEquals(dependecyNode0.toString(), result0.toString());
         assertEquals(dependecyNode1.toString(), result1.toString());
         assertEquals(dependecyNode2.toString(), result2.toString());
