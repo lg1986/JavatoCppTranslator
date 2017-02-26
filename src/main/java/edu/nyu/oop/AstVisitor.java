@@ -22,6 +22,8 @@ public class AstVisitor extends Visitor {
 
     private completeAST asts = new completeAST();
 
+
+
     // getFile - it gets the File object.
     // the src/test/java folder is where all
     // the dependcies and the test files are
@@ -51,12 +53,17 @@ public class AstVisitor extends Visitor {
     }
 
     // This is the first dispact
-    public void getAllASTs(Node n){
+    public completeAST getAllASTs(Node n){
         super.dispatch(n);
+        return asts;
     }
 
     static class completeAST{
         private List<Node> asts = new ArrayList<Node>();
+
+        public List<Node> getDependency(){
+            return asts;
+        }
         public void addAST(Node n) { this.asts.add(n);}
 
         public String toString(){
