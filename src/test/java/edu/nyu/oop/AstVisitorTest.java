@@ -15,9 +15,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.util.List;
 
-/**
- * Created by rishabh on 26/02/17.
- */
+
 public class AstVisitorTest {
     private static Logger logger = org.slf4j.LoggerFactory.getLogger(AstVisitor.class);
 
@@ -26,22 +24,31 @@ public class AstVisitorTest {
 
     @BeforeClass
     public static void beforeClass() {
-        System.out.println("Executing LinkedListVisitorTest");
-        logger.debug("Executing TeamExerciseVisitorTest");
-        node = (GNode) XtcTestUtils.loadTestFile("src/test/java/inputs/homework2/LinkedList.java");
-
+        node = (GNode) XtcTestUtils.loadTestFile("src/test/java/inputs/test001/Test001.java");
     }
 
     @Before
     public void beforeTest() {
         System.out.println("Executing LinkedListVisitorTest");
-
         visitor = new AstVisitor();
     }
 
-    public static void main(String[] args){
-        System.out.println("here!");
+
+    @Test
+    public void testMainClassImport(){
+        AstVisitor.completeAST asts = visitor.getAllASTs(node);
+        List<Node> dependecyASTList = asts.getDependency();
+
+        Node result0 = dependecyASTList.get(0);
+
+        GNode dependecy_node = (GNode) XtcTestUtils.loadTestFile(
+                "src/test/java/inputs/test004/Test004.java");
+
+        System.out.println(dependecy_node.toString());
+        assertEquals(dependecy_node.toString(), result0.toString());
     }
+
+
 
 
 }

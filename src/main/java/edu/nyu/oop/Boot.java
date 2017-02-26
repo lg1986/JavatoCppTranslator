@@ -40,12 +40,7 @@ public class Boot extends Tool {
     public void init() {
         super.init();
         // Declare command line arguments.
-        runtime.
-        bool("printJavaAst", "printJavaAst", false, "Print Java Ast.").
-        bool("printJavaCode", "printJavaCode", false, "Print Java code.").
-        bool("printJavaImportCode", "printJavaImportCode", false,
-                "Print Java code for imports of primary source file.").
-        bool("createAllAST", "createAllAST", false, "Create all ASTs");
+        runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs");
     }
 
     @Override
@@ -75,26 +70,7 @@ public class Boot extends Tool {
 
     @Override
     public void process(Node n) {
-        if (runtime.test("printJavaAst")) {
-            runtime.console().format(n).pln().flush();
-        }
 
-        if (runtime.test("printJavaCode")) {
-            new JavaPrinter(runtime.console()).dispatch(n);
-            runtime.console().flush();
-        }
-
-        if (runtime.test("printJavaImportCode")) {
-            List<GNode> nodes = JavaFiveImportParser.parse((GNode) n);
-            for(Node node : nodes) {
-                runtime.console().pln();
-                new JavaPrinter(runtime.console()).dispatch(node);
-            }
-            runtime.console().flush();
-        }
-
-        // This is the command to createAllAST
-        // Just run - runxtc -createAllAST src/test/java/inputs/homework2/LinkedList.java
         if(runtime.test("createAllAST")){
             runtime.console().format(n).pln().flush();
         }
