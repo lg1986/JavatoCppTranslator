@@ -1,5 +1,6 @@
 package inputs.test001;
 import inputs.test004.Test004;
+import inputs.test005.Test005;
 
 class A {
     public String toString() {

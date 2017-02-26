@@ -39,16 +39,12 @@ public class AstVisitorTest {
         AstVisitor.completeAST asts = visitor.getAllASTs(node);
         List<Node> dependecyASTList = asts.getDependency();
 
-        Node result0 = dependecyASTList.get(0);
+        Node result0 = dependecyASTList.get(2);
 
         GNode dependecy_node = (GNode) XtcTestUtils.loadTestFile(
-                "src/test/java/inputs/test004/Test004.java");
+                "src/test/java/inputs/test005/Test005.java");
 
         System.out.println(dependecy_node.toString());
         assertEquals(dependecy_node.toString(), result0.toString());
     }
-
-
-
-
 }
