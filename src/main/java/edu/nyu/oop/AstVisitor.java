@@ -23,7 +23,7 @@ public class AstVisitor extends Visitor {
 
     private Runtime runtime;
 
-    private completeAST asts = new completeAST();
+    protected completeAST asts = new completeAST();
 
 
 
@@ -65,7 +65,7 @@ public class AstVisitor extends Visitor {
         }
     }
 
-    // This is the first dispact
+    // This is the first dispatch
     public completeAST getAllASTs(Node n){
         super.dispatch(n);
         return asts;
