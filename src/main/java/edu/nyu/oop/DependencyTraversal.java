@@ -23,7 +23,7 @@ public class DependencyTraversal extends Visitor {
     // created nested static class that will have the new AST with the data layout
 
     private AstVisitor astVisitor;
-    protected dependencyASTs asts = new dependencyASTs();
+    private dependencyAST asts = new dependencyAST();
 
 
     public void getAllDependencyAsts(Node node){
@@ -32,7 +32,9 @@ public class DependencyTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(Node n){
-        astVisitor.asts.addAST(n);
+        asts.nodes += n.getName() + " ";
+        asts.nodes += n.getString(3) + " ";
+        asts.count++;
         visit(n);
     }
 
@@ -42,12 +44,16 @@ public class DependencyTraversal extends Visitor {
     }
 
     public void visitMethodDeclaration(Node n){
-        astVisitor.asts.addAST(n);
+        asts.nodes += n.getName() + " ";
+        asts.nodes += n.getString(3) + " ";
+        asts.count++;
         visit(n);
     }
 
     public void visitConstructorDeclaration(Node n){
-        astVisitor.asts.addAST(n);
+        asts.nodes += n.getName() + " ";
+        asts.nodes += n.getString(3) + " ";
+        asts.count++;
         visit(n);
     }
 
@@ -57,25 +63,21 @@ public class DependencyTraversal extends Visitor {
         }
     }
 
-    public dependencyASTs getAllASTs(Node n){
+
+    public dependencyAST getSummary(Node n) {
         super.dispatch(n);
         return asts;
     }
 
-    static class dependencyASTs {
-        private List<Node> asts = new ArrayList<Node>();
+    static class dependencyAST {
+        int count = 0;
+        String names = "";
+        String nodes = "";
 
-        public List<Node> getDependency(){
-            return asts;
-        }
-        public void addAST(Node n) { this.asts.add(n);}
-
-        public String toString(){
-            String ast_string = "";
-            for(Node l: asts){
-                ast_string += l.toString() + "\n";
-            }
-            return ast_string;
+        public String toString() {
+            return "Method count: " + count + System.lineSeparator() +
+                    "Method names: " + names + System.lineSeparator() +
+                    "Node names: " + nodes + System.lineSeparator();
         }
     }
 
