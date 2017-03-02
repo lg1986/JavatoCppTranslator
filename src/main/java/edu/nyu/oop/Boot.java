@@ -89,6 +89,7 @@ public class Boot extends Tool {
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
             System.out.println(visitor.getSummary(dependencyList));
+
         }
 
     }

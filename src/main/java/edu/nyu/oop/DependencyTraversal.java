@@ -44,6 +44,10 @@ public class DependencyTraversal extends Visitor {
         visit(n);
     }
 
+    public void visitClassDeclaration(GNode n){
+        asts.dataLayout.add(n);
+        visit(n);
+    }
 
     public void visit(Node n) {
         for (Object o : n) {
@@ -60,11 +64,16 @@ public class DependencyTraversal extends Visitor {
 
 
     static class dependencyAST {
+        public List<Node> dataLayout = new ArrayList<Node>();
+
         public int count = 0;
         public String names = "";
         public String nodes = "";
 
         public String toString() {
+            for (Node n: dataLayout){
+                System.out.println(n.getLocation());
+            }
             return "Method count: " + count + System.lineSeparator() +
                     "Method names: " + names + System.lineSeparator() +
                     "Node names: " + nodes + System.lineSeparator();
