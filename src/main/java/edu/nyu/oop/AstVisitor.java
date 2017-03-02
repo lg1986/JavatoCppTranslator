@@ -25,8 +25,6 @@ public class AstVisitor extends Visitor {
 
     private completeAST asts = new completeAST();
 
-
-
     // getFile - it gets the File object.
     // the src/test/java folder is where all
 
@@ -45,21 +43,6 @@ public class AstVisitor extends Visitor {
     public void visitImportDeclaration(GNode n){
         Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1))); // Creating new dependency
 
-        // Finding & splitting the filename to create individualized output text files
-        String filename = dependency.getLocation().file;
-//        String splitString[]= filename.split("/");
-//        String testName = splitString[splitString.length - 1];
-//        System.out.println(testName + ".txt");
-//
-//        try {
-//            System.out.println(dependency.toString() + "\n");
-//            FileOutputStream file = new FileOutputStream("src/main/java/edu/nyu/oop/outputs/" + testName); // Creating new output file
-//            file.write(dependency.toString().getBytes()); // Writing to AstVisitorOutputs.txt
-//            file.close(); // Closing file
-//        }
-//        catch (IOException ex) {
-//            System.out.println (ex.toString());
-//        }
         asts.addAST(dependency); // Adding to asts
         visit(dependency);
     }

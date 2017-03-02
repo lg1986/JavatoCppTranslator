@@ -85,7 +85,10 @@ public class Boot extends Tool {
 
         if(runtime.test("dependencyTraversal")){
             DependencyTraversal visitor = new DependencyTraversal();
-            System.out.println(visitor.getSummary(n));
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> dependencyList = depe.getDependency();
+            System.out.println(visitor.getSummary(dependencyList));
         }
 
     }

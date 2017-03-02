@@ -8,6 +8,7 @@ import xtc.util.Runtime;
 import xtc.tree.Location;
 
 
+import javax.sound.midi.SysexMessage;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -25,59 +26,43 @@ public class DependencyTraversal extends Visitor {
     private dependencyAST asts = new dependencyAST();
 
 
-    public void getAllDependencyAsts(Node node){
-        AstVisitor astVisitor = new AstVisitor();
-        AstVisitor.completeAST visitor = astVisitor.getAllASTs(node);
-        List<Node> listVisitor = visitor.getDependency();
-        for (Node n: listVisitor) {
-            visit(n);
-        }
-    }
-
-    public void visitClassDeclaration(Node n){
-        asts.nodes += n.getName() + " ";
-        asts.nodes += n.getString(3) + " ";
+    public void visitFieldDeclaration(GNode n){
+        asts.nodes += n.getName().toString() + " ";
         asts.count++;
         visit(n);
     }
 
-    public void visitFieldDeclaration(Node n){
-        asts.nodes += n.getName() + " ";
-        asts.nodes += n.getString(3) + " ";
+    public void visitMethodDeclaration(GNode n){
+        asts.nodes += n.getName().toString() + " ";
         asts.count++;
         visit(n);
     }
 
-    public void visitMethodDeclaration(Node n){
-        asts.nodes += n.getName() + " ";
-        asts.nodes += n.getString(3) + " ";
+    public void visitConstructorDeclaration(GNode n){
+        asts.nodes += n.get(0).toString() + " ";
         asts.count++;
         visit(n);
     }
 
-    public void visitConstructorDeclaration(Node n){
-        asts.nodes += n.getName() + " ";
-        asts.nodes += n.getString(3) + " ";
-        asts.count++;
-        visit(n);
-    }
 
     public void visit(Node n) {
         for (Object o : n) {
-            if (o instanceof Node) dispatch((Node) o);
+            if (o instanceof Node) {dispatch((Node) o);}
         }
     }
 
-
-    public dependencyAST getSummary(Node n) {
-        super.dispatch(n);
+    public dependencyAST getSummary(List<Node> dependencyList) {
+        for(Node n: dependencyList) {
+            super.dispatch(n);
+        }
         return asts;
     }
 
+
     static class dependencyAST {
-        int count = 0;
-        String names = "";
-        String nodes = "";
+        public int count = 0;
+        public String names = "";
+        public String nodes = "";
 
         public String toString() {
             return "Method count: " + count + System.lineSeparator() +

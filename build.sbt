@@ -22,6 +22,7 @@ libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test"
 
 crossPaths := false
 
+fork in run := true
 
 scalariformSettings
 
