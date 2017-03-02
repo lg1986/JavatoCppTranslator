@@ -10,6 +10,7 @@ import edu.nyu.oop.util.NodeUtil;
 import edu.nyu.oop.util.XtcProps;
 import org.slf4j.Logger;
 
+import xtc.lang.Java;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.util.Tool;
@@ -40,7 +41,10 @@ public class Boot extends Tool {
     public void init() {
         super.init();
         // Declare command line arguments.
-        runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs");
+
+        runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
+                bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
+                bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
     @Override
@@ -48,7 +52,7 @@ public class Boot extends Tool {
         super.prepare();
         // Perform consistency checks on command line arguments.
         // (i.e. are there some commands that cannot be run together?)
-        logger.debug("This is a debugging statement."); // Example logging statement, you may delete
+        // logger.debug("This is a debugging statement."); // Example logging statement, you may delete
     }
 
     @Override
@@ -71,8 +75,17 @@ public class Boot extends Tool {
     @Override
     public void process(Node n) {
 
-        if(runtime.test("createAllAST")){
+        if (runtime.test("printJavaAST")) {
             runtime.console().format(n).pln().flush();
+        }
+
+        if(runtime.test("createAllAST")){
+            AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
+        }
+
+        if(runtime.test("dependencyTraversal")){
+            DependencyTraversal visitor = new DependencyTraversal();
+            System.out.println(visitor.getSummary(n));
         }
 
     }
@@ -82,7 +95,5 @@ public class Boot extends Tool {
      *
      * @param args The command line arguments.
      */
-    public static void main(String[] args) {
-        new Boot().run(args);
-    }
+    public static void main(String[] args) {new Boot().run(args);}
 }

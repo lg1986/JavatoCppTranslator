@@ -47,19 +47,19 @@ public class AstVisitor extends Visitor {
 
         // Finding & splitting the filename to create individualized output text files
         String filename = dependency.getLocation().file;
-        String splitString[]= filename.split("/");
-        String testName = splitString[splitString.length - 1];
-        System.out.println(testName + ".txt");
-
-        try {
-            System.out.println(dependency.toString() + "\n");
-            FileOutputStream file = new FileOutputStream("src/main/java/edu/nyu/oop/outputs/" + testName); // Creating new output file
-            file.write(dependency.toString().getBytes()); // Writing to AstVisitorOutputs.txt
-            file.close(); // Closing file
-        }
-        catch (IOException ex) {
-            System.out.println (ex.toString());
-        }
+//        String splitString[]= filename.split("/");
+//        String testName = splitString[splitString.length - 1];
+//        System.out.println(testName + ".txt");
+//
+//        try {
+//            System.out.println(dependency.toString() + "\n");
+//            FileOutputStream file = new FileOutputStream("src/main/java/edu/nyu/oop/outputs/" + testName); // Creating new output file
+//            file.write(dependency.toString().getBytes()); // Writing to AstVisitorOutputs.txt
+//            file.close(); // Closing file
+//        }
+//        catch (IOException ex) {
+//            System.out.println (ex.toString());
+//        }
         asts.addAST(dependency); // Adding to asts
         visit(dependency);
     }
@@ -83,6 +83,7 @@ public class AstVisitor extends Visitor {
         public List<Node> getDependency(){
             return asts;
         }
+
         public void addAST(Node n) { this.asts.add(n);}
 
         public String toString(){
