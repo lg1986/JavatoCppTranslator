@@ -25,28 +25,50 @@ public class DependencyTraversal extends Visitor {
 
     private dependencyAST asts = new dependencyAST();
 
+    private  HashMap<String, ArrayList<String>> currentClassLayout;
+
 
     public void visitFieldDeclaration(GNode n){
+        ArrayList<String> fielNodes = currentClassLayout.get("FieldDeclaration");
+        fielNodes.add(n.getName().toString());
+        currentClassLayout.put("FieldDeclaration", fielNodes);
+
         asts.nodes += n.getName().toString() + " ";
         asts.count++;
         visit(n);
     }
 
     public void visitMethodDeclaration(GNode n){
+        ArrayList<String> methNodes = currentClassLayout.get("MethodDeclaration");
+        methNodes.add(n.getName().toString());
+        currentClassLayout.put("MethodDeclaration", methNodes);
+
         asts.nodes += n.getName().toString() + " ";
         asts.count++;
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n){
+        ArrayList<String> consNodes = currentClassLayout.get("ConstructorDeclaration");
+        consNodes.add(n.getName().toString());
+        currentClassLayout.put("ConstructorDeclaration", consNodes);
+
         asts.nodes += n.get(0).toString() + " ";
         asts.count++;
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n){
-        asts.dataLayout.add(n);
+        currentClassLayout = new HashMap<String, ArrayList<String>>();
+
+        ArrayList<String> listOfNodes = new ArrayList<>();
+        listOfNodes.add(n.getName().toString());
+        currentClassLayout.put("ClassDeclaration", listOfNodes);
+        currentClassLayout.put("FieldDeclaration", new ArrayList<String>());
+        currentClassLayout.put("MethodDeclaration", new ArrayList<String>());
+        currentClassLayout.put("ConstructorDeclaration", new ArrayList<String>());
         visit(n);
+        asts.dataLayout.add(currentClassLayout);
     }
 
     public void visit(Node n) {
@@ -64,15 +86,16 @@ public class DependencyTraversal extends Visitor {
 
 
     static class dependencyAST {
-        public List<Node> dataLayout = new ArrayList<Node>();
+        public ArrayList<HashMap<String, ArrayList<String>>> dataLayout =
+                new ArrayList<>();
 
         public int count = 0;
         public String names = "";
         public String nodes = "";
 
         public String toString() {
-            for (Node n: dataLayout){
-                System.out.println(n.getLocation());
+            for (HashMap<String, ArrayList<String>> n : dataLayout){
+                System.out.println(n.toString());
             }
             return "Method count: " + count + System.lineSeparator() +
                     "Method names: " + names + System.lineSeparator() +
