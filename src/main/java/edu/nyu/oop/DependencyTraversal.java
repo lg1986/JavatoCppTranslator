@@ -33,9 +33,12 @@ public class DependencyTraversal extends Visitor {
 
     public void visitClassDeclaration(GNode n){
         currentNode = n.ensureVariable(n);
-        if(count == 0){astNode = currentNode.ensureVariable(n);}
-        visit(n);
+        if(count == 0){
+            astNode = currentNode.ensureVariable(n);
+            count += 1;
+        }
         astNode.addNode(currentNode);
+        visit(n);
     }
 
     public void visit(Node n) {
@@ -50,6 +53,7 @@ public class DependencyTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
+        System.out.println(currentNode);
         return asts;
     }
 
@@ -60,6 +64,7 @@ public class DependencyTraversal extends Visitor {
 
         public String toString() {
             return "Rishabh";
+
 //            return DependencyAst.toString();
         }
     }
