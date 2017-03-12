@@ -1,5 +1,4 @@
 package inputs.test004;
-import inputs.test005.Test005;
 
 class A {
     private String fld;

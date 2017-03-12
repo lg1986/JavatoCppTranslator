@@ -1,5 +1,7 @@
 package edu.nyu.oop;
 
+import com.sun.org.apache.xpath.internal.operations.Variable;
+import xtc.tree.*;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
@@ -12,18 +14,28 @@ public class DependencyTraversal extends Visitor {
 
     // created nested static class that will have the new AST with the data layout
 
-    private dependencyAST asts = new dependencyAST();
-    private int count = 0;
-    private GNode astNode;
-    private GNode currentNode;
+    public static dependencyAST dataLayout = new dependencyAST();
+    public GNode currentNode;
+    public GNode classNode;
 
     public void visitFieldDeclaration(GNode n){
-
+        classNode.addNode(n);
         visit(n);
     }
 
     public void visitMethodDeclaration(GNode n){
-        currentNode.addNode(n.getNode(0));
+        GNode methodDetails = GNode.create("MethodDeclaration", 5);
+
+        for(int i = 0; i<5; i++){
+            try{
+                methodDetails.addNode(n.getNode(i));
+            } catch(java.lang.ClassCastException e){
+                GNode methodName = GNode.create(n.get(i).toString(), 1);
+                methodDetails.addNode(methodName);
+            }
+
+        }
+        classNode.addNode(methodDetails);
         visit(n);
     }
 
@@ -31,41 +43,38 @@ public class DependencyTraversal extends Visitor {
         visit(n);
     }
 
+
     public void visitClassDeclaration(GNode n){
-        currentNode = n.ensureVariable(n);
-        if(count == 0){
-            astNode = currentNode.ensureVariable(n);
-            count += 1;
-        }
-        astNode.addNode(currentNode);
+        classNode = GNode.create("ClassDeclaration", 20);
         visit(n);
+        dataLayout.addASTNode(classNode);
+
     }
 
     public void visit(Node n) {
-
         for (Object o : n) {
-            if (o instanceof Node) {dispatch((Node) o);}
+            if (o instanceof Node) {
+                dispatch((Node) o);
+            }
         }
     }
 
     public dependencyAST getSummary(List<Node> dependencyList) {
-
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
-        System.out.println(currentNode);
-        return asts;
+        return dataLayout;
     }
 
 
     static class dependencyAST{
 
-        GNode DependencyAst;
+        public ArrayList<GNode> dependencyAsts  = new ArrayList<GNode>();
+
+        public void addASTNode(GNode n) {this.dependencyAsts.add(n);}
 
         public String toString() {
-            return "Rishabh";
-
-//            return DependencyAst.toString();
+            return dependencyAsts.toString();
         }
     }
 

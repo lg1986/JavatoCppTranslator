@@ -3,6 +3,7 @@ package edu.nyu.oop;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.nyu.oop.util.JavaFiveImportParser;
@@ -88,8 +89,10 @@ public class Boot extends Tool {
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
-            System.out.println(visitor.getSummary(dependencyList));
-
+            ArrayList<GNode> dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
+            for(GNode data:dataLayout){
+                runtime.console().format(data).pln().flush();
+            }
         }
 
     }
