@@ -1,5 +1,4 @@
 package inputs.test000;
-import inputs.test004.Test004;
 
 public class Test000 {
     public int val;

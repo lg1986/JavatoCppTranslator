@@ -47,7 +47,7 @@ public class DependencyTraversal extends Visitor {
 
 
     public void visitClassDeclaration(GNode n){
-        classNode = GNode.create("ClassDeclaration", 20);
+        classNode = collateDetails(n, "ClassDeclaration", 5);
         visit(n);
         dataLayout.addASTNode(classNode);
 
