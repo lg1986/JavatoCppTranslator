@@ -23,23 +23,25 @@ public class DependencyTraversal extends Visitor {
         visit(n);
     }
 
-    public void visitMethodDeclaration(GNode n){
-        GNode methodDetails = GNode.create("MethodDeclaration", 5);
-
-        for(int i = 0; i<5; i++){
+    public GNode collateDetails(GNode n, String type, int limit){
+        GNode details = GNode.create(type, limit);
+        for(int i = 0; i<5; i+=1){
             try{
-                methodDetails.addNode(n.getNode(i));
+                details.addNode(n.getNode(i));
             } catch(java.lang.ClassCastException e){
                 GNode methodName = GNode.create(n.get(i).toString(), 1);
-                methodDetails.addNode(methodName);
+                details.addNode(methodName);
             }
-
         }
-        classNode.addNode(methodDetails);
+        return details;
+    }
+    public void visitMethodDeclaration(GNode n){
+        classNode.addNode(collateDetails(n, "MethodDeclaration", 5));
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n){
+        classNode.addNode(collateDetails(n, "ConstructorDeclaration", 5));
         visit(n);
     }
 
