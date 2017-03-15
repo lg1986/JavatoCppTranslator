@@ -75,7 +75,7 @@ public class Boot extends Tool {
     }
 
     @Override
-    public void process(Node n) {
+    public void process(Node n){
 
         if (runtime.test("printJavaAST")) {
             runtime.console().format(n).pln().flush();
@@ -97,9 +97,12 @@ public class Boot extends Tool {
         }
 
         if(runtime.test("createHeaderFile")) {
-            System.out.println("here!");
-            CreateHeader head = new CreateHeader();
-            head.writeBaseLayout();
+            try {
+                CreateHeader head = new CreateHeader(n);
+            } catch (IOException e){
+
+            }
+
         }
 
     }

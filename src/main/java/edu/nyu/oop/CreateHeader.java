@@ -2,6 +2,7 @@ package edu.nyu.oop;
 
 import xtc.tree.GNode;
 import xtc.tree.Node;
+import xtc.tree.Printer;
 import xtc.tree.Visitor;
 
 import java.io.IOException;
@@ -14,7 +15,24 @@ import java.util.List;
  */
 public class CreateHeader extends Visitor {
 
-    ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+    public PrintWriter writer;
+    public ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+
+    /**
+     * Constructor - This initiates the creation of the header file
+     * @param n
+     * @throws IOException
+     */
+    public CreateHeader(Node n) throws IOException {
+        writer = new PrintWriter("output/output.h", "UTF-8");
+        getDataLayoutAST(n);
+        writeStartBaseLayout();
+    }
+
+    /**
+     * This gets all the dataLayoutASTs
+     * @param n
+     */
 
     public void getDataLayoutAST(Node n) {
         DependencyTraversal visitor = new DependencyTraversal();
@@ -25,23 +43,26 @@ public class CreateHeader extends Visitor {
     }
 
 
+    /**
+     * This is to write the starting base layout of the header file
+     * @throws IOException
+     */
+    public void writeStartBaseLayout() throws IOException {
+        writer.println("using namespace edu::nyu::oop;");
+        writer.println("namespace edu{");
+        writer.println("namespace nyu{");
+        writer.println("namespace oop{");
+    }
+
+
     public void collect(Node n) {
-        getDataLayoutAST(n);
+
     }
 
-    public void writeBaseLayout() {
-        try {
-            PrintWriter writer = new PrintWriter("output/output.h", "UTF-8");
-            writer.println("using namespace edu::nyu::oop;");
-            writer.println("namespace edu{");
-            writer.println("namespace nyu{");
-            writer.println("namespace oop{");
 
-            writer.close();
-        } catch (IOException e) {
-            // do something
-        }
-    }
+
+
+}
 
 
 
