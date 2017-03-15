@@ -63,8 +63,8 @@ public class CreateHeader extends Visitor {
         writer.println("};");
     }
 
-    public void writeMethodBase(String methodName) throws IOException {
-        String v_ptr = "__"+methodName.replace("()", "")+"_VT* __vptr";
+    public void writeClassBase(String className) throws IOException {
+        String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr";
         writer.println(v_ptr);
         writer.println("static Class __class()");
     }
@@ -83,12 +83,16 @@ public class CreateHeader extends Visitor {
         visit(n);
     }
 
+    public void visitFieldDeclaration(GNode n) throws IOException{
+
+    }
+
 
     public void visitClassDeclaration(GNode n) throws IOException{
 
         String class_name = "__"+n.get(1).toString().replace("()", "");
         writer.println("struct "+class_name+" {");
-        writeMethodBase(n.get(1).toString());
+        writeClassBase(n.get(1).toString());
         visit(n);
         writer.println("};");
     }
