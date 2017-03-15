@@ -15,35 +15,35 @@ public class DependencyTraversal extends Visitor {
     public GNode currentNode;
     public GNode classNode;
 
-    public void visitFieldDeclaration(GNode n){
+    public void visitFieldDeclaration(GNode n) {
         classNode.addNode(n);
         visit(n);
     }
 
-    public GNode collateDetails(GNode n, String type, int limit){
+    public GNode collateDetails(GNode n, String type, int limit) {
         GNode details = GNode.create(type, limit);
-        for(int i = 0; i<5; i+=1){
-            try{
+        for(int i = 0; i<5; i+=1) {
+            try {
                 details.addNode(n.getNode(i));
-            } catch(java.lang.ClassCastException e){
+            } catch(java.lang.ClassCastException e) {
                 GNode methodName = GNode.create(n.get(i).toString(), 1);
                 details.addNode(methodName);
             }
         }
         return details;
     }
-    public void visitMethodDeclaration(GNode n){
+    public void visitMethodDeclaration(GNode n) {
         classNode.addNode(collateDetails(n, "MethodDeclaration", 5));
         visit(n);
     }
 
-    public void visitConstructorDeclaration(GNode n){
+    public void visitConstructorDeclaration(GNode n) {
         classNode.addNode(collateDetails(n, "ConstructorDeclaration", 5));
         visit(n);
     }
 
 
-    public void visitClassDeclaration(GNode n){
+    public void visitClassDeclaration(GNode n) {
         classNode = collateDetails(n, "ClassDeclaration", 5);
         visit(n);
         dataLayout.addASTNode(classNode);
@@ -66,11 +66,14 @@ public class DependencyTraversal extends Visitor {
     }
 
 
-    static class dependencyAST{
+
+    static class dependencyAST {
 
         public ArrayList<GNode> dependencyAsts  = new ArrayList<GNode>();
 
-        public void addASTNode(GNode n) {this.dependencyAsts.add(n);}
+        public void addASTNode(GNode n) {
+            this.dependencyAsts.add(n);
+        }
 
         public String toString() {
             return dependencyAsts.toString();

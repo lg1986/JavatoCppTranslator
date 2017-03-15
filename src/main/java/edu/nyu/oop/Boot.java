@@ -44,8 +44,9 @@ public class Boot extends Tool {
         // Declare command line arguments.
 
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
-                bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
-                bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
+        bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
+        bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
+        bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
     @Override
@@ -80,19 +81,25 @@ public class Boot extends Tool {
             runtime.console().format(n).pln().flush();
         }
 
-        if(runtime.test("createAllAST")){
+        if(runtime.test("createAllAST")) {
             AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
         }
 
-        if(runtime.test("dependencyTraversal")){
+        if(runtime.test("dependencyTraversal")) {
             DependencyTraversal visitor = new DependencyTraversal();
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
             ArrayList<GNode> dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
-            for(GNode data:dataLayout){
+            for(GNode data:dataLayout) {
                 runtime.console().format(data).pln().flush();
             }
+        }
+
+        if(runtime.test("createHeaderFile")) {
+            System.out.println("here!");
+            CreateHeader head = new CreateHeader();
+            head.writeBaseLayout();
         }
 
     }
@@ -102,5 +109,7 @@ public class Boot extends Tool {
      *
      * @param args The command line arguments.
      */
-    public static void main(String[] args) {new Boot().run(args);}
+    public static void main(String[] args) {
+        new Boot().run(args);
+    }
 }

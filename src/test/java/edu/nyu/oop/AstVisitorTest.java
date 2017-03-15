@@ -35,7 +35,7 @@ public class AstVisitorTest {
 
 
     @Test
-    public void testMainClassImport(){
+    public void testMainClassImport() {
         AstVisitor.completeAST asts = visitor.getAllASTs(node);
         List<Node> dependecyASTList = asts.getDependency();
 
@@ -44,11 +44,11 @@ public class AstVisitorTest {
         Node result2 = dependecyASTList.get(2);
 
         GNode dependecyNode0 = (GNode) XtcTestUtils.loadTestFile(
-                "src/test/java/inputs/test004/Test004.java");
+                                   "src/test/java/inputs/test004/Test004.java");
         GNode dependecyNode1 = (GNode) XtcTestUtils.loadTestFile(
-                "src/test/java/inputs/test005/Test005.java");
+                                   "src/test/java/inputs/test005/Test005.java");
         GNode dependecyNode2 = (GNode) XtcTestUtils.loadTestFile(
-                "src/test/java/inputs/test005/Test005.java");
+                                   "src/test/java/inputs/test005/Test005.java");
 
         assertEquals(dependecyNode0.toString(), result0.toString());
         assertEquals(dependecyNode1.toString(), result1.toString());
