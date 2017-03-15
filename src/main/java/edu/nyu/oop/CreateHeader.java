@@ -78,12 +78,20 @@ public class CreateHeader extends Visitor {
         visit(n);
     }
 
+
     public void visitClassDeclaration(GNode n) {
 
         String class_name = "__"+n.get(1).toString().replace("()", "");
         writer.println("struct "+class_name+" {");
         visit(n);
         writer.println("};");
+    }
+
+    public void visitConstructorDeclaration(GNode n){
+        System.out.println(n.get(2));
+        String constructor = "__"+n.get(2).toString();
+        writer.println(constructor+";");
+        visit(n);
     }
 
     public void visit(Node n) {
