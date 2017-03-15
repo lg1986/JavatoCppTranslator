@@ -63,12 +63,26 @@ public class CreateHeader extends Visitor {
         writer.println("};");
     }
 
+
+    // Write vptr to the respective vtable
+    // Write the static class method to retrive the class of the object
     public void writeClassBase(String className) throws IOException {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr";
         writer.println(v_ptr);
         writer.println("static Class __class()");
     }
 
+    public void visitFormalParameters(GNode n) throws IOException {
+
+        try {
+            Node temp = n.getNode(0);
+            writer.write(temp.get(3).toString() + ")");
+        } catch (IndexOutOfBoundsException e) {
+
+        }
+        writer.println(")");
+        visit(n);
+    }
 
     public void visitMethodDeclaration(GNode n) {
         String decorator = null;
@@ -77,32 +91,26 @@ public class CreateHeader extends Visitor {
         }
         String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
         String method_name = n.get(3).toString();
-
-        writer.println(return_type+" "+method_name);
-
+        writer.print(return_type+" "+method_name+"(");
         visit(n);
     }
 
-    public void visitFieldDeclaration(GNode n) throws IOException{
-
+    public void visitConstructorDeclaration(GNode n) {
+        String constructor = "__"+n.get(2).toString().replace("()", "");
+        writer.write(constructor+"(");
+        visit(n);
     }
 
-
-    public void visitClassDeclaration(GNode n) throws IOException{
-
+    public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = "__"+n.get(1).toString().replace("()", "");
+        writer.println("struct "+class_name+";");
+        writer.println("struct "+class_name+"_VT;");
         writer.println("struct "+class_name+" {");
         writeClassBase(n.get(1).toString());
         visit(n);
         writer.println("};");
     }
 
-    public void visitConstructorDeclaration(GNode n){
-        System.out.println(n.get(2));
-        String constructor = "__"+n.get(2).toString();
-        writer.println(constructor+";");
-        visit(n);
-    }
 
     public void visit(Node n) {
         for (Object o : n) {

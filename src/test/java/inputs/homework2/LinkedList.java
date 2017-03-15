@@ -1,4 +1,5 @@
 package inputs.homework2;
+import inputs.test004.Test004;
 import inputs.test008.Test008.*;
 
 public class LinkedList {

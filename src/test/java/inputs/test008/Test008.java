@@ -12,7 +12,7 @@ class A {
 class B extends A {
     String b;
 
-    public B() {
+    public B(String s) {
         b = "B";
         a = "B";
         System.out.println(a);
@@ -22,6 +22,6 @@ class B extends A {
 
 public class Test008 {
     public static void main(String[] args) {
-        B b = new B();
+        B b = new B("s");
     }
 }
