@@ -27,6 +27,9 @@ public class CreateHeader extends Visitor {
         writer = new PrintWriter("output/output.h", "UTF-8");
         getDataLayoutAST(n);
         writeStartBaseLayout();
+        collect();
+        writeEndBaseLayout();
+        writer.close();
     }
 
     /**
@@ -54,16 +57,45 @@ public class CreateHeader extends Visitor {
         writer.println("namespace oop{");
     }
 
-
-    public void collect(Node n) {
-
+    public void writeEndBaseLayout() throws IOException {
+        writer.println("};");
+        writer.println("};");
+        writer.println("};");
     }
 
 
+    public void visitMethodDeclaration(GNode n) {
+        String decorator = null;
+        if(n.get(1) != null) {
+            decorator = n.get(1).toString().replace("()", "");
+        }
+        String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
+        String method_name = n.get(3).toString().replace("()", "");
 
+        writer.write(return_type+" "+method_name);
+        writer.println();
+        System.out.println(decorator+ " "+return_type+" "+method_name);
+        visit(n);
+    }
 
+    public void visitClassDeclaration(GNode n) {
+
+        String class_name = "__"+n.get(1).toString().replace("()", "");
+        writer.println("struct "+class_name+" {");
+        visit(n);
+        writer.println("};");
+    }
+
+    public void visit(Node n) {
+        for (Object o : n) {
+            if (o instanceof Node) dispatch((Node) o);
+        }
+    }
+
+    public void collect() {
+        for(Node n: dataLayout) {
+            super.dispatch(n);
+        }
+    }
 }
 
-
-
-}
