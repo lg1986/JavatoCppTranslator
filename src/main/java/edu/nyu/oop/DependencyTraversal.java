@@ -1,11 +1,8 @@
 package edu.nyu.oop;
 
-import com.sun.org.apache.xpath.internal.operations.Variable;
-import xtc.tree.*;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
-import xtc.tree.Location;
 
 
 import java.util.*;
