@@ -5,16 +5,17 @@ import xtc.tree.Node;
 import xtc.tree.Printer;
 import xtc.tree.Visitor;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * Created by rishabh on 14/03/17.
  */
 public class CreateHeader extends Visitor {
 
+    private Printer printer;
     public PrintWriter writer;
     public ArrayList<GNode> dataLayout = new ArrayList<GNode>();
 
@@ -24,12 +25,21 @@ public class CreateHeader extends Visitor {
      * @throws IOException
      */
     public CreateHeader(Node n) throws IOException {
-        writer = new PrintWriter("output/output.h", "UTF-8");
+
+        Writer w = null;
+        try {
+            FileOutputStream fos = new FileOutputStream("output/output.h");
+            OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
+            w = new BufferedWriter(ows);
+            this.printer = new Printer(w);
+        } catch (Exception e) {
+            throw new RuntimeException("Output location not found. Create the /output directory.");
+        }
         getDataLayoutAST(n);
         writeStartBaseLayout();
         collect();
         writeEndBaseLayout();
-        writer.close();
+        printer.flush();
     }
 
     /**
@@ -51,16 +61,16 @@ public class CreateHeader extends Visitor {
      * @throws IOException
      */
     public void writeStartBaseLayout() throws IOException {
-        writer.println("using namespace edu::nyu::oop;");
-        writer.println("namespace edu{");
-        writer.println("namespace nyu{");
-        writer.println("namespace oop{");
+        printer.pln("using namespace edu::nyu::oop;");
+        printer.pln("namespace edu{");
+        printer.pln("namespace nyu{");
+        printer.pln("namespace oop{");
     }
 
     public void writeEndBaseLayout() throws IOException {
-        writer.println("};");
-        writer.println("};");
-        writer.println("};");
+        printer.pln("};");
+        printer.pln("};");
+        printer.pln("};");
     }
 
 
@@ -68,19 +78,19 @@ public class CreateHeader extends Visitor {
     // Write the static class method to retrive the class of the object
     public void writeClassBase(String className) throws IOException {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr";
-        writer.println(v_ptr);
-        writer.println("static Class __class()");
+        printer.pln(v_ptr);
+        printer.pln("static Class __class()");
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
 
         try {
             Node temp = n.getNode(0);
-            writer.write(temp.get(3).toString() + ")");
+            printer.p(temp.get(3).toString() + ")");
         } catch (IndexOutOfBoundsException e) {
 
         }
-        writer.println(")");
+        printer.pln(")");
         visit(n);
     }
 
@@ -91,24 +101,24 @@ public class CreateHeader extends Visitor {
         }
         String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
         String method_name = n.get(3).toString();
-        writer.print(return_type+" "+method_name+"(");
+        printer.p(return_type+" "+method_name+"(");
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
         String constructor = "__"+n.get(2).toString().replace("()", "");
-        writer.write(constructor+"(");
+        printer.p(constructor+"(");
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = "__"+n.get(1).toString().replace("()", "");
-        writer.println("struct "+class_name+";");
-        writer.println("struct "+class_name+"_VT;");
-        writer.println("struct "+class_name+" {");
+        printer.pln("struct "+class_name+";");
+        printer.pln("struct "+class_name+"_VT;");
+        printer.pln("struct "+class_name+" {");
         writeClassBase(n.get(1).toString());
         visit(n);
-        writer.println("};");
+        printer.pln("};");
     }
 
 
