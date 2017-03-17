@@ -75,7 +75,12 @@ public class Boot extends Tool {
             runtime.console().format(n).pln().flush();
         }
 
+        if(runtime.test("cppAST")){
+            runtime.console().format(n).pln().flush();
+        }
+
     }
+
 
     /**
      * Run Boot with the specified command line arguments.
