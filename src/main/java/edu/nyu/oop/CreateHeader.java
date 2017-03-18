@@ -83,13 +83,22 @@ public class CreateHeader extends Visitor {
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
+        String arg_name = null;
+        String arg_type = null;
 
         try {
             Node temp = n.getNode(0);
-            printer.p(temp.get(3).toString() + ")");
+            arg_name = temp.get(3).toString();
+            arg_type = temp.getNode(1).getNode(0).get(0).toString();
+            Node arr = temp.getNode(1).getNode(1);
+            if(arr != null) {
+                arg_type += "[]";
+            }
+            printer.p(arg_type+" "+arg_name);
         } catch (IndexOutOfBoundsException e) {
 
         }
+
         printer.pln(")");
         visit(n);
     }
