@@ -12,8 +12,6 @@ public class DependencyDataLayoutTraversal extends Visitor {
     // created nested static class that will have the new AST with the data layout
 
     public static dependencyAST dataLayout = new dependencyAST();
-    public List<Node> dd = new ArrayList<Node>();
-    public GNode currentNode;
     public GNode classNode;
     public GNode packageNode;
 
@@ -65,7 +63,6 @@ public class DependencyDataLayoutTraversal extends Visitor {
     }
 
     public dependencyAST getSummary(List<Node> dependencyList) {
-        this.dd = dependencyList;
         for(Node n: dependencyList) {
             packageNode = GNode.create("PackageDeclaration", 20);
             packageNode.addNode(n.getNode(0));
