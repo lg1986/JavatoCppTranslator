@@ -3,6 +3,9 @@ package inputs.test004;
 class A {
     private String fld;
 
+    public A() {
+
+    }
     public A(String fld, String fld2) {
         this.fld = fld;
     }
@@ -10,6 +13,10 @@ class A {
     public String getFld() {
         return fld;
     }
+}
+
+class B extends A {
+
 }
 
 public class Test004 {

@@ -7,13 +7,15 @@ import xtc.tree.Visitor;
 
 import java.util.*;
 
-public class DependencyTraversal extends Visitor {
+public class DependencyDataLayoutTraversal extends Visitor {
 
     // created nested static class that will have the new AST with the data layout
 
     public static dependencyAST dataLayout = new dependencyAST();
+    public List<Node> dd = new ArrayList<Node>();
     public GNode currentNode;
     public GNode classNode;
+    public GNode packageNode;
 
     public void visitFieldDeclaration(GNode n) {
         classNode.addNode(n);
@@ -22,7 +24,7 @@ public class DependencyTraversal extends Visitor {
 
     public GNode collateDetails(GNode n, String type, int limit) {
         GNode details = GNode.create(type, limit);
-        for(int i = 0; i<5; i+=1) {
+        for(int i = 0; i<limit; i+=1) {
             try {
                 details.addNode(n.getNode(i));
             } catch(java.lang.ClassCastException e) {
@@ -46,8 +48,12 @@ public class DependencyTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
         classNode = collateDetails(n, "ClassDeclaration", 5);
         visit(n);
-        dataLayout.addASTNode(classNode);
+        packageNode.addNode(classNode);
+    }
 
+    public void visitCompilationUnit(GNode n) {
+        System.out.println(n);
+        visit(n);
     }
 
     public void visit(Node n) {
@@ -59,11 +65,19 @@ public class DependencyTraversal extends Visitor {
     }
 
     public dependencyAST getSummary(List<Node> dependencyList) {
+        this.dd = dependencyList;
         for(Node n: dependencyList) {
+            packageNode = GNode.create("PackageDeclaration", 20);
+            packageNode.addNode(n.getNode(0));
             super.dispatch(n);
+            dataLayout.addASTNode(packageNode);
         }
         return dataLayout;
     }
+
+
+
+
 
 
 
@@ -79,6 +93,8 @@ public class DependencyTraversal extends Visitor {
             return dependencyAsts.toString();
         }
     }
+
+
 
 
 }

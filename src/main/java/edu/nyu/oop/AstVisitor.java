@@ -54,7 +54,7 @@ public class AstVisitor extends Visitor {
         }
     }
 
-    // This is the first dispact
+    // This is the first dispatch
     public completeAST getAllASTs(Node n) {
         super.dispatch(n);
         return asts;

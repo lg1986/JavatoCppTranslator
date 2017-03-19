@@ -16,7 +16,6 @@ import java.util.List;
 public class CreateHeader extends Visitor {
 
     private Printer printer;
-    public PrintWriter writer;
     public ArrayList<GNode> dataLayout = new ArrayList<GNode>();
 
     /**
@@ -26,7 +25,7 @@ public class CreateHeader extends Visitor {
      */
     public CreateHeader(Node n) throws IOException {
 
-        Writer w = null;
+        Writer w;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.h");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
@@ -48,7 +47,7 @@ public class CreateHeader extends Visitor {
      */
 
     public void getDataLayoutAST(Node n) {
-        DependencyTraversal visitor = new DependencyTraversal();
+        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         AstVisitor astVisitor = new AstVisitor();
         AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
         List<Node> dependenceyList = depe.getDependency();

@@ -6,16 +6,13 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.nyu.oop.util.JavaFiveImportParser;
 import edu.nyu.oop.util.NodeUtil;
 import edu.nyu.oop.util.XtcProps;
 import org.slf4j.Logger;
 
-import xtc.lang.Java;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.util.Tool;
-import xtc.lang.JavaPrinter;
 import xtc.parser.ParseException;
 
 /**
@@ -86,7 +83,7 @@ public class Boot extends Tool {
         }
 
         if(runtime.test("dependencyTraversal")) {
-            DependencyTraversal visitor = new DependencyTraversal();
+            DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
