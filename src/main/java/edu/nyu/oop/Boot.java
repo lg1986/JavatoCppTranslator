@@ -109,9 +109,10 @@ public class Boot extends Tool {
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
             ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
-            for(GNode data:vtable){
-                runtime.console().format(data).pln().flush();
-            }
+//            for(GNode data:vtable){
+//                runtime.console().format(data).pln().flush();
+//            }
+
         }
 
     }

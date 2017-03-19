@@ -1,6 +1,7 @@
 package inputs.homework2;
 import inputs.test004.Test004;
 
+
 public class LinkedList {
 
     static class Node {

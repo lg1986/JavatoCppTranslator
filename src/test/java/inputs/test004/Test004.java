@@ -16,7 +16,9 @@ class A {
 }
 
 class B extends A {
+    public void methodB(){
 
+    }
 }
 
 public class Test004 {
