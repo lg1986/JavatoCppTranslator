@@ -115,6 +115,14 @@ public class Boot extends Tool {
 //            }
 
         }
+        if(runtime.test("CppTraversal")){
+            CppTraversal cppTraversal = new CppTraversal();
+            DependencyVTableTraversal visitor = new DependencyVTableTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> dependencyList = depe.getDependency();
+            ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
+        }
     }
 
 
