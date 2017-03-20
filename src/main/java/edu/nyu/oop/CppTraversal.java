@@ -9,6 +9,7 @@ import xtc.tree.Visitor;
 import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
+import java.lang.reflect.Array;
 import java.util.List;
 
 
@@ -23,22 +24,37 @@ public class CppTraversal extends Visitor {
 
 
     public GNode mutateFieldDeclaration(GNode n) {
-
+        String nodeString = n.toString();
+        String[] splittedDeclaration = nodeString.split(" ");
+        System.out.println(splittedDeclaration[0]);
+        return n;
     }
 
     public GNode mutateMethodDeclaration(GNode n) {
-
+        String nodeString = n.toString();
+        String[] splittedDeclaration = nodeString.split(" ");
+        System.out.println(splittedDeclaration[0]);
+        return n;
     }
 
     public GNode mutateConstructorDeclartion(GNode n) {
-
+        String nodeString = n.toString();
+        String[] splittedDeclaration = nodeString.split(" ");
+        System.out.println(splittedDeclaration[0]);
+        return n;
     }
 
     public GNode mutateClassDeclaration(GNode n) {
-
+        String nodeString = n.toString();
+        String[] splittedDeclaration = nodeString.split(" ");
+        System.out.println(splittedDeclaration[0]);
+        return n;
     }
 
     public void visitMethodDeclaration(GNode n) {
+        String nodeString = n.toString();
+        String[] splittedDeclaration = nodeString.split(" ");
+        System.out.println(splittedDeclaration[0]);
         mutateMethodDeclaration(n);
         visit(n);
 
