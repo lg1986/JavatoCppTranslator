@@ -1,5 +1,6 @@
 package inputs.homework2;
-import inputs.test000.Test000;
+import inputs.test004.Test004;
+
 
 public class LinkedList {
 
@@ -24,6 +25,7 @@ public class LinkedList {
     {
         Node init = null;
         head = init;
+
     }
 
     public void add(Node n) {

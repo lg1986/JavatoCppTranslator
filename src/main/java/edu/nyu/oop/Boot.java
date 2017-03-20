@@ -3,9 +3,9 @@ package edu.nyu.oop;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.List;
 
-import edu.nyu.oop.util.JavaFiveImportParser;
 import edu.nyu.oop.util.NodeUtil;
 import edu.nyu.oop.util.XtcProps;
 import org.slf4j.Logger;
@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.util.Tool;
-import xtc.lang.JavaPrinter;
 import xtc.parser.ParseException;
 
 /**
@@ -40,7 +39,12 @@ public class Boot extends Tool {
     public void init() {
         super.init();
         // Declare command line arguments.
-        runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs");
+
+        runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
+        bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
+        bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
+        bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
     @Override
@@ -48,7 +52,7 @@ public class Boot extends Tool {
         super.prepare();
         // Perform consistency checks on command line arguments.
         // (i.e. are there some commands that cannot be run together?)
-        logger.debug("This is a debugging statement."); // Example logging statement, you may delete
+        // logger.debug("This is a debugging statement."); // Example logging statement, you may delete
     }
 
     @Override
@@ -71,14 +75,46 @@ public class Boot extends Tool {
     @Override
     public void process(Node n) {
 
-        if(runtime.test("createAllAST")){
+        if (runtime.test("printJavaAST")) {
             runtime.console().format(n).pln().flush();
         }
 
-        if(runtime.test("cppAST")){
-            runtime.console().format(n).pln().flush();
+
+        if(runtime.test("createAllAST")) {
+            AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
         }
 
+        if(runtime.test("dependencyTraversal")) {
+            DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> dependencyList = depe.getDependency();
+            ArrayList<GNode> dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
+            for(GNode data:dataLayout) {
+                runtime.console().format(data).pln().flush();
+            }
+        }
+
+        if(runtime.test("createHeaderFile")) {
+            try {
+                CreateHeader head = new CreateHeader(n);
+            } catch (IOException e) {
+
+            }
+
+        }
+
+        if(runtime.test("dependencyVTableTraversal")) {
+            DependencyVTableTraversal visitor = new DependencyVTableTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> dependencyList = depe.getDependency();
+            ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
+//            for(GNode data:vtable){
+//                runtime.console().format(data).pln().flush();
+//            }
+
+        }
     }
 
 

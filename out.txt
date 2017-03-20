@@ -1,0 +1,272 @@
+[0m[[0minfo[0m] [0mLoading project definition from /Users/rishabh/Desktop/OOP/translator-5/project[0m
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mInitial source changes: [0m
+[0m[[0mdebug[0m] [0m	removed:Set()[0m
+[0m[[0mdebug[0m] [0m	added: Set()[0m
+[0m[[0mdebug[0m] [0m	modified: Set()[0m
+[0m[[0mdebug[0m] [0mRemoved products: Set()[0m
+[0m[[0mdebug[0m] [0mExternal API changes: API Changes: Set()[0m
+[0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set()[0m
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
+[0m[[0mdebug[0m] [0m	product: Set()[0m
+[0m[[0mdebug[0m] [0m	binary dep: Set()[0m
+[0m[[0mdebug[0m] [0m	external source: Set()[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set()[0m
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	[0m
+[0m[[0minfo[0m] [0mSet current project to translator-5 (in build file:/Users/rishabh/Desktop/OOP/translator-5/)[0m
+[0m[[0minfo[0m] [0mRunning edu.nyu.oop.Boot -dependencyTraversal src/test/java/inputs/homework2/LinkedList.java[0m
+[0m[[0minfo[0m] [0mtranslator-5, v. 2.4.0, j++[0m
+[0m[[0minfo[0m] [0mProcessing src/test/java/inputs/homework2/LinkedList.java ...[0m
+[0m[[0minfo[0m] [0mClassDeclaration([0m
+[0m[[0minfo[0m] [0m  Modifiers([0m
+[0m[[0minfo[0m] [0m    Modifier([0m
+[0m[[0minfo[0m] [0m      "public"[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  Test000(),[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  FieldDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    Type([0m
+[0m[[0minfo[0m] [0m      PrimitiveType([0m
+[0m[[0minfo[0m] [0m        "int"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      null[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    Declarators([0m
+[0m[[0minfo[0m] [0m      Declarator([0m
+[0m[[0minfo[0m] [0m        "val",[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  MethodDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "static"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null,[0m
+[0m[[0minfo[0m] [0m    VoidType(),[0m
+[0m[[0minfo[0m] [0m    main(),[0m
+[0m[[0minfo[0m] [0m    FormalParameters([0m
+[0m[[0minfo[0m] [0m      FormalParameter([0m
+[0m[[0minfo[0m] [0m        Modifiers(),[0m
+[0m[[0minfo[0m] [0m        Type([0m
+[0m[[0minfo[0m] [0m          QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m            "String"[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          Dimensions([0m
+[0m[[0minfo[0m] [0m            "["[0m
+[0m[[0minfo[0m] [0m          )[0m
+[0m[[0minfo[0m] [0m        ),[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        "args",[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  MethodDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "static"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null,[0m
+[0m[[0minfo[0m] [0m    VoidType(),[0m
+[0m[[0minfo[0m] [0m    p(),[0m
+[0m[[0minfo[0m] [0m    FormalParameters([0m
+[0m[[0minfo[0m] [0m      FormalParameter([0m
+[0m[[0minfo[0m] [0m        Modifiers(),[0m
+[0m[[0minfo[0m] [0m        Type([0m
+[0m[[0minfo[0m] [0m          QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m            "String"[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          null[0m
+[0m[[0minfo[0m] [0m        ),[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        "arg",[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  )[0m
+[0m[[0minfo[0m] [0m)[0m
+[0m[[0minfo[0m] [0mClassDeclaration([0m
+[0m[[0minfo[0m] [0m  Modifiers(),[0m
+[0m[[0minfo[0m] [0m  A(),[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  FieldDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "private"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    Type([0m
+[0m[[0minfo[0m] [0m      QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m        "String"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      null[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    Declarators([0m
+[0m[[0minfo[0m] [0m      Declarator([0m
+[0m[[0minfo[0m] [0m        "fld",[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  ConstructorDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null,[0m
+[0m[[0minfo[0m] [0m    A(),[0m
+[0m[[0minfo[0m] [0m    FormalParameters([0m
+[0m[[0minfo[0m] [0m      FormalParameter([0m
+[0m[[0minfo[0m] [0m        Modifiers(),[0m
+[0m[[0minfo[0m] [0m        Type([0m
+[0m[[0minfo[0m] [0m          QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m            "String"[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          null[0m
+[0m[[0minfo[0m] [0m        ),[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        "fld",[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  MethodDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null,[0m
+[0m[[0minfo[0m] [0m    Type([0m
+[0m[[0minfo[0m] [0m      QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m        "String"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      null[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    getFld(),[0m
+[0m[[0minfo[0m] [0m    FormalParameters()[0m
+[0m[[0minfo[0m] [0m  )[0m
+[0m[[0minfo[0m] [0m)[0m
+[0m[[0minfo[0m] [0mClassDeclaration([0m
+[0m[[0minfo[0m] [0m  Modifiers([0m
+[0m[[0minfo[0m] [0m    Modifier([0m
+[0m[[0minfo[0m] [0m      "public"[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  Test004(),[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  null,[0m
+[0m[[0minfo[0m] [0m  MethodDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers([0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "public"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      Modifier([0m
+[0m[[0minfo[0m] [0m        "static"[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    null,[0m
+[0m[[0minfo[0m] [0m    VoidType(),[0m
+[0m[[0minfo[0m] [0m    main(),[0m
+[0m[[0minfo[0m] [0m    FormalParameters([0m
+[0m[[0minfo[0m] [0m      FormalParameter([0m
+[0m[[0minfo[0m] [0m        Modifiers(),[0m
+[0m[[0minfo[0m] [0m        Type([0m
+[0m[[0minfo[0m] [0m          QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m            "String"[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          Dimensions([0m
+[0m[[0minfo[0m] [0m            "["[0m
+[0m[[0minfo[0m] [0m          )[0m
+[0m[[0minfo[0m] [0m        ),[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        "args",[0m
+[0m[[0minfo[0m] [0m        null[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  ),[0m
+[0m[[0minfo[0m] [0m  FieldDeclaration([0m
+[0m[[0minfo[0m] [0m    Modifiers(),[0m
+[0m[[0minfo[0m] [0m    Type([0m
+[0m[[0minfo[0m] [0m      QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m        "A"[0m
+[0m[[0minfo[0m] [0m      ),[0m
+[0m[[0minfo[0m] [0m      null[0m
+[0m[[0minfo[0m] [0m    ),[0m
+[0m[[0minfo[0m] [0m    Declarators([0m
+[0m[[0minfo[0m] [0m      Declarator([0m
+[0m[[0minfo[0m] [0m        "a",[0m
+[0m[[0minfo[0m] [0m        null,[0m
+[0m[[0minfo[0m] [0m        NewClassExpression([0m
+[0m[[0minfo[0m] [0m          null,[0m
+[0m[[0minfo[0m] [0m          null,[0m
+[0m[[0minfo[0m] [0m          QualifiedIdentifier([0m
+[0m[[0minfo[0m] [0m            "A"[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          Arguments([0m
+[0m[[0minfo[0m] [0m            StringLiteral([0m
+[0m[[0minfo[0m] [0m              "\"A\""[0m
+[0m[[0minfo[0m] [0m            )[0m
+[0m[[0minfo[0m] [0m          ),[0m
+[0m[[0minfo[0m] [0m          null[0m
+[0m[[0minfo[0m] [0m        )[0m
+[0m[[0minfo[0m] [0m      )[0m
+[0m[[0minfo[0m] [0m    )[0m
+[0m[[0minfo[0m] [0m  )[0m
+[0m[[0minfo[0m] [0m)[0m
+[0m[[32msuccess[0m] [0mTotal time: 1 s, completed 11 Mar, 2017 8:13:38 PM[0m
+[0m[[0minfo[0m] [0mLoading project definition from /Users/rishabh/Desktop/OOP/translator-5/project[0m
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mInitial source changes: [0m
+[0m[[0mdebug[0m] [0m	removed:Set()[0m
+[0m[[0mdebug[0m] [0m	added: Set()[0m
+[0m[[0mdebug[0m] [0m	modified: Set()[0m
+[0m[[0mdebug[0m] [0mRemoved products: Set()[0m
+[0m[[0mdebug[0m] [0mExternal API changes: API Changes: Set()[0m
+[0m[[0mdebug[0m] [0mModified binary dependencies: Set()[0m
+[0m[[0mdebug[0m] [0mInitial directly invalidated sources: Set()[0m
+[0m[[0mdebug[0m] [0m[0m
+[0m[[0mdebug[0m] [0mSources indirectly invalidated by:[0m
+[0m[[0mdebug[0m] [0m	product: Set()[0m
+[0m[[0mdebug[0m] [0m	binary dep: Set()[0m
+[0m[[0mdebug[0m] [0m	external source: Set()[0m
+[0m[[0mdebug[0m] [0mAll initially invalidated sources: Set()[0m
+[0m[[0mdebug[0m] [0mCopy resource mappings: [0m
+[0m[[0mdebug[0m] [0m	[0m
+[0m[[0minfo[0m] [0mSet current project to translator-5 (in build file:/Users/rishabh/Desktop/OOP/translator-5/)[0m
+[0m[[0minfo[0m] [0mCompiling 1 Java source to /Users/rishabh/Desktop/OOP/translator-5/target/classes...[0m
+[0m[[0minfo[0m] [0mRunning edu.nyu.oop.Boot -dependencyTraversal src/test/java/inputs/homework2/LinkedList.java[0m
+[0m[[0minfo[0m] [0mtranslator-5, v. 2.4.0, j++[0m
+[0m[[0minfo[0m] [0mProcessing src/test/java/inputs/homework2/LinkedList.java ...[0m
+[0m[[0minfo[0m] [0mxtc.tree.Printer@6ea6d14e[0m
+[0m[[0minfo[0m] [0mxtc.tree.Printer@6ea6d14e[0m
+[0m[[0minfo[0m] [0mxtc.tree.Printer@6ea6d14e[0m
+[0m[[32msuccess[0m] [0mTotal time: 1 s, completed 11 Mar, 2017 8:14:31 PM[0m

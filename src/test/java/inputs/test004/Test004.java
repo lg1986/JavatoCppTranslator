@@ -1,10 +1,12 @@
 package inputs.test004;
-import inputs.test005.Test005;
 
 class A {
     private String fld;
 
-    public A(String fld) {
+    public A() {
+
+    }
+    public A(String fld, String fld2) {
         this.fld = fld;
     }
 
@@ -13,9 +15,15 @@ class A {
     }
 }
 
+class B extends A {
+    public void methodB(){
+
+    }
+}
+
 public class Test004 {
     public static void main(String[] args) {
-        A a = new A("A");
+        A a = new A("A", "B");
         System.out.println(a.getFld());
     }
 }

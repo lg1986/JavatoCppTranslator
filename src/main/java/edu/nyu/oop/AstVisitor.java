@@ -25,15 +25,13 @@ public class AstVisitor extends Visitor {
 
     protected completeAST asts = new completeAST();
 
-
-
     // getFile - it gets the File object.
     // the src/test/java folder is where all
 
     // the dependcies and the test files are
-    public File getFile(Node k){
+    public File getFile(Node k) {
         String file_path = "src/test/java/";
-        for(int i = 0; i<k.size()-1; i++){
+        for(int i = 0; i<k.size()-1; i++) {
             file_path += k.get(i).toString()+"/";
         }
         file_path+=k.get(k.size()-2)+".java";
@@ -42,24 +40,9 @@ public class AstVisitor extends Visitor {
     }
 
     // Double dispact visitImport declaration
-    public void visitImportDeclaration(GNode n){
+    public void visitImportDeclaration(GNode n) {
         Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1))); // Creating new dependency
 
-        // Finding & splitting the filename to create individualized output text files
-        String filename = dependency.getLocation().file;
-        String splitString[]= filename.split("/");
-        String testName = splitString[splitString.length - 1];
-        System.out.println(testName + ".txt");
-
-        try {
-            System.out.println(dependency.toString() + "\n");
-            FileOutputStream file = new FileOutputStream("src/main/java/edu/nyu/oop/outputs/" + testName); // Creating new output file
-            file.write(dependency.toString().getBytes()); // Writing to AstVisitorOutputs.txt
-            file.close(); // Closing file
-        }
-        catch (IOException ex) {
-            System.out.println (ex.toString());
-        }
         asts.addAST(dependency); // Adding to asts
         visit(dependency);
     }
@@ -77,17 +60,20 @@ public class AstVisitor extends Visitor {
         return asts;
     }
 
-    static class completeAST{
+    static class completeAST {
         private List<Node> asts = new ArrayList<Node>();
 
-        public List<Node> getDependency(){
+        public List<Node> getDependency() {
             return asts;
         }
-        public void addAST(Node n) { this.asts.add(n);}
 
-        public String toString(){
+        public void addAST(Node n) {
+            this.asts.add(n);
+        }
+
+        public String toString() {
             String ast_string = "";
-            for(Node l: asts){
+            for(Node l: asts) {
                 ast_string += l.toString() + "\n";
             }
             return ast_string;
