@@ -95,6 +95,19 @@ public class Boot extends Tool {
             }
         }
 
+        if(runtime.test("CppTraversal")){
+            CppTraversal cppTraversal = new CppTraversal();
+            DependencyVTableTraversal visitor = new DependencyVTableTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> dependencyList = depe.getDependency();
+            ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
+
+            for(GNode data : datalayout){
+                runtime.console().format(data).pln().flush();
+            }
+        }
+
         if(runtime.test("createHeaderFile")) {
             try {
                 CreateHeader head = new CreateHeader(n);
@@ -115,14 +128,7 @@ public class Boot extends Tool {
 //            }
 
         }
-        if(runtime.test("CppTraversal")){
-            CppTraversal cppTraversal = new CppTraversal();
-            DependencyVTableTraversal visitor = new DependencyVTableTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> dependencyList = depe.getDependency();
-            ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
-        }
+
     }
 
 
