@@ -10,6 +10,7 @@ import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.List;
 
 
@@ -18,13 +19,15 @@ import java.util.List;
  */
 public class CppTraversal extends Visitor {
 
-    public static DependencyDataLayoutTraversal.dependencyAST dataLayout = new DependencyDataLayoutTraversal.dependencyAST();
+    // need to get AST from Phase 1 and mutate
+
     public GNode classNode;
     public GNode packageNode;
 
 
     public GNode mutateFieldDeclaration(GNode n) {
         String nodeString = n.toString();
+
         String[] splittedDeclaration = nodeString.split(" ");
         System.out.println(splittedDeclaration[0]);
         return n;
@@ -45,11 +48,14 @@ public class CppTraversal extends Visitor {
     }
 
     public GNode mutateClassDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String className = "__"+n.get(1).toString().replace("()","");
+        // struct class name {} --> syntax
+        // omit the {} since that is denoted by child element in AST
+        String classBase = "struct"+className;
+        String cppSyntax = n.get(1).toString().replace("",className);
         return n;
     }
+
 
     public void visitMethodDeclaration(GNode n) {
         String nodeString = n.toString();
@@ -91,13 +97,5 @@ public class CppTraversal extends Visitor {
         }
     }
 
-    public DependencyDataLayoutTraversal.dependencyAST getSummary(List<Node> dependencyList) {
-        for (Node n : dependencyList) {
-            packageNode = GNode.create("PackageDeclaration", 20);
-            packageNode.addNode(n.getNode(0));
-            super.dispatch(n);
-            dataLayout.addASTNode(packageNode);
-        }
-        return dataLayout;
-    }
+
 }
