@@ -73,11 +73,6 @@ public class DependencyDataLayoutTraversal extends Visitor {
     }
 
 
-
-
-
-
-
     static class dependencyAST {
 
         public ArrayList<GNode> dependencyAsts  = new ArrayList<GNode>();
