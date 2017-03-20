@@ -26,24 +26,21 @@ public class CppTraversal extends Visitor {
 
 
     public GNode mutateFieldDeclaration(GNode n) {
-        String nodeString = n.toString();
-
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
         return n;
     }
 
     public GNode mutateMethodDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String returnType = n.get(2).toString().replace("Type()","").toLowerCase();
+        String methodName = n.get(3).toString();
+        String methodBase = returnType+" "+methodName;
+        n.get(1).toString().replace("",methodBase);
         return n;
     }
 
     public GNode mutateConstructorDeclartion(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String constructorName = "__"+n.get(2).toString().replace("()","");
+        String constructorBase = constructorName+"(";
+        n.get(1).toString().replace("",constructorBase);
         return n;
     }
 
@@ -52,22 +49,18 @@ public class CppTraversal extends Visitor {
         // struct class name {} --> syntax
         // omit the {} since that is denoted by child element in AST
         String classBase = "struct"+className;
-        String cppSyntax = n.get(1).toString().replace("",className);
+        n.get(1).toString().replace("",classBase);
         return n;
     }
 
 
     public void visitMethodDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
         mutateMethodDeclaration(n);
         visit(n);
 
     }
 
     public void visitFieldDeclaration(GNode n) {
-        classNode.addNode(n);
         mutateFieldDeclaration(n);
         visit(n);
     }
