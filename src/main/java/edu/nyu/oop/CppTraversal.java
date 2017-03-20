@@ -10,6 +10,7 @@ import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.util.List;
 
 
@@ -18,50 +19,48 @@ import java.util.List;
  */
 public class CppTraversal extends Visitor {
 
-    public static DependencyDataLayoutTraversal.dependencyAST dataLayout = new DependencyDataLayoutTraversal.dependencyAST();
+    // need to get AST from Phase 1 and mutate
+
     public GNode classNode;
     public GNode packageNode;
 
 
     public GNode mutateFieldDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
         return n;
     }
 
     public GNode mutateMethodDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String returnType = n.get(2).toString().replace("Type()","").toLowerCase();
+        String methodName = n.get(3).toString();
+        String methodBase = returnType+" "+methodName;
+        n.get(1).toString().replace("",methodBase);
         return n;
     }
 
     public GNode mutateConstructorDeclartion(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String constructorName = "__"+n.get(2).toString().replace("()","");
+        String constructorBase = constructorName+"(";
+        n.get(1).toString().replace("",constructorBase);
         return n;
     }
 
     public GNode mutateClassDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
+        String className = "__"+n.get(1).toString().replace("()","");
+        // struct class name {} --> syntax
+        // omit the {} since that is denoted by child element in AST
+        String classBase = "struct"+className;
+        n.get(1).toString().replace("",classBase);
         return n;
     }
 
+
     public void visitMethodDeclaration(GNode n) {
-        String nodeString = n.toString();
-        String[] splittedDeclaration = nodeString.split(" ");
-        System.out.println(splittedDeclaration[0]);
         mutateMethodDeclaration(n);
         visit(n);
 
     }
 
     public void visitFieldDeclaration(GNode n) {
-        classNode.addNode(n);
         mutateFieldDeclaration(n);
         visit(n);
     }
@@ -91,13 +90,5 @@ public class CppTraversal extends Visitor {
         }
     }
 
-    public DependencyDataLayoutTraversal.dependencyAST getSummary(List<Node> dependencyList) {
-        for (Node n : dependencyList) {
-            packageNode = GNode.create("PackageDeclaration", 20);
-            packageNode.addNode(n.getNode(0));
-            super.dispatch(n);
-            dataLayout.addASTNode(packageNode);
-        }
-        return dataLayout;
-    }
+
 }
