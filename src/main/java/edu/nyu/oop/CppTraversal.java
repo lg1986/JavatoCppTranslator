@@ -11,6 +11,7 @@ import xtc.util.SymbolTable;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -20,18 +21,9 @@ import java.util.List;
  */
 public class CppTraversal extends Visitor {
 
-    // need to get AST from Phase 1 and mutate
+    private Runtime runtime;
 
-    public GNode classNode;
-    public GNode packageNode;
-
-    public GNode addNewNode(GNode n, String type, int limit) {
-        GNode newNode = GNode.create(type, limit);
-        for(int i = 0; i<limit; i+=1) {
-                newNode.addNode(n.getNode(i));
-        }
-        return newNode;
-    }
+    protected CppTraversal cpp = new CppTraversal();
 
     // @Lina
     // Mutating field declarations into C++ version
@@ -44,7 +36,6 @@ public class CppTraversal extends Visitor {
         n.toString().replaceAll("",fieldBase);
         System.out.println(n.getName());
         System.out.println(n.get(0));
-        classNode.add(addNewNode(n,fieldBase,5));
         return n;
     }
 
@@ -100,7 +91,6 @@ public class CppTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
         mutateClassDeclaration(n);
         visit(n);
-        packageNode.addNode(classNode);
     }
 
     public void visitCompilationUnit(GNode n) {
@@ -113,6 +103,26 @@ public class CppTraversal extends Visitor {
             if (o instanceof Node) {
                 dispatch((Node) o);
             }
+        }
+    }
+
+    static class cppAST {
+        protected static List<Node> cppasts = new ArrayList<Node>();
+
+        public List<Node> getDependency() {
+            return cppasts;
+        }
+
+        public void addAST(Node n) {
+            this.cppasts.add(n);
+        }
+
+        public String toString() {
+            String ast_string = "";
+            for(Node l: cppasts) {
+                ast_string += l.toString() + "\n";
+            }
+            return ast_string;
         }
     }
 }

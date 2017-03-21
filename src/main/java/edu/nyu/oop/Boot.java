@@ -43,7 +43,8 @@ public class Boot extends Tool {
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
-        bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+                bool("cppTraversal", "cppTraversal", false, "?").
+                bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
@@ -96,13 +97,13 @@ public class Boot extends Tool {
         }
 
         if(runtime.test("cppTraversal")){
-            CppTraversal cppTraversal = new CppTraversal();
+            //CppTraversal cppTraversal = new CppTraversal();
             //AstVisitor astVisitor = new AstVisitor();
             //AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> astList = AstVisitor.completeAST.asts;
-            for(Node element:astList) {
-                runtime.console().format(element).pln().flush();
-            }
+            //List<Node> astList = AstVisitor.completeAST.asts;
+            //for(Node element:astList) {
+            //    runtime.console().format(element).pln().flush();
+            //}
 
         }
 
