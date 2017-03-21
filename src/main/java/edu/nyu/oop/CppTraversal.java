@@ -29,6 +29,8 @@ public class CppTraversal extends Visitor {
         String returnType = n.get(0).toString().replace("Type()","").toLowerCase();
         String fieldName = n.get(2).toString();
         String fieldBase = returnType+" "+fieldName;
+        n.toString().replaceAll("",fieldBase);
+        System.out.println(n.getName());
         System.out.println(fieldBase);
         System.out.println(n.get(0));
         return n;
