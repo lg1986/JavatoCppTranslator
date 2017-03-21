@@ -40,7 +40,7 @@ public class CreateHeaderVTable extends Visitor {
         this.vtable = visitor.getSummary(dependenceyList).dependencyAsts;
     }
 
-    public void printStarterVTable(String name){
+    public void printStarterVTable(String name) {
         printer.pln("Class __is_a;");
         printer.pln("int32_t (*hashCode)("+name+");");
         printer.pln("bool (*equals)("+name+", Object);");

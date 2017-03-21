@@ -16,7 +16,7 @@ public class DependencyVTableTraversal extends Visitor {
     public GNode currentClass;
 
 
-    public DependencyVTableTraversal(){
+    public DependencyVTableTraversal() {
         object = new JppObject();
         object.methods.add("hashCode");
         object.methods.add("equals");
@@ -24,42 +24,40 @@ public class DependencyVTableTraversal extends Visitor {
         object.methods.add("getClass");
     }
 
-    public void visitMethodDeclaration(GNode n){
+    public void visitMethodDeclaration(GNode n) {
 
         try {
             String method_name = n.get(3).toString();
             currentClass.addNode(GNode.create(method_name));
             currentObject.methods.add(method_name);
 
-        } catch (Exception e){
+        } catch (Exception e) {
 
         }
         visit(n);
 
     }
-
-    public boolean doesExtend(GNode n){
+    // Add all inherited methods
+    public boolean doesExtend(GNode n) {
         try {
             Node extendExpression = n.getNode(3);
             if (extendExpression != null) {
                 String className = extendExpression.getNode(0).getNode(0).get(0).toString();
                 JppObject extObj = vtable.objects.get(className);
-                for(String objmeth: extObj.methods){
-                    if(!currentObject.methods.contains(objmeth)){
+                for(String objmeth: extObj.methods) {
+                    if(!currentObject.methods.contains(objmeth)) {
                         currentObject.methods.add(objmeth);
                     }
                 }
                 return true;
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
         return false;
     }
 
-    public void visitClassDeclaration(GNode n){
-//        System.out.println(n.get(1));
-
+    public void visitClassDeclaration(GNode n) {
         try {
             currentObject = new JppObject();
             String class_name = (n.get(1).toString());
@@ -67,13 +65,14 @@ public class DependencyVTableTraversal extends Visitor {
             currentClass = GNode.create(class_name);
             visit(n);
             doesExtend(n);
-            for(String objmeth: object.methods){
-                if(!currentObject.methods.contains(objmeth)){
+            for(String objmeth: object.methods) {
+                if(!currentObject.methods.contains(objmeth)) {
                     currentObject.methods.add(objmeth);
                 }
             }
+            vtable.addASTNode(currentClass);
             vtable.objects.put(class_name, currentObject);
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
 
         }
@@ -88,8 +87,8 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
-    public vtableAST getSummary(List<Node> dependencyList){
-        for(Node n: dependencyList){
+    public vtableAST getSummary(List<Node> dependencyList) {
+        for(Node n: dependencyList) {
             super.dispatch(n);
         }
         System.out.println(vtable.toString());
@@ -99,9 +98,9 @@ public class DependencyVTableTraversal extends Visitor {
     static class JppObject {
         public ArrayList<String> methods = new ArrayList<String>();
 
-        public String toString(){
+        public String toString() {
             String s = "";
-            for (String d: methods){
+            for (String d: methods) {
                 s += d + "\n ";
             }
             return s;
@@ -112,11 +111,11 @@ public class DependencyVTableTraversal extends Visitor {
         public ArrayList<GNode> vtableAsts = new ArrayList<GNode>();
         public HashMap<String, JppObject> objects = new HashMap<String, JppObject>();
 
-        public void addASTNode(GNode n){
+        public void addASTNode(GNode n) {
             this.vtableAsts.add(n);
         }
 
-        public String toString(){
+        public String toString() {
             String s = "";
             Iterator it = objects.entrySet().iterator();
             while (it.hasNext()) {
@@ -124,7 +123,7 @@ public class DependencyVTableTraversal extends Visitor {
                 s += pair.getKey() + " = " + pair.getValue().toString()+" ";
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            System.out.println("here!");
+            System.out.println(vtableAsts.toString());
             return s;
         }
     }
