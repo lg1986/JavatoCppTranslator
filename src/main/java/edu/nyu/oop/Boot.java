@@ -95,12 +95,12 @@ public class Boot extends Tool {
             }
         }
 
-        if(runtime.test("CppTraversal")){
+        if(runtime.test("cppTraversal")){
             CppTraversal cppTraversal = new CppTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> dependencyList = depe.getDependency();
-            for(Node element:dependencyList){
+            //AstVisitor astVisitor = new AstVisitor();
+            //AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> astList = AstVisitor.completeAST.asts;
+            for(Node element:astList) {
                 runtime.console().format(element).pln().flush();
             }
 

@@ -24,18 +24,30 @@ public class CppTraversal extends Visitor {
     public GNode classNode;
     public GNode packageNode;
 
+    public GNode addNewNode(GNode n, String type, int limit) {
+        GNode newNode = GNode.create(type, limit);
+        for(int i = 0; i<limit; i+=1) {
+                newNode.addNode(n.getNode(i));
 
+
+        }
+        return newNode;
+    }
+
+    // @Lina
     public GNode mutateFieldDeclaration(GNode n) {
         String returnType = n.get(0).toString().replace("Type()","").toLowerCase();
         String fieldName = n.get(2).toString();
         String fieldBase = returnType+" "+fieldName;
+        System.out.println(fieldBase);
         n.toString().replaceAll("",fieldBase);
         System.out.println(n.getName());
-        System.out.println(fieldBase);
         System.out.println(n.get(0));
+        classNode.add(addNewNode(n,fieldBase,5));
         return n;
     }
 
+    // @Lina
     public GNode mutateMethodDeclaration(GNode n) {
         String returnType = n.get(2).toString().replace("Type()","").toLowerCase();
         String methodName = n.get(3).toString();
@@ -45,6 +57,7 @@ public class CppTraversal extends Visitor {
         return n;
     }
 
+    //@Charlie
     public GNode mutateConstructorDeclartion(GNode n) {
         String constructorName = "__"+n.get(2).toString().replace("()","");
         String constructorBase = constructorName+"(";
@@ -53,6 +66,7 @@ public class CppTraversal extends Visitor {
         return n;
     }
 
+    //@Charlie
     public GNode mutateClassDeclaration(GNode n) {
         String className = "__"+n.get(1).toString().replace("()","");
         // struct classname {} --> syntax
