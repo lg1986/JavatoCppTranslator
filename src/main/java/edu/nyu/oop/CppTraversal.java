@@ -16,6 +16,7 @@ import java.util.List;
 
 /**
  * Created by charlottephillips on 09/03/17.
+ * Traversing the AST and mutating the existing nodes from Java in C++ format
  */
 public class CppTraversal extends Visitor {
 
@@ -28,13 +29,13 @@ public class CppTraversal extends Visitor {
         GNode newNode = GNode.create(type, limit);
         for(int i = 0; i<limit; i+=1) {
                 newNode.addNode(n.getNode(i));
-
-
         }
         return newNode;
     }
 
     // @Lina
+    // Mutating field declarations into C++ version
+    // Building a string with the name, return type & replacing in tree
     public GNode mutateFieldDeclaration(GNode n) {
         String returnType = n.get(0).toString().replace("Type()","").toLowerCase();
         String fieldName = n.get(2).toString();
@@ -48,6 +49,8 @@ public class CppTraversal extends Visitor {
     }
 
     // @Lina
+    // Mutating the method declaration into C++ verison
+    // Building a string with the type, name
     public GNode mutateMethodDeclaration(GNode n) {
         String returnType = n.get(2).toString().replace("Type()","").toLowerCase();
         String methodName = n.get(3).toString();
@@ -77,11 +80,11 @@ public class CppTraversal extends Visitor {
         return n;
     }
 
+    // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
         mutateMethodDeclaration(n);
         visit(n);
-
     }
 
     public void visitFieldDeclaration(GNode n) {
@@ -93,7 +96,6 @@ public class CppTraversal extends Visitor {
         mutateConstructorDeclartion(n);
         visit(n);
     }
-
 
     public void visitClassDeclaration(GNode n) {
         mutateClassDeclaration(n);
@@ -113,6 +115,4 @@ public class CppTraversal extends Visitor {
             }
         }
     }
-
-
 }
