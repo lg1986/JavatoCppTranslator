@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 
+/*
+ * Printing the C++ code from the C++ AST
+ * Created by Lina on 3/22/17
+ */
 public class CppPrinter extends Visitor {
 
     private Printer printer;
@@ -26,13 +30,25 @@ public class CppPrinter extends Visitor {
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
+        getDataLayoutAST(n);
         headOfFile();
-        writeCpp(n,n.getName().toString());
+        writeCpp(n);
         collect();
         writeEnd();
         printer.flush();
     }
 
+    // Creating the data layout by traversing the C++ AST
+    // @param Current node
+    public void getDataLayoutAST(Node n) {
+        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
+        CppTraversal traversing = new CppTraversal();
+        CppTraversal.cppAST depe = traversing.getAllCppAST(n);
+        List<Node> dependenceyList = depe.getDependency();
+        this.cppContainer = visitor.getSummary(dependenceyList).dependencyAsts;
+    }
+
+    // Writing the header section of the file
     public void headOfFile() throws IOException {
         printer.pln("#include <iostream>");
         printer.pln("#include \"java_lang.h\"");
@@ -45,12 +61,15 @@ public class CppPrinter extends Visitor {
         printer.pln("int main(void) {");
     }
 
+    // Writing the end of the file, closing brackets
     public void writeEnd() throws IOException {
         printer.pln("};");
         printer.pln("};");
         printer.pln("};");
     }
 
+    // Printing current line
+    // @param Current line
     private void cout(String line) {
     printer.incr().indent().pln("cout << \"" + line + "\" << endl;").decr();
     }
@@ -63,6 +82,8 @@ public class CppPrinter extends Visitor {
 
     }
 
+    // Printing the constructor
+    // @param Current node
     public void visitConstructorDeclaration(GNode n) {
         String constructor = "__"+n.get(2).toString().replace("()", "");
         printer.p(constructor+"(");
@@ -74,7 +95,8 @@ public class CppPrinter extends Visitor {
         printer.pln("};");
     }
 
-
+    // Double dispatch
+    // @param Current node
     public void visit(Node n) {
         cout(n.getName());
         for (Object o : n) {
@@ -82,6 +104,7 @@ public class CppPrinter extends Visitor {
         }
     }
 
+    // For each node in in the C++ AST, dispatch
     public void collect() {
         for(Node n: cppContainer) {
             super.dispatch(n);
