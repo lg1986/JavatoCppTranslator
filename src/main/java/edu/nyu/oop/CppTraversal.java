@@ -73,7 +73,7 @@ public class CppTraversal extends Visitor {
     // @param Name of the constructor
     GNode addConstructorCPP(GNode node, Class className) {
         GNode constructor = GNode.create("ConstructorDeclaration");
-        constructor.add(className.toString());
+        constructor.add(node.get(0).toString());
         return constructor;
 
     }
