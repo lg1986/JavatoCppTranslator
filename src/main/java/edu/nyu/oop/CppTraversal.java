@@ -9,6 +9,7 @@ import xtc.tree.Visitor;
 import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -24,6 +25,21 @@ public class CppTraversal extends Visitor {
     private Runtime runtime;
     protected cppAST cpp = new cppAST();
     public GNode classNode;
+    private Printer printer;
+
+
+    public void cppBaseLayout() throws IOException {
+        printer.pln("using namespace edu::nyu::oop;");
+        printer.pln("namespace edu{");
+        printer.pln("namespace nyu{");
+        printer.pln("namespace oop{");
+    }
+
+    public void cppEndBaseLayout() throws IOException {
+        printer.pln("};");
+        printer.pln("};");
+        printer.pln("};");
+    }
 
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
@@ -32,9 +48,6 @@ public class CppTraversal extends Visitor {
     GNode addClassCPP(String className, int capacity) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add(className);
-        classN.addNode(GNode.create("Constructors"));
-        classN.addNode(GNode.create("Fields"));
-        classN.addNode(GNode.create("Methods"));
         return classN;
     }
 
@@ -49,7 +62,6 @@ public class CppTraversal extends Visitor {
             field.add(type);
         }
         String pointerObject = "__"+className.replace("()","")+"_VT*__vptr";
-
         field.addNode(GNode.create(pointerObject));
         return field;
     }
