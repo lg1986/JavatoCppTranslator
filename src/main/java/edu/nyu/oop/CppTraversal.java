@@ -61,7 +61,7 @@ public class CppTraversal extends Visitor {
         GNode method = GNode.create("MethodDeclaration");
         if (!(name.equals(null) || type.equals(null) || node == null)) {
             method.add(node.get(3).toString());
-            method.add(node.);
+            method.add(type);
         }
         String pointerObject = (node.get(3).toString()).replace("()","")+"*__vptr";
         method.add(pointerObject);
