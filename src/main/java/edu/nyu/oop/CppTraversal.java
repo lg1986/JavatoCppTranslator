@@ -47,7 +47,7 @@ public class CppTraversal extends Visitor {
             field.add(className);
             field.add(type);
         }
-        String pointerObject = "__"+className.replace("()","")+"_VT*__vptr";
+        String pointerObject = "__"+className.replace("()","")+"*__vptr";
         field.addNode(GNode.create(pointerObject));
         return field;
     }
@@ -63,6 +63,8 @@ public class CppTraversal extends Visitor {
         }
         method.add(name);
         method.add(type);
+        String pointerObject = name.replace("()","")+"*__vptr";
+        method.addNode(GNode.create(pointerObject));
         return method;
     }
 
