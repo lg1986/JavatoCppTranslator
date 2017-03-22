@@ -96,6 +96,7 @@ public class Boot extends Tool {
             }
         }
 
+
         if(runtime.test("cppTraversal")){
             CppTraversal cppTraversal = new CppTraversal();
             AstVisitor astVisitor = new AstVisitor();
@@ -103,10 +104,11 @@ public class Boot extends Tool {
             List<Node> astList = AstVisitor.completeAST.asts;
             for(Node element:astList) {
                 runtime.console().format(element).pln().flush();
+                System.out.println("within boot");
             }
 
         }
-
+        /*
         if(runtime.test("cppPrinter")) {
             try {
                 CppPrinter printerCpp = new CppPrinter(n);
@@ -114,7 +116,7 @@ public class Boot extends Tool {
                 e.getMessage();
             }
 
-        }
+        }*/
 
         if(runtime.test("createHeaderFile")) {
             try {

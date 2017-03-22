@@ -25,6 +25,7 @@ public class CppTraversal extends Visitor {
     private Runtime runtime;
     protected cppAST cpp = new cppAST();
     public GNode classNode;
+    public GNode packageNode;
     private Printer printer;
 
     // Add the class declarations to the C++ AST
@@ -43,7 +44,7 @@ public class CppTraversal extends Visitor {
     // @param Field's type
     GNode addFieldCPP(GNode node, String className, String type){
         GNode field = GNode.create("FieldDeclaration");
-        if (!(className.equals(null) || type.equals(null) || node == null)){
+        if (!(className.equals(null) || type.equals(null) || node == null) && node != null){
             field.add(className);
             field.add(type);
         }
@@ -58,11 +59,10 @@ public class CppTraversal extends Visitor {
     // @param Method's type
     GNode addMethodCPP(GNode node, String name, String type){
         GNode method = GNode.create("MethodDeclaration");
-        if (name.equals(null) || type.equals(null) || node == null){
-            return null;
+        if (!(name.equals(null) || type.equals(null) || node == null)) {
+            method.add(name);
+            method.add(type);
         }
-        method.add(name);
-        method.add(type);
         return method;
     }
 
@@ -95,6 +95,7 @@ public class CppTraversal extends Visitor {
 
     public void visitClassDeclaration(GNode n) {
         cpp.addAST(addConstructorCPP(n,n.getName()));
+        cpp.addAST(packageNode);
         visit(n);
     }
 
@@ -115,6 +116,16 @@ public class CppTraversal extends Visitor {
     // First dispatch, getting the complete C++ AST
     public cppAST getAllCppAST(Node n){
         super.dispatch(n);
+        return cpp;
+    }
+
+    public cppAST getSummary(List<Node> cppList) {
+        for(Node n: cppList) {
+            packageNode = GNode.create("PackageDeclaration", 20);
+            packageNode.addNode(n.getNode(0));
+            super.dispatch(n);
+            cpp.addAST(packageNode);
+        }
         return cpp;
     }
 
