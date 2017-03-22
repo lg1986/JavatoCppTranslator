@@ -17,79 +17,87 @@ import java.util.List;
 
 /**
  * Created by charlottephillips on 09/03/17.
- * Traversing the AST and mutating the existing nodes from Java in C++ format
+ * Traversing the AST and mutating the existing nodes from the Java AST to the C++ AST
  */
 public class CppTraversal extends Visitor {
 
     private Runtime runtime;
+    protected cppAST cpp = new cppAST();
 
-    protected CppTraversal cpp = new CppTraversal();
+    // Add the class declarations to the C++ AST
+    // @param GNode of current node visiting
+    // @param Name of the class
+    // @param Class' type
+    GNode addClassCPP(GNode n, String className, String parent) {
+        GNode classN = GNode.create("ClassDeclaration");
+        classN.add(className);
 
-    // @Lina
-    // Mutating field declarations into C++ version
-    // Building a string with the name, return type & replacing in tree
-    public GNode mutateFieldDeclaration(GNode n) {
-        String returnType = n.get(0).toString().replace("Type()","").toLowerCase();
-        String fieldName = n.get(2).toString();
-        String fieldBase = returnType+" "+fieldName;
-        System.out.println(fieldBase);
-        n.toString().replaceAll("",fieldBase);
-        System.out.println(n.getName());
-        System.out.println(n.get(0));
-        return n;
+        if (parent.equals(NULL)) {
+            classN.add(GNode.create("Parent")).getNode(classN.size()-1).add(generateObjectType());
+        }
+        if (className.equals(NULL) || n == NULL){
+            return;
+        }
+        return classN;
     }
 
-    // @Lina
-    // Mutating the method declaration into C++ verison
-    // Building a string with the type, name
-    public GNode mutateMethodDeclaration(GNode n) {
-        String returnType = n.get(2).toString().replace("Type()","").toLowerCase();
-        String methodName = n.get(3).toString();
-        String methodBase = returnType+" "+methodName;
-        System.out.println(methodBase);
-        System.out.println(n.get(0));
-        return n;
+    // Add the field declarations to the C++ AST
+    // @param GNode of current node visiting
+    // @param Name of the field declaration
+    // @param Field's type
+    GNode addFieldCPP(GNode node, String name, String type){
+        GNode field = GNode.create("FieldDeclaration");
+        if (name.equals(NULL) || type.equals(NULL) || node == NULL){
+            return;
+        }
+        field.add(name);
+        field.add(type);
+        return field;
     }
 
-    //@Charlie
-    public GNode mutateConstructorDeclartion(GNode n) {
-        String constructorName = "__"+n.get(2).toString().replace("()","");
-        String constructorBase = constructorName+"(";
-        System.out.println(constructorBase);
-        System.out.println(n.get(0));
-        return n;
+    // Add the method declarations to the C++ AST
+    // @param GNode of current node visiting
+    // @param Name of the method
+    // @param Method's type
+    GNode addMethodCPP(GNode node, String name, String type){
+        GNode method = GNode.create("MethodDeclaration");
+        if (name.equals(NULL) || type.equals(NULL) || node == NULL){
+            return;
+        }
+        method.add(name);
+        method.add(type);
+        return method;
     }
 
-    //@Charlie
-    public GNode mutateClassDeclaration(GNode n) {
-        String className = "__"+n.get(1).toString().replace("()","");
-        // struct classname {} --> syntax
-        // omit the {} since that is denoted by child element in AST
-        String classBase = "struct "+className;
-        System.out.println(classBase);
-        System.out.println(n.get(0));
-        return n;
+    // Adds the constructor node to the C++ AST
+    // @param GNode of current node visiting
+    // @param Name of the constructor
+    GNode addConstructorCPP(GNode node, String name) {
+        GNode constructor = GNode.create("ConstructorDeclaration");
+        constructor.add(name);
+        return constructor;
+
     }
 
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
-        mutateMethodDeclaration(n);
+        addMethodCPP(n);
         visit(n);
     }
 
     public void visitFieldDeclaration(GNode n) {
-        mutateFieldDeclaration(n);
+        addFieldCPP(n);
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
-        mutateConstructorDeclartion(n);
+        addConstructorCPP(n);
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) {
-        mutateClassDeclaration(n);
+        addClassCPP(n);
         visit(n);
     }
 
@@ -98,6 +106,7 @@ public class CppTraversal extends Visitor {
         visit(n);
     }
 
+    // The double dispatch
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) {
@@ -106,16 +115,18 @@ public class CppTraversal extends Visitor {
         }
     }
 
+    // First dispatch, getting the complete C++ AST
+    public completeCppAST getAllCppAST(Node n){
+        super.dispatch(n);
+        return cpp;
+    }
+
     static class cppAST {
         protected static List<Node> cppasts = new ArrayList<Node>();
 
-        public List<Node> getDependency() {
-            return cppasts;
-        }
+        public List<Node> getDependency() { return cppasts; }
 
-        public void addAST(Node n) {
-            this.cppasts.add(n);
-        }
+        public void addAST(Node n) { this.cppasts.add(n); }
 
         public String toString() {
             String ast_string = "";
