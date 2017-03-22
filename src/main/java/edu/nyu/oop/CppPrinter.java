@@ -1,31 +1,39 @@
 package edu.nyu.oop;
 
-import xtc.lang.CPrinter;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Printer;
-import xtc.lang.CFeatureExtractor;
 import xtc.tree.Visitor;
-import xtc.util.Runtime;
 
-public class CppPrinter {
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
-    Writer w;
-    try {
-        FileOutputStream fos = new FileOutputStream("output/cppOutput.h");
-        OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
-        w = new BufferedWriter(ows);
-        this.printer = new Printer(w);
-    } catch (Exception e) {
-        throw new RuntimeException("Output location not found. Create the /output directory.");
+public class CppPrinter extends Visitor {
+
+    private Printer printer;
+    public ArrayList<GNode> cppContainer = new ArrayList<GNode>();
+
+    public CppPrinter(Node n) throws IOException{
+        Writer w;
+        try {
+            FileOutputStream fos = new FileOutputStream("output/cppOutput.h");
+            OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
+            w = new BufferedWriter(ows);
+            this.printer = new Printer(w);
+        } catch (Exception e) {
+            throw new RuntimeException("Output location not found. Create the /output directory.");
+        }
+
     }
+
 
     public void getDataLayoutAST(Node n) {
         DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         CppTraversal traversing = new CppTraversal();
         CppTraversal.cppAST everything = traversing.getAllCppAST(n);
         List<Node> list = everything.getDependency();
-        //this.dataLayout = visitor.getSummary(dependenceyList).dependencyAsts;
+        //this.cppContainer = visitor.getSummary(dependenceyList).dependencyAsts;
     }
 
     public void writeBeginning() extends IOException {
@@ -83,7 +91,7 @@ public class CppPrinter {
         printer.pln("struct "+class_name+";");
         printer.pln("struct "+class_name+"_VT;");
         printer.pln("struct "+class_name+" {");
-        writeClassBase(n.get(1).toString());
+        writeBeginning(n.get(1).toString());
         visit(n);
         printer.pln("};");
     }
@@ -96,7 +104,7 @@ public class CppPrinter {
     }
 
     public void collect() {
-        for(Node n: dataLayout) {
+        for(Node n: cppContainer) {
             super.dispatch(n);
         }
     }
