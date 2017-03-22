@@ -32,7 +32,7 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the class
     // @param Class' type
-    GNode addClassCPP(String className) {
+    GNode addClassCPP(Class className) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add(className);
         return classN;
@@ -42,13 +42,13 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the field declaration
     // @param Field's type
-    GNode addFieldCPP(GNode node, String className, String type){
+    GNode addFieldCPP(GNode node, Class className, String type){
         GNode field = GNode.create("FieldDeclaration");
         if (!(className.equals(null) || type.equals(null) || node == null) && node != null){
             field.add(className);
             field.add(type);
         }
-        String pointerObject = "__"+className.replace("()","")+"__VT*__vptr";
+        String pointerObject = "__"+className.toString().replace("()","")+"__VT*__vptr";
         field.addNode(GNode.create(pointerObject));
         return field;
     }
@@ -73,9 +73,9 @@ public class CppTraversal extends Visitor {
     // Adds the constructor node to the C++ AST
     // @param GNode of current node visiting
     // @param Name of the constructor
-    GNode addConstructorCPP(GNode node, String name) {
+    GNode addConstructorCPP(GNode node, Class className) {
         GNode constructor = GNode.create("ConstructorDeclaration");
-        constructor.add(name.toString());
+        constructor.add(className.toString());
         return constructor;
 
     }
@@ -88,17 +88,17 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-        cpp.addAST(addFieldCPP(n,n.getName(),n.getClass().getTypeName()));
+        cpp.addAST(addFieldCPP(n,n.getClass(),n.getClass().getTypeName()));
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
-        cpp.addAST(addConstructorCPP(n,n.getName()));
+        cpp.addAST(addConstructorCPP(n,n.getClass()));
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) {
-        cpp.addAST(addClassCPP((n.getName())));
+        cpp.addAST(addClassCPP((n.getClass())));
         visit(n);
     }
 
