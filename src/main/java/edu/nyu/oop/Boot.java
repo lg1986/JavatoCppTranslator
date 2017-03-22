@@ -101,9 +101,9 @@ public class Boot extends Tool {
             CppTraversal cppTraversal = new CppTraversal();
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> astList = AstVisitor.completeAST.asts;
-            cppTraversal.cpp;
-            for(Node element:astList) {
+            List<Node> astList = depe.getDependency();
+            List<Node> cppList = cppTraversal.getSummary(astList).cppasts;
+            for(Node element:cppList) {
                 runtime.console().format(element).pln().flush();
             }
 
