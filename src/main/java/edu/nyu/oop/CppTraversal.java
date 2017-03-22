@@ -27,7 +27,6 @@ public class CppTraversal extends Visitor {
     public GNode classNode;
     private Printer printer;
 
-
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
     // @param Name of the class
