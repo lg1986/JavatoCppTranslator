@@ -23,6 +23,7 @@ public class CppTraversal extends Visitor {
 
     private Runtime runtime;
     protected cppAST cpp = new cppAST();
+    public GNode classNode;
 
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
@@ -41,12 +42,15 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the field declaration
     // @param Field's type
-    GNode addFieldCPP(GNode node, String name, String type){
+    GNode addFieldCPP(GNode node, String className, String type){
         GNode field = GNode.create("FieldDeclaration");
-        if (!(name.equals(null) || type.equals(null) || node == null)){
-            field.add(name);
+        if (!(className.equals(null) || type.equals(null) || node == null)){
+            field.add(className);
             field.add(type);
         }
+        String pointerObject = "__"+className.replace("()","")+"_VT*__vptr";
+
+        field.addNode(GNode.create(pointerObject));
         return field;
     }
 
