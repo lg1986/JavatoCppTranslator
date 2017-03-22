@@ -28,9 +28,9 @@ public class CppPrinter extends Visitor {
         }
         headOfFile();
         writeCpp(n,n.getName().toString());
+        collect();
         writeEnd();
         printer.flush();
-
     }
 
     public void headOfFile() throws IOException {
@@ -41,6 +41,8 @@ public class CppPrinter extends Visitor {
         printer.pln("namespace edu{");
         printer.pln("namespace nyu{");
         printer.pln("namespace oop{");
+        printer.pln();
+        printer.pln("int main(void) {");
     }
 
     public void writeEnd() throws IOException {
@@ -53,7 +55,7 @@ public class CppPrinter extends Visitor {
     printer.incr().indent().pln("cout << \"" + line + "\" << endl;").decr();
     }
 
-    public void writeCpp(Node n,String className) throws IOException {
+    public void writeCpp(Node n) throws IOException {
 
     }
 
@@ -74,6 +76,7 @@ public class CppPrinter extends Visitor {
 
 
     public void visit(Node n) {
+        cout(n.getName());
         for (Object o : n) {
             if (o instanceof Node) dispatch((Node) o);
         }
