@@ -32,7 +32,7 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the class
     // @param Class' type
-    GNode addClassCPP(String className, int capacity) {
+    GNode addClassCPP(String className) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add(className);
         return classN;
@@ -63,9 +63,10 @@ public class CppTraversal extends Visitor {
             method.add(name);
             method.add(type);
         }
-        method.add(name);
-        method.add(type);
+        method.add(name.toString());
+        method.add(type.toString());
         String pointerObject = name.replace("()","")+"*__vptr";
+        method.add(pointerObject);
         return method;
     }
 
@@ -74,7 +75,7 @@ public class CppTraversal extends Visitor {
     // @param Name of the constructor
     GNode addConstructorCPP(GNode node, String name) {
         GNode constructor = GNode.create("ConstructorDeclaration");
-        constructor.add(name);
+        constructor.add(name.toString());
         return constructor;
 
     }
@@ -97,7 +98,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-        cpp.addAST(packageNode.addNode(addConstructorCPP(n,n.getName())));
+        cpp.addAST(addClassCPP((n.getName())));
         visit(n);
     }
 
