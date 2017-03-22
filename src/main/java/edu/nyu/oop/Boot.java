@@ -107,6 +107,15 @@ public class Boot extends Tool {
 
         }
 
+        if(runtime.test("cppPrinter")) {
+            try {
+                CppPrinter cppPrinter = new CppPrinter(n);
+            } catch (IOException e) {
+
+            }
+
+        }
+
         if(runtime.test("createHeaderFile")) {
             try {
                 CreateHeader head = new CreateHeader(n);
