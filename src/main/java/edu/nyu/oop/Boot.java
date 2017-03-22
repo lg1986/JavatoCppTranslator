@@ -106,7 +106,6 @@ public class Boot extends Tool {
             List<Node> cppList = cppTraversal.getSummary(astList).cppasts;
             for(Node element:cppList) {
                 runtime.console().format(element).pln().flush();
-                System.out.println("within boot");
             }
 
         }
