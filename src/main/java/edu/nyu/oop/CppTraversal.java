@@ -31,7 +31,9 @@ public class CppTraversal extends Visitor {
     GNode addClassCPP(String className, int capacity) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add(className);
-
+        classN.addNode(GNode.create("Constructors"));
+        classN.addNode(GNode.create("Fields"));
+        classN.addNode(GNode.create("Methods"));
         return classN;
     }
 
@@ -44,7 +46,6 @@ public class CppTraversal extends Visitor {
         if (!(name.equals(null) || type.equals(null) || node == null)){
             field.add(name);
             field.add(type);
-
         }
         return field;
     }
