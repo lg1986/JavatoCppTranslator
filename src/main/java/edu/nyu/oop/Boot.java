@@ -43,8 +43,9 @@ public class Boot extends Tool {
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
-                bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
-                bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
+        bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("cppPrinter", "cppPrinter", false, "Prints C++ AST").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
