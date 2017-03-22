@@ -109,9 +109,9 @@ public class Boot extends Tool {
 
         if(runtime.test("cppPrinter")) {
             try {
-                CppPrinter cppPrinter = new CppPrinter(n);
+                CppPrinter printerCpp = new CppPrinter(n);
             } catch (IOException e) {
-
+                e.getMessage();
             }
 
         }

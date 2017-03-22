@@ -26,21 +26,11 @@ public class CppPrinter extends Visitor {
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
-        getDataLayoutAST(n);
         writeBeginning();
         writeCpp(n,n.getName().toString());
         writeEnd();
         printer.flush();
 
-    }
-
-
-    public void getDataLayoutAST(Node n) {
-        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
-        CppTraversal traversing = new CppTraversal();
-        CppTraversal.cppAST everything = traversing.getAllCppAST(n);
-        List<Node> list = everything.getDependency();
-        //this.cppContainer = visitor.getSummary(dependenceyList).dependencyAsts;
     }
 
     public void writeBeginning() throws IOException {
@@ -64,37 +54,11 @@ public class CppPrinter extends Visitor {
     }
 
     public void writeCpp(Node n,String className) throws IOException {
-        String arg_name = null;
-        String arg_type = null;
 
-        printer.pln(className);
-        printer.pln("static Class __class()");
-
-        try {
-            Node temp = n.getNode(0);
-            arg_name = temp.get(3).toString();
-            arg_type = temp.getNode(1).getNode(0).get(0).toString();
-            Node arr = temp.getNode(1).getNode(1);
-            if(arr != null) {
-                arg_type += "[]";
-            }
-            printer.p(arg_type+" "+arg_name);
-        } catch (IndexOutOfBoundsException e) {
-
-        }
-        printer.pln(")");
-        visit(n);
     }
 
     public void visitMethodDeclaration(GNode n) {
-        String decorator = null;
-        if(n.get(1) != null) {
-            decorator = n.get(1).toString().replace("()", "");
-        }
-        String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
-        String method_name = n.get(3).toString();
-        printer.p(return_type+" "+method_name+"(");
-        visit(n);
+
     }
 
     public void visitConstructorDeclaration(GNode n) {
@@ -104,10 +68,6 @@ public class CppPrinter extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
-        String class_name = "__"+n.get(1).toString().replace("()", "");
-        printer.pln("struct "+class_name+";");
-        printer.pln("struct "+class_name+"_VT;");
-        printer.pln("struct "+class_name+" {");
         visit(n);
         printer.pln("};");
     }
