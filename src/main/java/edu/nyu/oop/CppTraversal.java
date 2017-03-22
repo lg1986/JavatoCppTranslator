@@ -28,19 +28,6 @@ public class CppTraversal extends Visitor {
     private Printer printer;
 
 
-    public void cppBaseLayout() throws IOException {
-        printer.pln("using namespace edu::nyu::oop;");
-        printer.pln("namespace edu{");
-        printer.pln("namespace nyu{");
-        printer.pln("namespace oop{");
-    }
-
-    public void cppEndBaseLayout() throws IOException {
-        printer.pln("};");
-        printer.pln("};");
-        printer.pln("};");
-    }
-
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
     // @param Name of the class
