@@ -19,7 +19,7 @@ public class CppPrinter extends Visitor {
     public CppPrinter(Node n) throws IOException{
         Writer w;
         try {
-            FileOutputStream fos = new FileOutputStream("output/cppOutput.h");
+            FileOutputStream fos = new FileOutputStream("output/cppOutput.cpp");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
             w = new BufferedWriter(ows);
             this.printer = new Printer(w);
