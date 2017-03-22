@@ -22,19 +22,16 @@ import java.util.List;
  */
 public class CppTraversal extends Visitor {
 
-    private Runtime runtime;
     protected cppAST cpp = new cppAST();
-    public GNode classNode;
     public GNode packageNode;
-    private Printer printer;
 
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
     // @param Name of the class
     // @param Class' type
-    GNode addClassCPP(String className) {
+    GNode addClassCPP(GNode n) {
         GNode classN = GNode.create("ClassDeclaration");
-        classN.add(className);
+        classN.add("struct "+n.get(1).toString());
         return classN;
     }
 
@@ -45,11 +42,12 @@ public class CppTraversal extends Visitor {
     GNode addFieldCPP(GNode node, String className, String type){
         GNode field = GNode.create("FieldDeclaration");
         if (!(className.equals(null) || type.equals(null) || node == null) && node != null){
-            field.add(className);
+            field.add(node.getClass()+"HERE");
             field.add(type);
         }
-        String pointerObject = "__"+className.replace("()","")+"__VT*__vptr";
-        field.addNode(GNode.create(pointerObject));
+        String pointerObject = "__"+className+"__VT*__vptr";
+        GNode pointer = GNode.create("Pointer");
+        pointer.add(pointerObject);
         return field;
     }
 
@@ -98,7 +96,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-        cpp.addAST(addClassCPP((n.getName())));
+        cpp.addAST(addClassCPP(n));
         visit(n);
     }
 
