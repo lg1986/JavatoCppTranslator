@@ -47,7 +47,7 @@ public class CppTraversal extends Visitor {
             field.add(className);
             field.add(type);
         }
-        String pointerObject = "__"+className.replace("()","")+"*__vptr";
+        String pointerObject = "__"+className.replace("()","")+"__VT*__vptr";
         field.addNode(GNode.create(pointerObject));
         return field;
     }

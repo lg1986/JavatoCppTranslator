@@ -102,6 +102,7 @@ public class Boot extends Tool {
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> astList = AstVisitor.completeAST.asts;
+            cppTraversal.cpp;
             for(Node element:astList) {
                 runtime.console().format(element).pln().flush();
             }
@@ -111,6 +112,7 @@ public class Boot extends Tool {
         if(runtime.test("cppPrinter")) {
             try {
                 CppPrinter printerCpp = new CppPrinter(n);
+
             } catch (IOException e) {
                 e.getMessage();
             }
