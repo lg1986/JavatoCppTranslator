@@ -43,7 +43,7 @@ public class CppTraversal extends Visitor {
     GNode addFieldCPP(GNode node, Class className, String type){
         GNode field = GNode.create("FieldDeclaration");
         if (!(className.equals(null) || type.equals(null) || node == null) && node != null){
-            field.add(node.getClass()+"HERE");
+            field.add(node.get(0).toString());
             field.add(type);
         }
 
