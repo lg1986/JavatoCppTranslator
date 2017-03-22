@@ -28,16 +28,10 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the class
     // @param Class' type
-    GNode addClassCPP(GNode n, String className, String parent) {
+    GNode addClassCPP(String className, int capacity) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add(className);
 
-        if (parent.equals(NULL)) {
-            classN.add(GNode.create("Parent")).getNode(classN.size()-1).add(generateObjectType());
-        }
-        if (className.equals(NULL) || n == NULL){
-            return;
-        }
         return classN;
     }
 
@@ -47,11 +41,11 @@ public class CppTraversal extends Visitor {
     // @param Field's type
     GNode addFieldCPP(GNode node, String name, String type){
         GNode field = GNode.create("FieldDeclaration");
-        if (name.equals(NULL) || type.equals(NULL) || node == NULL){
-            return;
+        if (!(name.equals(null) || type.equals(null) || node == null)){
+            field.add(name);
+            field.add(type);
+
         }
-        field.add(name);
-        field.add(type);
         return field;
     }
 
@@ -61,8 +55,8 @@ public class CppTraversal extends Visitor {
     // @param Method's type
     GNode addMethodCPP(GNode node, String name, String type){
         GNode method = GNode.create("MethodDeclaration");
-        if (name.equals(NULL) || type.equals(NULL) || node == NULL){
-            return;
+        if (name.equals(null) || type.equals(null) || node == null){
+            return null;
         }
         method.add(name);
         method.add(type);
@@ -82,22 +76,22 @@ public class CppTraversal extends Visitor {
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
-        addMethodCPP(n);
+        cpp.addAST(addMethodCPP(n,n.getName(),n.getClass().getTypeName()));
         visit(n);
     }
 
     public void visitFieldDeclaration(GNode n) {
-        addFieldCPP(n);
+        cpp.addAST(addFieldCPP(n,n.getName(),n.getClass().getTypeName()));
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
-        addConstructorCPP(n);
+        cpp.addAST(addConstructorCPP(n,n.getName()));
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) {
-        addClassCPP(n);
+        cpp.addAST(addConstructorCPP(n,n.getName()));
         visit(n);
     }
 
@@ -116,7 +110,7 @@ public class CppTraversal extends Visitor {
     }
 
     // First dispatch, getting the complete C++ AST
-    public completeCppAST getAllCppAST(Node n){
+    public cppAST getAllCppAST(Node n){
         super.dispatch(n);
         return cpp;
     }
