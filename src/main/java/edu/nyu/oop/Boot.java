@@ -45,7 +45,7 @@ public class Boot extends Tool {
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
         bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
         bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
-        bool("cppPrinter", "cppPrinter", false, "Prints C++ AST").
+        bool("cppPrinter", "cppPrinter", false, "Create Cpp File").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
