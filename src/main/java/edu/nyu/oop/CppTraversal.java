@@ -63,13 +63,9 @@ public class CppTraversal extends Visitor {
             method.add(name);
             method.add(type);
         }
-<<<<<<< HEAD
-=======
         method.add(name);
         method.add(type);
         String pointerObject = name.replace("()","")+"*__vptr";
-        method.addNode(GNode.create(pointerObject));
->>>>>>> 6501c77bbe6ad44c2562100b7c4ffeba4a9357eb
         return method;
     }
 
@@ -101,8 +97,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-        cpp.addAST(addConstructorCPP(n,n.getName()));
-        cpp.addAST(packageNode);
+        cpp.addAST(packageNode.addNode(addConstructorCPP(n,n.getName())));
         visit(n);
     }
 
