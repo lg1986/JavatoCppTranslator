@@ -43,8 +43,9 @@ public class Boot extends Tool {
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
-                bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
-                bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
+        bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("cppPrinter", "cppPrinter", false, "Create Cpp File").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
@@ -102,6 +103,7 @@ public class Boot extends Tool {
             AstVisitor astVisitor = new AstVisitor();
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> astList = AstVisitor.completeAST.asts;
+            cppTraversal.cpp;
             for(Node element:astList) {
                 runtime.console().format(element).pln().flush();
                 System.out.println("within boot");
@@ -112,6 +114,7 @@ public class Boot extends Tool {
         if(runtime.test("cppPrinter")) {
             try {
                 CppPrinter printerCpp = new CppPrinter(n);
+
             } catch (IOException e) {
                 e.getMessage();
             }
