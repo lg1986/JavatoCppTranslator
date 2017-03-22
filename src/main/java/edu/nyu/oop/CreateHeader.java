@@ -8,6 +8,9 @@ import xtc.tree.Visitor;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.OutputStreamWriter;
+import java.io.FileOutputStream;
+
 
 
 /**
@@ -17,20 +20,18 @@ public class CreateHeader extends Visitor {
 
     private Printer printer;
     public ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+    PrintWriter out;
 
     /**
      * Constructor - This initiates the creation of the header file
-     * @param n
-     * @throws IOException
+     * @param current node
+     * @throws RuntimeException
      */
     public CreateHeader(Node n) throws IOException {
 
-        Writer w;
         try {
-            FileOutputStream fos = new FileOutputStream("output/output.h");
-            OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
-            w = new BufferedWriter(ows);
-            this.printer = new Printer(w);
+            FileWriter file = new FileWriter("src/main/java/edu/nyu/oop/output/output.h", true);
+            out = new PrintWriter(file, true);
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
@@ -38,14 +39,13 @@ public class CreateHeader extends Visitor {
         writeStartBaseLayout();
         collect();
         writeEndBaseLayout();
-        printer.flush();
+        out.flush();
     }
 
     /**
      * This gets all the dataLayoutASTs
-     * @param n
+     * @param current node
      */
-
     public void getDataLayoutAST(Node n) {
         DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         AstVisitor astVisitor = new AstVisitor();
@@ -60,16 +60,17 @@ public class CreateHeader extends Visitor {
      * @throws IOException
      */
     public void writeStartBaseLayout() throws IOException {
-        printer.pln("using namespace edu::nyu::oop;");
-        printer.pln("namespace edu{");
-        printer.pln("namespace nyu{");
-        printer.pln("namespace oop{");
+        out.write("using namespace edu::nyu::oop;\n");
+        out.write("using namespace edu::nyu::oop;\n");
+        out.write("namespace edu{\n");
+        out.write("namespace nyu{\n");
+        out.write("namespace oop{\n");
     }
 
     public void writeEndBaseLayout() throws IOException {
-        printer.pln("};");
-        printer.pln("};");
-        printer.pln("};");
+        out.write("};");
+        out.write("};");
+        out.write("};");
     }
 
 
@@ -77,8 +78,8 @@ public class CreateHeader extends Visitor {
     // Write the static class method to retrive the class of the object
     public void writeClassBase(String className) throws IOException {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr";
-        printer.pln(v_ptr);
-        printer.pln("static Class __class()");
+        out.write(v_ptr);
+        out.write("static Class __class()");
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
@@ -93,12 +94,12 @@ public class CreateHeader extends Visitor {
             if(arr != null) {
                 arg_type += "[]";
             }
-            printer.p(arg_type+" "+arg_name);
+            out.write(arg_type+" "+arg_name);
         } catch (IndexOutOfBoundsException e) {
 
         }
 
-        printer.pln(")");
+        out.write(")");
         visit(n);
     }
 
@@ -109,24 +110,24 @@ public class CreateHeader extends Visitor {
         }
         String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
         String method_name = n.get(3).toString();
-        printer.p(return_type+" "+method_name+"(");
+        out.write(return_type+" "+method_name+"(");
         visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
         String constructor = "__"+n.get(2).toString().replace("()", "");
-        printer.p(constructor+"(");
+        out.write(constructor+"(");
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = "__"+n.get(1).toString().replace("()", "");
-        printer.pln("struct "+class_name+";");
-        printer.pln("struct "+class_name+"_VT;");
-        printer.pln("struct "+class_name+" {");
+        out.write("struct "+class_name+";");
+        out.write("struct "+class_name+"_VT;");
+        out.write("struct "+class_name+" {");
         writeClassBase(n.get(1).toString());
         visit(n);
-        printer.pln("};");
+        out.write("};");
     }
 
 
