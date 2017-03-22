@@ -29,11 +29,8 @@ public class CppTraversal extends Visitor {
     // @param GNode of current node visiting
     // @param Name of the class
     // @param Class' type
-<<<<<<< HEAD
+
     GNode addClassCPP(GNode n) {
-=======
-    GNode addClassCPP(Class className) {
->>>>>>> f02a25ca9e8a56808b05ca82511c6851c9a0fc1f
         GNode classN = GNode.create("ClassDeclaration");
         classN.add("struct "+n.get(1).toString());
         return classN;
@@ -49,14 +46,10 @@ public class CppTraversal extends Visitor {
             field.add(node.getClass()+"HERE");
             field.add(type);
         }
-<<<<<<< HEAD
+
         String pointerObject = "__"+className+"__VT*__vptr";
         GNode pointer = GNode.create("Pointer");
         pointer.add(pointerObject);
-=======
-        String pointerObject = "__"+className.toString().replace("()","")+"__VT*__vptr";
-        field.addNode(GNode.create(pointerObject));
->>>>>>> f02a25ca9e8a56808b05ca82511c6851c9a0fc1f
         return field;
     }
 
@@ -105,11 +98,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-<<<<<<< HEAD
         cpp.addAST(addClassCPP(n));
-=======
-        cpp.addAST(addClassCPP((n.getClass())));
->>>>>>> f02a25ca9e8a56808b05ca82511c6851c9a0fc1f
         visit(n);
     }
 
