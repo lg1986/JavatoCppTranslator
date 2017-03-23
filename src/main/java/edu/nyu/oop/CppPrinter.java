@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 public class CppPrinter extends Visitor {
 
     private Printer printer;
-    public ArrayList<GNode> cppContainer = new ArrayList<GNode>();
+    public List<Node> cppContainer = new ArrayList<Node>();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
     public CppPrinter(Node n) throws IOException{
@@ -41,15 +41,15 @@ public class CppPrinter extends Visitor {
     // Creating the data layout by traversing the C++ AST
     // @param Current node
     public void getDataLayoutAST(Node n) {
-        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
-        CppTraversal traversing = new CppTraversal();
-        CppTraversal.cppAST depe = traversing.getAllCppAST(n);
-        List<Node> dependencyList = depe.getDependency();
-        for (Node k : dependencyList) {
-            printer.pln(k.toString());
-        }
-        this.cppContainer = visitor.getSummary(dependencyList).dependencyAsts;
+        CppTraversal visitor = new CppTraversal();
 
+        // We get ASTs from phase 1
+        AstVisitor astVisitor = new AstVisitor();
+        AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+
+        // Call Phase 4 for the mutated Java to C++ code
+        List<Node> dependencyList = depe.getDependency();
+        this.cppContainer = visitor.getSummary(dependencyList).cppasts;
     }
 
     // Writing the header section of the file
