@@ -44,8 +44,12 @@ public class CppPrinter extends Visitor {
         DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         CppTraversal traversing = new CppTraversal();
         CppTraversal.cppAST depe = traversing.getAllCppAST(n);
-        List<Node> dependenceyList = depe.getDependency();
-        this.cppContainer = visitor.getSummary(dependenceyList).dependencyAsts;
+        List<Node> dependencyList = depe.getDependency();
+        for (Node k : dependencyList) {
+            printer.pln(k.toString());
+        }
+        this.cppContainer = visitor.getSummary(dependencyList).dependencyAsts;
+
     }
 
     // Writing the header section of the file
@@ -61,11 +65,20 @@ public class CppPrinter extends Visitor {
         printer.pln("int main(void) {");
     }
 
-    // Writing the end of the file, closing brackets
-    public void writeEnd() throws IOException {
-        printer.pln("};");
-        printer.pln("};");
-        printer.pln("};");
+    // For each node in in the C++ AST, dispatch
+    public void collect() {
+        for(Node n: cppContainer) {
+            super.dispatch(n);
+        }
+    }
+
+    // Double dispatch
+    // @param Current node
+    public void visit(Node n) {
+        cout(n.getName());
+        for (Object o : n) {
+            if (o instanceof Node) dispatch((Node) o);
+        }
     }
 
     // Printing current line
@@ -82,6 +95,23 @@ public class CppPrinter extends Visitor {
 
     }
 
+
+    public void writeClassBase(String className) throws IOException {
+        String v_ptr = "__" + className.replace("()", "") + "_VT* __vptr";
+        printer.pln(v_ptr);
+        printer.pln("static Class __class()");
+    }
+
+    public void visitClassDeclaration(GNode n) throws IOException {
+        String class_name = "__"+n.get(1).toString().replace("()", "");
+        printer.pln("struct "+class_name+";");
+        printer.pln("struct "+class_name+"_VT;");
+        printer.pln("struct "+class_name+" {");
+        writeClassBase(n.get(1).toString());
+        visit(n);
+        printer.pln("};");
+    }
+
     // Printing the constructor
     // @param Current node
     public void visitConstructorDeclaration(GNode n) {
@@ -90,24 +120,11 @@ public class CppPrinter extends Visitor {
         visit(n);
     }
 
-    public void visitClassDeclaration(GNode n) throws IOException {
-        visit(n);
+    // Writing the end of the file, closing brackets
+    public void writeEnd() throws IOException {
+        printer.pln("};");
+        printer.pln("};");
         printer.pln("};");
     }
 
-    // Double dispatch
-    // @param Current node
-    public void visit(Node n) {
-        cout(n.getName());
-        for (Object o : n) {
-            if (o instanceof Node) dispatch((Node) o);
-        }
-    }
-
-    // For each node in in the C++ AST, dispatch
-    public void collect() {
-        for(Node n: cppContainer) {
-            super.dispatch(n);
-        }
-    }
 }

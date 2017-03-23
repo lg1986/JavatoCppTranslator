@@ -109,7 +109,7 @@ public class Boot extends Tool {
             }
 
         }
-        /*
+
         if(runtime.test("cppPrinter")) {
             try {
                 CppPrinter printerCpp = new CppPrinter(n);
@@ -118,7 +118,7 @@ public class Boot extends Tool {
                 e.getMessage();
             }
 
-        }*/
+        }
 
         if(runtime.test("createHeaderFile")) {
             try {
