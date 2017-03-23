@@ -33,6 +33,11 @@ public class CppTraversal extends Visitor {
     GNode addClassCPP(GNode n) {
         GNode classN = GNode.create("ClassDeclaration");
         classN.add("struct "+n.get(1).toString());
+        if(n.toString().length() > 2) {
+            GNode pointerClass = GNode.create("ClassDeclaration");
+            pointerClass.add(n.getClass().toString().replace("class xtc.tree.","") + " ->_vptr->");
+            cpp.addAST(pointerClass);
+        }
         return classN;
     }
 
