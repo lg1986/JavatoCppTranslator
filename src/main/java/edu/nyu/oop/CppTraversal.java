@@ -46,9 +46,12 @@ public class CppTraversal extends Visitor {
             field.add(node.get(0).toString()); //class
             field.add(node.get(2).toString()); //type
         }
-        String pointerObject = "__"+className;
-        GNode pointer = GNode.create("Pointer");
-        pointer.add(pointerObject);
+        // check if the field calls a function, in which case we need to add a vptr Node in between
+        if(node.toString().length() > 2){
+            GNode pointerField = GNode.create("FieldDeclaration");
+            pointerField.add(node.getClass().toString().replace("class xtc.tree.","") + " *_vptr");
+            cpp.addAST(pointerField);
+        }
         return field;
     }
 
@@ -58,7 +61,7 @@ public class CppTraversal extends Visitor {
     // @param Method's type
     GNode addMethodCPP(GNode node, String name, String type){
         GNode method = GNode.create("MethodDeclaration");
-        if (!(name.equals(null) || type.equals(null) || node == null)) {
+        if (!(name.equals(null) || type.equals(null) || node == null)){
             method.add(node.get(3).toString()); //get(3) will access method name
             method.add(node.get(2).toString()); //access type
         }
