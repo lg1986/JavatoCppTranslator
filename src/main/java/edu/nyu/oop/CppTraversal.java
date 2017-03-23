@@ -32,7 +32,7 @@ public class CppTraversal extends Visitor {
 
     GNode addClassCPP(GNode n) {
         GNode classN = GNode.create("ClassDeclaration");
-        classN.add("struct "+n.get(1).toString());
+        classN.addNode(GNode.create("struct "+n.get(0).toString()));
         return classN;
     }
 
@@ -43,8 +43,8 @@ public class CppTraversal extends Visitor {
     GNode addFieldCPP(GNode node, Class className, String type){
         GNode field = GNode.create("FieldDeclaration");
         if (!(className.equals(null) || type.equals(null) || node == null) && node != null){
-            field.add(node.get(0).toString()); //class
-            field.add(node.get(2).toString()); //type
+            field.addNode(GNode.create(node.get(0).toString())); //class
+            field.addNode(GNode.create(node.get(2).toString())); //type
         }
         // check if the field calls a function, in which case we need to add a vptr Node in between
         if(node.toString().length() > 2){
@@ -62,11 +62,11 @@ public class CppTraversal extends Visitor {
     GNode addMethodCPP(GNode node, String name, String type){
         GNode method = GNode.create("MethodDeclaration");
         if (!(name.equals(null) || type.equals(null) || node == null)){
-            method.add(node.get(3).toString()); //get(3) will access method name
-            method.add(node.get(2).toString()); //access type
+            method.addNode(GNode.create(node.get(3).toString())); //get(3) will access method name
+            method.addNode(GNode.create(node.get(2).toString())); //access type
         }
-        String pointerObject = (node.get(3).toString()).replace("()","");
-        method.add(pointerObject);
+        GNode pointerObject = GNode.create((node.get(3).toString()).replace("()",""));
+        method.addNode(pointerObject);
         return method;
     }
 
@@ -75,7 +75,7 @@ public class CppTraversal extends Visitor {
     // @param Name of the constructor
     GNode addConstructorCPP(GNode node, Class className) {
         GNode constructor = GNode.create("ConstructorDeclaration");
-        constructor.add(node.get(0).toString());
+        constructor.addNode(GNode.create(node.get(0).toString()));
         return constructor;
 
     }
@@ -103,7 +103,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitCompilationUnit(GNode n) {
-        System.out.println(n);
+       // System.out.println(n);
         visit(n);
     }
 
@@ -123,12 +123,14 @@ public class CppTraversal extends Visitor {
     }
 
     public cppAST getSummary(List<Node> cppList) {
+
         for(Node n: cppList) {
             packageNode = GNode.create("PackageDeclaration", 20);
-            packageNode.addNode(n.getNode(0));
+            packageNode.addNode(n);
             super.dispatch(n);
             cpp.addAST(packageNode);
         }
+//        System.out.println(cpp.toString());
         return cpp;
     }
 
