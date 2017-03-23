@@ -38,7 +38,7 @@ public class CppTraversal extends Visitor {
 
     // Add the field declarations to the C++ AST
     // @param GNode of current node visiting
-    // @param Name of the field declaration
+    // @param className of the field declaration
     // @param Field's type
     GNode addFieldCPP(GNode node, Class className, String type){
         GNode field = GNode.create("FieldDeclaration");
@@ -57,7 +57,7 @@ public class CppTraversal extends Visitor {
 
     // Add the method declarations to the C++ AST
     // @param GNode of current node visiting
-    // @param Name of the method
+    // @param className of the method
     // @param Method's type
     GNode addMethodCPP(GNode node, String name, String type){
         GNode method = GNode.create("MethodDeclaration");
@@ -72,7 +72,7 @@ public class CppTraversal extends Visitor {
 
     // Adds the constructor node to the C++ AST
     // @param GNode of current node visiting
-    // @param Name of the constructor
+    // @param className of the constructor
     GNode addConstructorCPP(GNode node, Class className) {
         GNode constructor = GNode.create("ConstructorDeclaration",node.get(0).toString());
         return constructor;
@@ -81,7 +81,6 @@ public class CppTraversal extends Visitor {
 
     GNode addForStatement(GNode n){
         GNode forStatement = GNode.create("ForStatement");
-        forStatement.addNode(n);
         return forStatement;
     }
 
