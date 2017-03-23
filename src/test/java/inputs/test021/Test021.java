@@ -1,4 +1,5 @@
 package inputs.test021;
+import inputs.test022.Test022;
 
 class A {
     static int x = 4;

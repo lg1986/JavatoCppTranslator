@@ -1,8 +1,6 @@
 package inputs.test000;
 
-/**
- * Created by rishabh on 12/03/17.
- */
+
 class A {
     public int method() {
         return 12345;
@@ -18,7 +16,7 @@ class B extends A {
     }
 }
 
-public class Input {
+public class test000 {
     public static void main(String[] args) {
         B b = new B();
         A a1 = new A();
