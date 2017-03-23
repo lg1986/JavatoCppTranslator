@@ -49,8 +49,7 @@ public class CppTraversal extends Visitor {
         // check if the field calls a function, in which case we need to add a vptr Node in between
         if(node.toString().length() > 2){
             GNode pointerField = GNode.create("FieldDeclaration");
-            pointerField.add(node.get(2).toString());
-            pointerField.add("*_vptr");
+            pointerField.add(node.getClass().toString().replace("class xtc.tree.","") + " *_vptr");
             cpp.addAST(pointerField);
         }
         return field;
