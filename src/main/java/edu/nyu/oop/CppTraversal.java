@@ -49,7 +49,7 @@ public class CppTraversal extends Visitor {
         // check if the field calls a function, in which case we need to add a vptr Node in between
         if(node.toString().length() > 2){
             GNode pointerField = GNode.create("FieldDeclaration");
-            pointerField.add(node.getClass().toString().replace("class xtc.tree.","") + " *_vptr");
+            pointerField.add(node.getClass().toString().replace("class xtc.tree.","") + " ->_vptr->");
             cpp.addAST(pointerField);
         }
         return field;
@@ -80,15 +80,49 @@ public class CppTraversal extends Visitor {
 
     }
 
+    GNode addForStatement(GNode n){
+        GNode forStatement = GNode.create("ForStatement");
+        forStatement.addNode(n);
+        return forStatement;
+    }
+
+    GNode addBlockDeclaration(GNode n){
+        GNode block = GNode.create("BlockDeclaration");
+        block.addNode(n);
+        return block;
+    }
+
+    GNode addWhileStatement(GNode n){
+        GNode whileStatement = GNode.create("WhileStatement");
+        whileStatement.addNode(n);
+        return whileStatement;
+    }
+
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
+        System.out.println(n.toString());
         cpp.addAST(addMethodCPP(n,n.getName(),n.getClass().getTypeName()));
         visit(n);
     }
 
     public void visitFieldDeclaration(GNode n) {
         cpp.addAST(addFieldCPP(n,n.getClass(),n.getClass().getTypeName()));
+        visit(n);
+    }
+
+    public void visitBlockDeclaration(GNode n){
+        cpp.addAST(addBlockDeclaration(n));
+        visit(n);
+    }
+
+    public void visitForStatement(GNode n){
+        cpp.addAST(addForStatement(n));
+        visit(n);
+    }
+
+    public void visitWhileStatement(GNode n){
+        cpp.addAST(addWhileStatement(n));
         visit(n);
     }
 
