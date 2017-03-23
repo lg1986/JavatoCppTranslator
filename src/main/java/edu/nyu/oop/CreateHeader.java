@@ -50,8 +50,8 @@ public class CreateHeader extends Visitor {
         DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         AstVisitor astVisitor = new AstVisitor();
         AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-        List<Node> dependenceyList = depe.getDependency();
-        this.dataLayout = visitor.getSummary(dependenceyList).dependencyAsts;
+        List<Node> dependencyList = depe.getDependency();
+        this.dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
     }
 
 
