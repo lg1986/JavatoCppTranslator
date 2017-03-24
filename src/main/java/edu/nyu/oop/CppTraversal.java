@@ -135,6 +135,11 @@ public class CppTraversal extends Visitor {
         visit(n);
     }
 
+    public void visitPackageDeclaration(GNode n){
+        cpp.addAST(n);
+        visit(n);
+    }
+
     public void visitBlockDeclaration(GNode n){
         cpp.addAST(addBlockDeclaration(n));
         visit(n);
