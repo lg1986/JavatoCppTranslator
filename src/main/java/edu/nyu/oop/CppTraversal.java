@@ -32,16 +32,13 @@ public class CppTraversal extends Visitor {
 
     GNode addClassCPP(GNode n) {
         GNode classN = GNode.create("ClassDeclaration");
-        classN.addNode(GNode.create("struct "+n.get(0).toString()));
-/*
-        classN.add("struct "+n.get(1).toString());
-        if(n.toString().length() > 2) {
-            GNode pointerClass = GNode.create("ClassDeclaration");
-            pointerClass.add(n.getClass().toString().replace("class xtc.tree.","") + " ->_vptr->");
+        classN.addNode(GNode.create("struct " + n.get(0).toString()));
+        if (n.toString().length() > 2) {
+            GNode pointerClass = GNode.create("ClassDeclarationPointer");
+            pointerClass.addNode(GNode.create(" ->_vptr->"));
             cpp.addAST(pointerClass);
 
         }
-        */
         return classN;
     }
 
@@ -57,8 +54,8 @@ public class CppTraversal extends Visitor {
         }
         // check if the field calls a function, in which case we need to add a vptr Node in between
         if(node.toString().length() > 2){
-            GNode pointerField = GNode.create("FieldDeclaration");
-            pointerField.add(node.getClass().toString().replace("class xtc.tree.","") + " ->_vptr->");
+            GNode pointerField = GNode.create("FieldDeclarationPointer");
+            pointerField.addNode(GNode.create(" ->_vptr->"));
             cpp.addAST(pointerField);
         }
         return field;
@@ -108,11 +105,12 @@ public class CppTraversal extends Visitor {
 
     GNode addSubscriptExpression(GNode n){
         GNode subscriptExpression = GNode.create("SubscriptExpression");
+        subscriptExpression.add(n);
         return subscriptExpression;
     }
 
     GNode addSelectionExpression(GNode n){
-        GNode selectionExpression = GNode.create("HELLOOOOO");
+        GNode selectionExpression = GNode.create("SelectionExpression");
         selectionExpression.addNode(GNode.create("cout<<"));
         return selectionExpression;
     }
