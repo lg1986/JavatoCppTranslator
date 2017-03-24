@@ -4,7 +4,6 @@ import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class DependencyVTableTraversal extends Visitor {
@@ -14,38 +13,50 @@ public class DependencyVTableTraversal extends Visitor {
 
     public JppObject currentObject;
     public GNode currentClass;
+    public String currentClassName;
 
-
+    /**
+     * DependencyVTableTraversal Constructor
+     * This initializes the Java "Object" JppObject.
+     */
     public DependencyVTableTraversal() {
         object = new JppObject();
-        object.methods.add("hashCode");
-        object.methods.add("equals");
-        object.methods.add("toString");
-        object.methods.add("getClass");
+        object.methods.add(new MethodObject("Object", "hashCode"));
+        object.methods.add(new MethodObject("Object", "equals"));
+        object.methods.add(new MethodObject("Object","toString"));
+        object.methods.add(new MethodObject("Object", "getClass"));
     }
 
-    public void visitMethodDeclaration(GNode n) {
 
-        try {
-            String method_name = n.get(3).toString();
-            currentClass.addNode(GNode.create(method_name));
-            currentObject.methods.add(method_name);
-
-        } catch (Exception e) {
-
+    /**
+     * Helper method. Check if the method was already created
+     * or overriden by the subclass while iterating over the
+     * methods of the super class.
+     * @param methodName
+     * @return
+     */
+    public boolean checkIfContains(String methodName){
+        for(MethodObject objmeth: currentObject.methods){
+            if(objmeth.methodName == methodName) return true;
         }
-        visit(n);
-
+        return false;
     }
-    // Add all inherited methods
+
+    /**
+     * The doesExtend method is essentially to
+     * "inherit" all the methods from the super
+     * class into the current class.
+     * @param n
+     * @return
+     */
     public boolean doesExtend(GNode n) {
         try {
             Node extendExpression = n.getNode(3);
             if (extendExpression != null) {
                 String className = extendExpression.getNode(0).getNode(0).get(0).toString();
                 JppObject extObj = vtable.objects.get(className);
-                for(String objmeth: extObj.methods) {
-                    if(!currentObject.methods.contains(objmeth)) {
+                for(MethodObject objmeth: extObj.methods) {
+                    if(!checkIfContains(objmeth.methodName)){
                         currentObject.methods.add(objmeth);
                     }
                 }
@@ -57,15 +68,36 @@ public class DependencyVTableTraversal extends Visitor {
         return false;
     }
 
+    /**
+     * visits Method Declaration. To the existing JppObject's
+     * MethodObject ArrayList the current method is added
+     * @param n
+     */
+    public void visitMethodDeclaration(GNode n) {
+        try {
+            String method_name = n.get(3).toString();
+            currentClass.addNode(GNode.create(method_name));
+            currentObject.methods.add(new MethodObject(currentClassName, method_name));
+        } catch (Exception e) {
+            System.out.println("Exception: "+e);
+        }
+        visit(n);
+    }
+
+    /**
+     *
+     * @param n
+     */
     public void visitClassDeclaration(GNode n) {
         try {
             currentObject = new JppObject();
             String class_name = (n.get(1).toString());
+            currentClassName = class_name;
             currentClass = GNode.create(class_name);
             visit(n);
             doesExtend(n);
-            for(String objmeth: object.methods) {
-                if(!currentObject.methods.contains(objmeth)) {
+            for(MethodObject objmeth: object.methods) {
+                if(!checkIfContains(objmeth.methodName)){
                     currentObject.methods.add(objmeth);
                 }
             }
@@ -90,25 +122,29 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
-        System.out.println(vtable.toString());
         return vtable;
     }
 
     static class JppObject {
-        public ArrayList<String> methods = new ArrayList<String>();
+        public ArrayList<MethodObject> methods = new ArrayList<MethodObject>();
 
         public String toString() {
             String s = "";
-            for (String d: methods) {
-                s += d + "\n ";
+            for (MethodObject d: methods) {
+                s += d.toString() + "\n ";
             }
             return s;
         }
     }
 
-    static class methodObject {
-        String classInherits;
-        String methodName;
+    static class MethodObject {
+        private String classInherits;
+        private String methodName;
+
+        public MethodObject(String classInherits, String methodName){
+            this.classInherits = classInherits;
+            this.methodName = methodName;
+        }
 
         public String toString(){
             return classInherits +" "+methodName;
