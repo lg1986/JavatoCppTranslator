@@ -16,6 +16,9 @@ public class CreateHeaderVTable extends Visitor {
 
     private Printer printer;
     public ArrayList<GNode> vtable = new ArrayList<GNode>();
+    public String currentMethodString = "";
+    public String currentClassName;
+    public String currentMethodName;
 
     public CreateHeaderVTable(Node n) throws IOException {
         Writer w;
@@ -39,15 +42,18 @@ public class CreateHeaderVTable extends Visitor {
         List<Node> dependenceyList = depe.getDependency();
 
         DependencyVTableTraversal visitor = new DependencyVTableTraversal();
-        this.vtable = visitor.getSummary(dependenceyList).vtableAsts;
+        DependencyVTableTraversal.vtableAST a = visitor.getSummary(dependenceyList);
+        System.out.println(a.objects.toString());
+        this.vtable = a.vtableAsts;
     }
 
     public void printStarterVTable(String name) {
+        printer.pln("struct __"+name+"_VT{");
         printer.pln("Class __is_a;");
         printer.pln("int32_t (*hashCode)("+name+");");
         printer.pln("bool (*equals)("+name+", Object);");
-        printer.pln("Class (*getClass)("+name+";");
-        printer.pln("String (*toString)("+name+";");
+        printer.pln("Class (*getClass)("+name+");");
+        printer.pln("String (*toString)("+name+");");
 
         printer.pln("__"+name+"_VT()");
         printer.incr();
@@ -55,12 +61,54 @@ public class CreateHeaderVTable extends Visitor {
 
     }
 
+    // 0 Modifiers
+    // 1
+    // 2 Return Type - Qualified Identifier
+    // 3 name
+    // 4 Formal Params
+
+    // Structured needed -  Return type (*nameOfMethod) ()
+
+    // Structure for VTable -
+//    name((returnTyoe (*)(name)) &__FROM::name),
+
+//    public void visitExtendsObjectPram(GNode n) throws IOException {
+//        currentMethodString += "&__"+n.get(0).toString()+"::"+currentMethodName+")";
+//        printer.pln(currentMethodString);
+//        visit(n);
+//    }
     public void visitMethodDeclaration(GNode n) throws IOException {
+        try {
+            String meth_name = n.getNode(3).toString().replace("()", "");
+            String ret_type = n.getNode(2).getNode(0).get(0).toString();
+            String params = n.getNode(4).toString();
+            String cl = n.getNode(5).get(0).toString().replace("()", "");
+
+            if(cl.compareTo(currentClassName) == 0) {
+                System.out.println("here!");
+                currentMethodString = meth_name+"("+"__"+currentClassName+"::"+meth_name+"),";
+                printer.pln(currentMethodString);
+            } else {
+                currentMethodString = (meth_name+"(("+ret_type+"(*)("+"::"+currentClassName+"))");
+                currentMethodString += "&__"+cl+"::"+meth_name+")";
+                printer.pln(currentMethodString);
+            }
+        } catch (Exception e) {
+
+        }
+
         visit(n);
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
+        String className = n.get(0).toString().replace("()", "");
+        printStarterVTable(className);
+        currentClassName = className;
+
         visit(n);
+        printer.pln("}");
+        printer.pln();
+        printer.pln();
     }
 
     public void visit(Node n) {

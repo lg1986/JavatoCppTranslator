@@ -58,9 +58,12 @@ public class DependencyVTableTraversal extends Visitor {
      * @param methodName
      * @return
      */
-    public boolean checkIfContains(String methodName){
-        for(MethodObject objmeth: currentObject.methods){
-            if(objmeth.methodName == methodName) return true;
+    public boolean checkIfContains(String methodName) {
+        for(MethodObject objmeth: currentObject.methods) {
+            if(objmeth.methodName == methodName) {
+                System.out.println(currentClassName+" "+objmeth.methodName+" "+methodName);
+                return true;
+            }
         }
         return false;
     }
@@ -72,8 +75,8 @@ public class DependencyVTableTraversal extends Visitor {
      * @param objmeth
      * @return
      */
-    public void checkAndInheritMethods(MethodObject objmeth){
-        if(!checkIfContains(objmeth.methodName)){
+    public void checkAndInheritMethods(MethodObject objmeth) {
+        if(!checkIfContains(objmeth.methodName)) {
             currentObject.methods.add(objmeth);
             GNode methodNode = GNode.create(objmeth.methodName);
             GNode inherits = GNode.create(objmeth.classInherits);
@@ -84,11 +87,15 @@ public class DependencyVTableTraversal extends Visitor {
     public boolean doesExtend(GNode n) {
         try {
             Node extendExpression = n.getNode(3);
+
             if (extendExpression != null) {
                 String className = extendExpression.getNode(0).getNode(0).get(0).toString();
                 JppObject extObj = vtable.objects.get(className);
                 for(MethodObject objmeth: extObj.methods) {
-                    checkAndInheritMethods(objmeth);
+                    if(!currentObject.methnames.contains(objmeth.methodName)) {
+                        currentObject.methods.add(objmeth);
+                        currentObject.methnames.add(objmeth.methodName);
+                    }
                 }
                 return true;
             }
@@ -110,10 +117,14 @@ public class DependencyVTableTraversal extends Visitor {
             GNode methDetails = collateDetails(n, "MethodDeclaration", 5);
             MethodObject objmeth = new MethodObject(currentClassName, method_name, methDetails);
             currentObject.methods.add(objmeth);
+            currentObject.methnames.add(method_name);
 
-            GNode methodNode = GNode.create(objmeth.methodName);
-            GNode inherits = GNode.create(objmeth.classInherits);
-            currentClass.addNode(methodNode.addNode(inherits));
+            GNode extendsNode = GNode.create("ExtendsObjectPram");
+            GNode inhertis = GNode.create(objmeth.classInherits);
+            extendsNode.addNode(inhertis);
+            methDetails.addNode(extendsNode);
+
+            currentClass.addNode(methDetails);
         } catch (Exception e) {
             System.out.println("Exception: "+e);
         }
@@ -132,11 +143,15 @@ public class DependencyVTableTraversal extends Visitor {
         try {
             currentObject = new JppObject();
             currentClassName = (n.get(1).toString());
-            currentClass = GNode.create(currentClassName);
+            currentClass = GNode.create("ClassDeclaration");
+            currentClass.addNode(GNode.create(currentClassName));
             visit(n);
             doesExtend(n);
             for(MethodObject objmeth: object.methods) {
-                checkAndInheritMethods(objmeth);
+                if(!currentObject.methnames.contains(objmeth.methodName)) {
+                    currentObject.methods.add(objmeth);
+                    currentObject.methnames.add(objmeth.methodName);
+                }
             }
             vtable.addASTNode(currentClass);
             vtable.objects.put(currentClassName, currentObject);
@@ -166,7 +181,6 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
-        System.out.println(vtable.vtableAsts.toString());
         return vtable;
     }
 
@@ -181,13 +195,13 @@ public class DependencyVTableTraversal extends Visitor {
         private String methodName;
         private GNode methodDecl;
 
-        public MethodObject(String classInherits, String methodName, GNode methodDecl){
+        public MethodObject(String classInherits, String methodName, GNode methodDecl) {
             this.classInherits = classInherits;
             this.methodName = methodName;
             this.methodDecl = methodDecl;
         }
 
-        public String toString(){
+        public String toString() {
             return classInherits +" "+methodName;
         }
     }
@@ -200,11 +214,12 @@ public class DependencyVTableTraversal extends Visitor {
      */
     static class JppObject {
         public ArrayList<MethodObject> methods = new ArrayList<MethodObject>();
+        public ArrayList<String> methnames = new ArrayList<String>();
 
         public String toString() {
             String s = "";
             for (MethodObject d: methods) {
-                s += d.toString() + "\n ";
+                s += d.classInherits +" "+d.methodName+ "\n ";
             }
             return s;
         }
@@ -226,7 +241,7 @@ public class DependencyVTableTraversal extends Visitor {
             Iterator it = objects.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
-                s += pair.getKey() + " = " + pair.getValue().toString()+" ";
+                s += pair.getKey() + " = " + ((JppObject)pair.getValue()).toString()+" ";
                 it.remove();
             }
             return s;

@@ -104,7 +104,7 @@ public class Boot extends Tool {
 
         }
 
-        if(runtime.test("createVTableHeader")){
+        if(runtime.test("createVTableHeader")) {
             try {
                 CreateHeaderVTable head = new CreateHeaderVTable(n);
             } catch (IOException e) {
