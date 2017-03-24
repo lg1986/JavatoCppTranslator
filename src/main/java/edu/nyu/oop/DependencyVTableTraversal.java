@@ -172,6 +172,26 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
+    // BROKEN:
+    public GNode getVTableAST(){
+        HashMap<String, JppObject> objects = vtable.objects;
+        GNode p = GNode.create("PackageDeclaration");
+        Iterator it = objects.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            GNode classObj = GNode.create(pair.getKey().toString());
+            for(MethodObject methodObj: ((JppObject)pair.getValue()).methods){
+                GNode classInheritNode = GNode.create(methodObj.classInherits);
+                GNode methodNameNode = GNode.create(methodObj.methodName);
+
+            }
+//            s += pair.getKey() + " = " + pair.getValue().toString()+" ";
+            it.remove();
+        }
+        return p;
+
+    }
+
     /**
      * Helper static class to keep track of the AST.
      */
