@@ -112,6 +112,7 @@ public class CppTraversal extends Visitor {
     GNode addSelectionExpression(GNode n){
         GNode selectionExpression = GNode.create("SelectionExpression");
         selectionExpression.addNode(GNode.create("cout<<"));
+        selectionExpression.addNode(addSubscriptExpression(n));
         return selectionExpression;
     }
 
@@ -160,7 +161,6 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitSubscriptExpression(GNode n){
-        cpp.addAST(addSubscriptExpression(n));
         visit(n);
     }
 
