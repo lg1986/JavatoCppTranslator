@@ -61,7 +61,6 @@ public class DependencyVTableTraversal extends Visitor {
         try {
             currentObject = new JppObject();
             String class_name = (n.get(1).toString());
-            System.out.println(doesExtend(n));
             currentClass = GNode.create(class_name);
             visit(n);
             doesExtend(n);
@@ -107,6 +106,15 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
+    static class methodObject {
+        String classInherits;
+        String methodName;
+
+        public String toString(){
+            return classInherits +" "+methodName;
+        }
+    }
+
     static class vtableAST {
         public ArrayList<GNode> vtableAsts = new ArrayList<GNode>();
         public HashMap<String, JppObject> objects = new HashMap<String, JppObject>();
@@ -123,7 +131,6 @@ public class DependencyVTableTraversal extends Visitor {
                 s += pair.getKey() + " = " + pair.getValue().toString()+" ";
                 it.remove(); // avoids a ConcurrentModificationException
             }
-            System.out.println(vtableAsts.toString());
             return s;
         }
     }
