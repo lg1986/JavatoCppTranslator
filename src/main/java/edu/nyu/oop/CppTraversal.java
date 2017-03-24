@@ -106,6 +106,17 @@ public class CppTraversal extends Visitor {
         return whileStatement;
     }
 
+    GNode addSubscriptExpression(GNode n){
+        GNode subscriptExpression = GNode.create("SubscriptExpression");
+        return subscriptExpression;
+    }
+
+    GNode addSelectionExpression(GNode n){
+        GNode selectionExpression = GNode.create("HELLOOOOO");
+        selectionExpression.addNode(GNode.create("cout<<"));
+        return selectionExpression;
+    }
+
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
@@ -141,6 +152,24 @@ public class CppTraversal extends Visitor {
 
     public void visitClassDeclaration(GNode n) {
         cpp.addAST(addClassCPP(n));
+        visit(n);
+    }
+
+    public void visitSubscriptExpression(GNode n){
+        cpp.addAST(addSubscriptExpression(n));
+        visit(n);
+    }
+
+    public void visitExpressionStatement(GNode n){
+        visit(n);
+    }
+
+    public void visitCallExpression(GNode n){
+        visit(n);
+    }
+
+    public void visitSelectionExpression(GNode n){
+        cpp.addAST(addSelectionExpression(n));
         visit(n);
     }
 
