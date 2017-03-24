@@ -14,17 +14,17 @@ import java.util.List;
 /**
  * Created by rishabh on 14/03/17.
  */
-public class CreateHeader extends Visitor {
+public class CreateHeaderDataLayout extends Visitor {
 
     private Printer printer;
-    private ArrayList<GNode> dataLayouVTable = new ArrayList<GNode>();
+    private ArrayList<GNode> dataLayout = new ArrayList<GNode>();
 
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
      * @throws IOException
      */
-    public CreateHeader(Node n) throws IOException {
+    public CreateHeaderDataLayout(Node n) throws IOException {
 
         Writer w;
         try {
@@ -62,11 +62,8 @@ public class CreateHeader extends Visitor {
         dataLayout = dataLayoutVisitor.getSummary(dependenceyList).dependencyAsts;
 
         // Phase 2 - Data Layout VTable
-        DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
-        vTable = vTableVisitor.getSummary(dependenceyList).vtableAsts;
-
-        for(GNode g: dataLayout) this.dataLayouVTable.add(g);
-        for(GNode g: vTable) this.dataLayouVTable.add(g);
+//        DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
+//        vTable = vTableVisitor.getSummary(dependenceyList).vtableAsts;
 
     }
 
@@ -153,7 +150,7 @@ public class CreateHeader extends Visitor {
     }
 
     public void collect() {
-        for(Node n: this.dataLayouVTable) {
+        for(Node n: this.dataLayout) {
             super.dispatch(n);
         }
     }

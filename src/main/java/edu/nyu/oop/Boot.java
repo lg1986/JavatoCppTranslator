@@ -43,6 +43,7 @@ public class Boot extends Tool {
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
+        bool("createVTableHeader", "createVTableHeader", false, "Create VTable Header").
         bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
@@ -96,11 +97,19 @@ public class Boot extends Tool {
 
         if(runtime.test("createHeaderFile")) {
             try {
-                CreateHeader head = new CreateHeader(n);
+                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
             } catch (IOException e) {
 
             }
 
+        }
+
+        if(runtime.test("createVTableHeader")){
+            try {
+                CreateHeaderVTable head = new CreateHeaderVTable(n);
+            } catch (IOException e) {
+
+            }
         }
 
         if(runtime.test("dependencyVTableTraversal")) {

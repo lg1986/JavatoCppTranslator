@@ -27,17 +27,19 @@ public class CreateHeaderVTable extends Visitor {
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
+        getVTableAST(n);
         collect();
         printer.flush();
 
     }
 
     public void getVTableAST(Node n) {
-        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
         AstVisitor astVisitor = new AstVisitor();
         AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
         List<Node> dependenceyList = depe.getDependency();
-        this.vtable = visitor.getSummary(dependenceyList).dependencyAsts;
+
+        DependencyVTableTraversal visitor = new DependencyVTableTraversal();
+        this.vtable = visitor.getSummary(dependenceyList).vtableAsts;
     }
 
     public void printStarterVTable(String name) {
@@ -53,8 +55,12 @@ public class CreateHeaderVTable extends Visitor {
 
     }
 
-    public void visitClassDeclaration(GNode n) throws IOException {
+    public void visitMethodDeclaration(GNode n) throws IOException {
+        visit(n);
+    }
 
+    public void visitClassDeclaration(GNode n) throws IOException {
+        visit(n);
     }
 
     public void visit(Node n) {
@@ -70,11 +76,4 @@ public class CreateHeaderVTable extends Visitor {
         }
 
     }
-
-    public void getParent(String name) {
-        for(Node n:vtable) {
-//            System.out.println(n);
-        }
-    }
-
 }
