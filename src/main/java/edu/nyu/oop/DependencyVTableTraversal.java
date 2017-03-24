@@ -14,6 +14,8 @@ public class DependencyVTableTraversal extends Visitor {
     public JppObject currentObject;
     public String currentClassName;
 
+    public GNode currentClass;
+
 
     /**
      * DependencyVTableTraversal Constructor
@@ -21,10 +23,10 @@ public class DependencyVTableTraversal extends Visitor {
      */
     public DependencyVTableTraversal() {
         object = new JppObject();
-        object.methods.add(new MethodObject("Object", "hashCode"));
-        object.methods.add(new MethodObject("Object", "equals"));
-        object.methods.add(new MethodObject("Object","toString"));
-        object.methods.add(new MethodObject("Object", "getClass"));
+        object.methods.add(new MethodObject("Object", "hashCode", null));
+        object.methods.add(new MethodObject("Object", "equals", null));
+        object.methods.add(new MethodObject("Object","toString", null));
+        object.methods.add(new MethodObject("Object", "getClass", null));
     }
 
 
@@ -49,6 +51,15 @@ public class DependencyVTableTraversal extends Visitor {
      * @param n
      * @return
      */
+    public void checkAndInheritMethods(MethodObject objmeth){
+        if(!checkIfContains(objmeth.methodName)){
+            currentObject.methods.add(objmeth);
+            GNode methodNode = GNode.create(objmeth.methodName);
+            GNode inherits = GNode.create(objmeth.classInherits);
+            currentClass.addNode(methodNode.addNode(inherits).addNode(objmeth.methodDecl));
+        }
+    }
+
     public boolean doesExtend(GNode n) {
         try {
             Node extendExpression = n.getNode(3);
@@ -56,9 +67,7 @@ public class DependencyVTableTraversal extends Visitor {
                 String className = extendExpression.getNode(0).getNode(0).get(0).toString();
                 JppObject extObj = vtable.objects.get(className);
                 for(MethodObject objmeth: extObj.methods) {
-                    if(!checkIfContains(objmeth.methodName)){
-                        currentObject.methods.add(objmeth);
-                    }
+                    checkAndInheritMethods(objmeth);
                 }
                 return true;
             }
@@ -69,6 +78,18 @@ public class DependencyVTableTraversal extends Visitor {
         return false;
     }
 
+    public GNode collateDetails(GNode n, String type, int limit) {
+        GNode details = GNode.create(type, limit);
+        for(int i = 0; i<limit; i+=1) {
+            try {
+                details.addNode(n.getNode(i));
+            } catch(Exception e) {
+                GNode methodName = GNode.create(n.get(i).toString(), 1);
+                details.addNode(methodName);
+            }
+        }
+        return details;
+    }
     /**
      * visits Method Declaration. To the existing JppObject's
      * MethodObject ArrayList the current method is added
@@ -77,7 +98,13 @@ public class DependencyVTableTraversal extends Visitor {
     public void visitMethodDeclaration(GNode n) {
         try {
             String method_name = n.get(3).toString();
-            currentObject.methods.add(new MethodObject(currentClassName, method_name));
+            GNode methDetails = collateDetails(n, "MethodDeclaration", 5);
+            MethodObject objmeth = new MethodObject(currentClassName, method_name, methDetails);
+            currentObject.methods.add(objmeth);
+
+            GNode methodNode = GNode.create(objmeth.methodName);
+            GNode inherits = GNode.create(objmeth.classInherits);
+            currentClass.addNode(methodNode.addNode(inherits));
         } catch (Exception e) {
             System.out.println("Exception: "+e);
         }
@@ -95,16 +122,15 @@ public class DependencyVTableTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
         try {
             currentObject = new JppObject();
-            String class_name = (n.get(1).toString());
-            currentClassName = class_name;
+            currentClassName = (n.get(1).toString());
+            currentClass = GNode.create(currentClassName);
             visit(n);
             doesExtend(n);
             for(MethodObject objmeth: object.methods) {
-                if(!checkIfContains(objmeth.methodName)){
-                    currentObject.methods.add(objmeth);
-                }
+                checkAndInheritMethods(objmeth);
             }
-            vtable.objects.put(class_name, currentObject);
+            vtable.addASTNode(currentClass);
+            vtable.objects.put(currentClassName, currentObject);
         } catch (Exception e) {
             System.out.println(e);
 
@@ -131,6 +157,7 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
+        System.out.println(vtable.vtableAsts.toString());
         return vtable;
     }
 
@@ -143,10 +170,12 @@ public class DependencyVTableTraversal extends Visitor {
     static class MethodObject {
         private String classInherits;
         private String methodName;
+        private GNode methodDecl;
 
-        public MethodObject(String classInherits, String methodName){
+        public MethodObject(String classInherits, String methodName, GNode methodDecl){
             this.classInherits = classInherits;
             this.methodName = methodName;
+            this.methodDecl = methodDecl;
         }
 
         public String toString(){
@@ -172,25 +201,25 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
-    // BROKEN:
-    public GNode getVTableAST(){
-        HashMap<String, JppObject> objects = vtable.objects;
-        GNode p = GNode.create("PackageDeclaration");
-        Iterator it = objects.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
-            GNode classObj = GNode.create(pair.getKey().toString());
-            for(MethodObject methodObj: ((JppObject)pair.getValue()).methods){
-                GNode classInheritNode = GNode.create(methodObj.classInherits);
-                GNode methodNameNode = GNode.create(methodObj.methodName);
-
-            }
-//            s += pair.getKey() + " = " + pair.getValue().toString()+" ";
-            it.remove();
-        }
-        return p;
-
-    }
+//    // BROKEN:
+//    public GNode getVTableAST(){
+//        HashMap<String, JppObject> objects = vtable.objects;
+//        GNode p = GNode.create("PackageDeclaration");
+//        Iterator it = objects.entrySet().iterator();
+//        while (it.hasNext()) {
+//            Map.Entry pair = (Map.Entry)it.next();
+//            GNode classObj = GNode.create(pair.getKey().toString());
+//            for(MethodObject methodObj: ((JppObject)pair.getValue()).methods){
+//                GNode classInheritNode = GNode.create(methodObj.classInherits);
+//                GNode methodNameNode = GNode.create(methodObj.methodName);
+//
+//            }
+////            s += pair.getKey() + " = " + pair.getValue().toString()+" ";
+//            it.remove();
+//        }
+//        return p;
+//
+//    }
 
     /**
      * Helper static class to keep track of the AST.
