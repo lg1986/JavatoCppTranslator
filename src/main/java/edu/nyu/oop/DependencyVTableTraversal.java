@@ -12,8 +12,8 @@ public class DependencyVTableTraversal extends Visitor {
     public JppObject object;
 
     public JppObject currentObject;
-    public GNode currentClass;
     public String currentClassName;
+
 
     /**
      * DependencyVTableTraversal Constructor
@@ -63,6 +63,7 @@ public class DependencyVTableTraversal extends Visitor {
                 return true;
             }
         } catch (Exception e) {
+            System.out.println(e);
             return false;
         }
         return false;
@@ -76,7 +77,6 @@ public class DependencyVTableTraversal extends Visitor {
     public void visitMethodDeclaration(GNode n) {
         try {
             String method_name = n.get(3).toString();
-            currentClass.addNode(GNode.create(method_name));
             currentObject.methods.add(new MethodObject(currentClassName, method_name));
         } catch (Exception e) {
             System.out.println("Exception: "+e);
@@ -85,7 +85,11 @@ public class DependencyVTableTraversal extends Visitor {
     }
 
     /**
-     *
+     * The visitClassDeclaration is similar to what
+     * has been done for other visit methods.
+     * The primary difference is that this is where
+     * new JppObjects/GNodes are created/reassigned
+     * and added to the vtableAST
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
@@ -93,7 +97,6 @@ public class DependencyVTableTraversal extends Visitor {
             currentObject = new JppObject();
             String class_name = (n.get(1).toString());
             currentClassName = class_name;
-            currentClass = GNode.create(class_name);
             visit(n);
             doesExtend(n);
             for(MethodObject objmeth: object.methods) {
@@ -101,14 +104,12 @@ public class DependencyVTableTraversal extends Visitor {
                     currentObject.methods.add(objmeth);
                 }
             }
-            vtable.addASTNode(currentClass);
             vtable.objects.put(class_name, currentObject);
         } catch (Exception e) {
             System.out.println(e);
 
         }
     }
-
 
     public void visit(Node n) {
         for (Object o : n) {
@@ -118,6 +119,14 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
+    /**
+     * Takes in a list of the ASTs of the
+     * dependencies and dispatches them to
+     * vist the nodes and perform the required
+     * steps.
+     * @param dependencyList
+     * @return
+     */
     public vtableAST getSummary(List<Node> dependencyList) {
         for(Node n: dependencyList) {
             super.dispatch(n);
@@ -125,18 +134,12 @@ public class DependencyVTableTraversal extends Visitor {
         return vtable;
     }
 
-    static class JppObject {
-        public ArrayList<MethodObject> methods = new ArrayList<MethodObject>();
-
-        public String toString() {
-            String s = "";
-            for (MethodObject d: methods) {
-                s += d.toString() + "\n ";
-            }
-            return s;
-        }
-    }
-
+    /**
+     * The Method Object is so that we can keep a track
+     * of where the method is being inherited from.
+     * This will be important for the vpointers
+     * in the VTable of the object.
+     */
     static class MethodObject {
         private String classInherits;
         private String methodName;
@@ -151,6 +154,27 @@ public class DependencyVTableTraversal extends Visitor {
         }
     }
 
+
+    /**
+     * Helper object for the creation of the AST
+     * in the future. This is essenitally to hold all
+     * the methods
+     */
+    static class JppObject {
+        public ArrayList<MethodObject> methods = new ArrayList<MethodObject>();
+
+        public String toString() {
+            String s = "";
+            for (MethodObject d: methods) {
+                s += d.toString() + "\n ";
+            }
+            return s;
+        }
+    }
+
+    /**
+     * Helper static class to keep track of the AST.
+     */
     static class vtableAST {
         public ArrayList<GNode> vtableAsts = new ArrayList<GNode>();
         public HashMap<String, JppObject> objects = new HashMap<String, JppObject>();
@@ -165,7 +189,7 @@ public class DependencyVTableTraversal extends Visitor {
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry)it.next();
                 s += pair.getKey() + " = " + pair.getValue().toString()+" ";
-                it.remove(); // avoids a ConcurrentModificationException
+                it.remove();
             }
             return s;
         }
