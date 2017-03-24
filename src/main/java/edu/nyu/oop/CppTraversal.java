@@ -88,6 +88,7 @@ public class CppTraversal extends Visitor {
 
     GNode addForStatement(GNode n){
         GNode forStatement = GNode.create("ForStatement");
+        forStatement.addNode(addForControl(n));
         return forStatement;
     }
 
@@ -122,6 +123,11 @@ public class CppTraversal extends Visitor {
         return selectionExpression;
     }
 
+    GNode addForControl(GNode n){
+        GNode selectionExpression = GNode.create("BasicForControl");
+        selectionExpression.addNode(n);
+        return selectionExpression;
+    }
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
@@ -132,6 +138,11 @@ public class CppTraversal extends Visitor {
 
     public void visitFieldDeclaration(GNode n) {
         cpp.addAST(addFieldCPP(n,n.getClass(),n.getClass().getTypeName()));
+        visit(n);
+    }
+
+    public void visitBasicForControl(GNode n) {
+        cpp.addAST(addForControl(n));
         visit(n);
     }
 
