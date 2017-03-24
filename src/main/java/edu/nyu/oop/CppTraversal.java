@@ -115,6 +115,12 @@ public class CppTraversal extends Visitor {
         return selectionExpression;
     }
 
+    GNode addSelectionExpressionExit(GNode n){
+        GNode selectionExpression = GNode.create("SelectionExpression");
+        selectionExpression.addNode(GNode.create("end<<"));
+        return selectionExpression;
+    }
+
     // Visit methods for each scope construct, mutating each node
 
     public void visitMethodDeclaration(GNode n) {
@@ -168,6 +174,11 @@ public class CppTraversal extends Visitor {
 
     public void visitSelectionExpression(GNode n){
         cpp.addAST(addSelectionExpression(n));
+        visit(n);
+        cpp.addAST(addSelectionExpressionExit(n));
+    }
+
+    public void visitArguments(GNode n){
         visit(n);
     }
 
