@@ -6,6 +6,7 @@ import xtc.tree.Printer;
 import xtc.tree.Visitor;
 
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class CreateHeader extends Visitor {
 
     private Printer printer;
-    public ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+    private ArrayList<GNode> dataLayouVTable = new ArrayList<GNode>();
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -47,11 +48,26 @@ public class CreateHeader extends Visitor {
      */
 
     public void getDataLayoutAST(Node n) {
-        DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
+
+        ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+        ArrayList<GNode> vTable = new ArrayList<GNode>();
+
+        // Phase 1
         AstVisitor astVisitor = new AstVisitor();
         AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
         List<Node> dependenceyList = depe.getDependency();
-        this.dataLayout = visitor.getSummary(dependenceyList).dependencyAsts;
+
+        // Phase 2 - Data Layout Traversal
+        DependencyDataLayoutTraversal dataLayoutVisitor = new DependencyDataLayoutTraversal();
+        dataLayout = dataLayoutVisitor.getSummary(dependenceyList).dependencyAsts;
+
+        // Phase 2 - Data Layout VTable
+        DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
+        vTable = vTableVisitor.getSummary(dependenceyList).vtableAsts;
+
+        for(GNode g: dataLayout) this.dataLayouVTable.add(g);
+        for(GNode g: vTable) this.dataLayouVTable.add(g);
+
     }
 
 
@@ -137,7 +153,7 @@ public class CreateHeader extends Visitor {
     }
 
     public void collect() {
-        for(Node n: dataLayout) {
+        for(Node n: this.dataLayouVTable) {
             super.dispatch(n);
         }
     }

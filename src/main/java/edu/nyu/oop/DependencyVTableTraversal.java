@@ -29,6 +29,27 @@ public class DependencyVTableTraversal extends Visitor {
         object.methods.add(new MethodObject("Object", "getClass", null));
     }
 
+    /**
+     * Helper method to collate certain details
+     * with regards to the method declarations
+     * @param n
+     * @param type
+     * @param limit
+     * @return
+     */
+
+    public GNode collateDetails(GNode n, String type, int limit) {
+        GNode details = GNode.create(type, limit);
+        for(int i = 0; i<limit; i+=1) {
+            try {
+                details.addNode(n.getNode(i));
+            } catch(Exception e) {
+                GNode methodName = GNode.create(n.get(i).toString(), 1);
+                details.addNode(methodName);
+            }
+        }
+        return details;
+    }
 
     /**
      * Helper method. Check if the method was already created
@@ -48,7 +69,7 @@ public class DependencyVTableTraversal extends Visitor {
      * The doesExtend method is essentially to
      * "inherit" all the methods from the super
      * class into the current class.
-     * @param n
+     * @param objmeth
      * @return
      */
     public void checkAndInheritMethods(MethodObject objmeth){
@@ -78,18 +99,6 @@ public class DependencyVTableTraversal extends Visitor {
         return false;
     }
 
-    public GNode collateDetails(GNode n, String type, int limit) {
-        GNode details = GNode.create(type, limit);
-        for(int i = 0; i<limit; i+=1) {
-            try {
-                details.addNode(n.getNode(i));
-            } catch(Exception e) {
-                GNode methodName = GNode.create(n.get(i).toString(), 1);
-                details.addNode(methodName);
-            }
-        }
-        return details;
-    }
     /**
      * visits Method Declaration. To the existing JppObject's
      * MethodObject ArrayList the current method is added
@@ -200,26 +209,6 @@ public class DependencyVTableTraversal extends Visitor {
             return s;
         }
     }
-
-//    // BROKEN:
-//    public GNode getVTableAST(){
-//        HashMap<String, JppObject> objects = vtable.objects;
-//        GNode p = GNode.create("PackageDeclaration");
-//        Iterator it = objects.entrySet().iterator();
-//        while (it.hasNext()) {
-//            Map.Entry pair = (Map.Entry)it.next();
-//            GNode classObj = GNode.create(pair.getKey().toString());
-//            for(MethodObject methodObj: ((JppObject)pair.getValue()).methods){
-//                GNode classInheritNode = GNode.create(methodObj.classInherits);
-//                GNode methodNameNode = GNode.create(methodObj.methodName);
-//
-//            }
-////            s += pair.getKey() + " = " + pair.getValue().toString()+" ";
-//            it.remove();
-//        }
-//        return p;
-//
-//    }
 
     /**
      * Helper static class to keep track of the AST.
