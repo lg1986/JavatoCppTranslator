@@ -161,7 +161,6 @@ public class DependencyVTableTraversal extends Visitor {
             currentClass = GNode.create("ClassDeclaration");
             currentClass.addNode(GNode.create(currentClassName));
             visit(n);
-            doesExtend(n);
             for(MethodObject objmeth: object.methods) {
                 if(!currentObject.methnames.contains(objmeth.methodName)) {
                     currentObject.methods.add(objmeth);
@@ -170,6 +169,7 @@ public class DependencyVTableTraversal extends Visitor {
                     currentClass.addNode(objMethDecl);
                 }
             }
+            doesExtend(n);
             vtable.addASTNode(currentClass);
             vtable.objects.put(currentClassName, currentObject);
         } catch (Exception e) {
@@ -198,6 +198,7 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
+        System.out.println(vtable.toString());
         return vtable;
     }
 

@@ -91,7 +91,9 @@ public class CreateHeaderVTable extends Visitor {
                         paramList += params.getNode(i).getNode(2).get(0).toString() + ", ";
                 }
             }
+            paramList = paramList.replaceAll(", $", "");
             paramList = "( " + paramList + " )";
+
             if(cl.compareTo(currentClassName) == 0) {
                 currentMethodString = meth_name+"("+"__"+currentClassName+"::"+meth_name+"),";
                 printer.pln(currentMethodString);
