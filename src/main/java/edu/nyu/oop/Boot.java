@@ -104,13 +104,13 @@ public class Boot extends Tool {
 
         }
 
-        if(runtime.test("createVTableHeader")) {
-            try {
-                CreateHeaderVTable head = new CreateHeaderVTable(n);
-            } catch (IOException e) {
-
-            }
-        }
+//        if(runtime.test("createVTableHeader")) {
+//            try {
+//                CreateHeaderVTable head = new CreateHeaderVTable(n);
+//            } catch (IOException e) {
+//
+//            }
+//        }
 
         if(runtime.test("dependencyVTableTraversal")) {
             DependencyVTableTraversal visitor = new DependencyVTableTraversal();

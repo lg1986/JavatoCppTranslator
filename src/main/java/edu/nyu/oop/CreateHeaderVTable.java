@@ -20,16 +20,8 @@ public class CreateHeaderVTable extends Visitor {
     public String currentClassName;
     public String currentMethodName;
 
-    public CreateHeaderVTable(Node n) throws IOException {
-        Writer w;
-        try {
-            FileOutputStream fos = new FileOutputStream("output/outputV.h");
-            OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
-            w = new BufferedWriter(ows);
-            this.printer = new Printer(w);
-        } catch (Exception e) {
-            throw new RuntimeException("Output location not found. Create the /output directory.");
-        }
+    public CreateHeaderVTable(Node n, Printer printer) throws IOException {
+        this.printer = printer;
         getVTableAST(n);
         collect();
         printer.flush();

@@ -37,6 +37,7 @@ public class CreateHeaderDataLayout extends Visitor {
         getDataLayoutAST(n);
         writeStartBaseLayout();
         collect();
+        CreateHeaderVTable vtableCreator  = new CreateHeaderVTable(n, printer);
         writeEndBaseLayout();
         printer.flush();
     }
