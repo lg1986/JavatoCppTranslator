@@ -44,6 +44,7 @@ public class Boot extends Tool {
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
         bool("cppTraversal", "cppTraversal", false, "C++ Traversal").
+        bool("createVTableHeader", "createVTableHeader", false, "Create VTable Header").
         bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
         bool("cppPrinter", "cppPrinter", false, "Create Cpp File").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
@@ -122,12 +123,20 @@ public class Boot extends Tool {
 
         if(runtime.test("createHeaderFile")) {
             try {
-                CreateHeader head = new CreateHeader(n);
+                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
             } catch (IOException e) {
 
             }
 
         }
+
+//        if(runtime.test("createVTableHeader")) {
+//            try {
+//                CreateHeaderVTable head = new CreateHeaderVTable(n);
+//            } catch (IOException e) {
+//
+//            }
+//        }
 
         if(runtime.test("dependencyVTableTraversal")) {
             DependencyVTableTraversal visitor = new DependencyVTableTraversal();
@@ -135,10 +144,6 @@ public class Boot extends Tool {
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
             ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
-//            for(GNode data:vtable){
-//                runtime.console().format(data).pln().flush();
-//            }
-
         }
 
     }

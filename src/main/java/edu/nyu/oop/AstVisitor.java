@@ -23,7 +23,7 @@ public class AstVisitor extends Visitor {
 
     private Runtime runtime;
 
-    protected static completeAST asts = new completeAST();
+    private completeAST asts = new completeAST();
 
     // getFile - it gets the File object.
     // the src/test/java folder is where all
@@ -55,13 +55,14 @@ public class AstVisitor extends Visitor {
     }
 
     // This is the first dispatch
-    public completeAST getAllASTs(Node n){
+    public completeAST getAllASTs(Node n) {
+        asts.addAST(n);
         super.dispatch(n);
         return asts;
     }
 
     static class completeAST {
-        protected static List<Node> asts = new ArrayList<Node>();
+        private List<Node> asts = new ArrayList<Node>();
 
         public List<Node> getDependency() {
             return asts;
