@@ -43,7 +43,6 @@ public class CreateHeaderVTable extends Visitor {
 
         DependencyVTableTraversal visitor = new DependencyVTableTraversal();
         DependencyVTableTraversal.vtableAST a = visitor.getSummary(dependenceyList);
-        System.out.println(a.objects.toString());
         this.vtable = a.vtableAsts;
     }
 
@@ -81,7 +80,7 @@ public class CreateHeaderVTable extends Visitor {
         try {
             String meth_name = n.getNode(3).toString().replace("()", "");
             String ret_type = n.getNode(2).getNode(0).get(0).toString();
-            String params = n.getNode(4).toString();
+//            String params = n.getNode(4);
             String cl = n.getNode(5).get(0).toString().replace("()", "");
 
             if(cl.compareTo(currentClassName) == 0) {
@@ -94,7 +93,7 @@ public class CreateHeaderVTable extends Visitor {
                 printer.pln(currentMethodString);
             }
         } catch (Exception e) {
-
+            System.out.println(n);
         }
 
         visit(n);

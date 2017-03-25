@@ -20,9 +20,18 @@ public class DependencyVTableTraversal extends Visitor {
         GNode hashNode = GNode.create("MethodDeclaration");
         hashNode.addNode(null);
         hashNode.addNode(null);
-        hashNode.addNode(GNode.create("Type(QualifiedIdentifier("+returnType+"), null))"));
+        GNode type = GNode.create("Type");
+        GNode qul = GNode.create("QualifiedIdentifier");
+        type.addNode(qul.add(returnType.replace("()", "")));
+        hashNode.addNode(type);
         hashNode.addNode(GNode.create(name));
         hashNode.addNode(null);
+        GNode extendsNode = GNode.create("ExtendsObjectPram");
+        GNode inhertis = GNode.create("Object");
+        extendsNode.add(inhertis);
+        hashNode.addNode(extendsNode);
+
+//        System.out.println(hashNode.getNode(5).get(0));
         return hashNode;
     }
 
@@ -93,7 +102,6 @@ public class DependencyVTableTraversal extends Visitor {
      * @param n
      */
     public void visitMethodDeclaration(GNode n) {
-        System.out.println(n.toString());
         try {
             String method_name = n.get(3).toString();
             GNode methDetails = collateDetails(n, "MethodDeclaration", 5);
@@ -135,6 +143,7 @@ public class DependencyVTableTraversal extends Visitor {
                     currentObject.methnames.add(objmeth.methodName);
                     GNode objMethDecl = createObjectNode(objmeth.returnType, objmeth.methodName);
                     currentClass.addNode(objMethDecl);
+                    System.out.println(objMethDecl);
                 }
             }
             vtable.addASTNode(currentClass);
