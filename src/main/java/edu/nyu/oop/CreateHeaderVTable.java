@@ -69,13 +69,9 @@ public class CreateHeaderVTable extends Visitor {
     // Structured needed -  Return type (*nameOfMethod) ()
 
     // Structure for VTable -
-//    name((returnTyoe (*)(name)) &__FROM::name),
+    // name((returnTyoe (*)(name)) &__FROM::name),
 
-//    public void visitExtendsObjectPram(GNode n) throws IOException {
-//        currentMethodString += "&__"+n.get(0).toString()+"::"+currentMethodName+")";
-//        printer.pln(currentMethodString);
-//        visit(n);
-//    }
+
     public void visitMethodDeclaration(GNode n) throws IOException {
         try {
             String meth_name = n.getNode(3).toString().replace("()", "");

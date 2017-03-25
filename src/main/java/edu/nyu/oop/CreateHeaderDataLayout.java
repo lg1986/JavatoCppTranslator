@@ -25,7 +25,6 @@ public class CreateHeaderDataLayout extends Visitor {
      * @throws IOException
      */
     public CreateHeaderDataLayout(Node n) throws IOException {
-
         Writer w;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.h");
@@ -59,7 +58,7 @@ public class CreateHeaderDataLayout extends Visitor {
 
         // Phase 2 - Data Layout Traversal
         DependencyDataLayoutTraversal dataLayoutVisitor = new DependencyDataLayoutTraversal();
-        dataLayout = dataLayoutVisitor.getSummary(dependenceyList).dependencyAsts;
+        this.dataLayout = dataLayoutVisitor.getSummary(dependenceyList).dependencyAsts;
 
         // Phase 2 - Data Layout VTable
 //        DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
