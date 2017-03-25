@@ -8,55 +8,66 @@ import java.util.*;
 
 public class DependencyVTableTraversal extends Visitor {
 
-    public vtableAST vtable = new vtableAST();
-    public JppObject object;
+    public vtableAST vtable = new vtableAST();  // The static object that holds all the details
 
-    public JppObject currentObject;
-    public String currentClassName;
+    public JppObject object; // This is for Java's Object class
 
-    public GNode currentClass;
-    private String packageName;
+    public JppObject currentObject; // This holds the object that is being traversed and updated
+    public GNode currentClass; // currentClass this is the Class's AST
 
+
+    public String currentClassName; // class name for use across different methods
+    private String packageName; // current Package to make sure that we don't add as a Struct for VTable
+
+
+    /**
+     * The following creates the methodDeclaration GNode for the
+     * 4 generic Java Object methods
+     * @param name -- equals, hashCode, toString, getClass
+     * @param returnType -- bool, int_32, String, Class
+     * @return GNode for the MethodDeclaration
+     */
     public GNode createObjectNode(String returnType, String name) {
-        GNode hashNode = GNode.create("MethodDeclaration");
+        GNode genericObjectNode = GNode.create("MethodDeclaration");
 
         // Modifier
-        hashNode.addNode(null);
+        genericObjectNode.addNode(null);
 
         // Modi
-        hashNode.addNode(null);
+        genericObjectNode.addNode(null);
 
         // return type
         GNode type = GNode.create("Type");
         GNode qul = GNode.create("QualifiedIdentifier");
         type.addNode(qul.add(returnType.replace("()", "")));
-        hashNode.addNode(type);
+        genericObjectNode.addNode(type);
 
         // Name
-        hashNode.addNode(GNode.create(name));
+        genericObjectNode.addNode(GNode.create(name));
 
         // Param
-        GNode fms = GNode.create("FormalParameters");
+        GNode fms = GNode.create("FormalParameters");   // This GNode holds all the children GNodes
         if(name == "equals") {
-            GNode fm = GNode.create("FormalParameter");
+            GNode fm = GNode.create("FormalParameter"); // Creating the FormalParameter GNode
             fm.addNode(null);
             fm.addNode(GNode.create("Type"));
-            GNode fmqul = GNode.create("QualifiedIdentifier");
-            fmqul.add("Object");
-            fm.addNode(fmqul);
+            GNode fmIdentifier = GNode.create("QualifiedIdentifier");
+            fmIdentifier.add("Object");
+            fm.addNode(fmIdentifier);
             fms.addNode(fm);
         } else {
+            // This is the case when there are no additional parameters
             fms.addNode(null);
         }
-        hashNode.addNode(fms);
+        genericObjectNode.addNode(fms);
 
-        // Extender
+        // Extender i.e., from where was this method inherited
         GNode extendsNode = GNode.create("ExtendsObjectPram");
-        GNode inhertis = GNode.create("Object");
-        extendsNode.add(inhertis);
-        hashNode.addNode(extendsNode);
+        GNode inherit = GNode.create("Object");
+        extendsNode.add(inherit);
+        genericObjectNode.addNode(extendsNode);
 
-        return hashNode;
+        return genericObjectNode;
     }
 
     /**
@@ -65,10 +76,14 @@ public class DependencyVTableTraversal extends Visitor {
      */
     public DependencyVTableTraversal() {
         object = new JppObject();
-        object.methods.add(new MethodObject("Object", "hashCode", null, "int_32"));
-        object.methods.add(new MethodObject("Object", "equals", null, "bool"));
-        object.methods.add(new MethodObject("Object","toString", null, "String"));
-        object.methods.add(new MethodObject("Object", "getClass", null, "Class"));
+        object.methods.add(new MethodObject("Object", "hashCode",
+                null, "int_32"));
+        object.methods.add(new MethodObject("Object", "equals",
+                null, "bool"));
+        object.methods.add(new MethodObject("Object","toString",
+                null, "String"));
+        object.methods.add(new MethodObject("Object", "getClass",
+                null, "Class"));
     }
 
     /**
@@ -77,9 +92,8 @@ public class DependencyVTableTraversal extends Visitor {
      * @param n
      * @param type
      * @param limit
-     * @return
+     * @return GNode with required details
      */
-
     public GNode collateDetails(GNode n, String type, int limit) {
         GNode details = GNode.create(type, limit);
         for(int i = 0; i<limit; i+=1) {
