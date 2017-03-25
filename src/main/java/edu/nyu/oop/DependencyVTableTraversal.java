@@ -157,7 +157,7 @@ public class DependencyVTableTraversal extends Visitor {
     public void visitClassDeclaration(GNode n) {
         try {
             String class_name = n.get(1).toString().replace("()", "");
-            System.out.println(class_name);
+
             if(class_name.toLowerCase().compareTo(packageName) == 0) return;
             currentObject = new JppObject();
             currentClassName = (n.get(1).toString());
@@ -184,7 +184,7 @@ public class DependencyVTableTraversal extends Visitor {
 
         try {
             this.packageName = n.getNode(1).get(1).toString();
-            System.out.println(packageName);
+
             visit(n);
         } catch (Exception ignored) {
 
