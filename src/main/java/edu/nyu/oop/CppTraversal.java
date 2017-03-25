@@ -24,6 +24,7 @@ public class CppTraversal extends Visitor {
 
     protected cppAST cpp = new cppAST();
     public GNode packageNode;
+    public GNode classNode;
 
     // Add the class declarations to the C++ AST
     // @param GNode of current node visiting
@@ -177,17 +178,17 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitSubscriptExpression(GNode n){
-        cpp.addAST(n);
+        cpp.addAST(GNode.create(n));
         visit(n);
     }
 
     public void visitExpressionStatement(GNode n){
-        cpp.addAST(n);
+        cpp.addAST(GNode.create(n));
         visit(n);
     }
 
     public void visitCallExpression(GNode n){
-        cpp.addAST(n);
+        cpp.addAST(GNode.create(n));
         visit(n);
     }
 
@@ -198,7 +199,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitArguments(GNode n){
-        cpp.addAST(n);
+        cpp.addAST(GNode.create(n));
         visit(n);
     }
 
@@ -230,7 +231,6 @@ public class CppTraversal extends Visitor {
             super.dispatch(n);
             cpp.addAST(packageNode);
         }
-//        System.out.println(cpp.toString());
         return cpp;
     }
 
@@ -239,7 +239,7 @@ public class CppTraversal extends Visitor {
 
         public List<Node> getDependency() { return cppasts; }
 
-        public void addAST(Node n) { this.cppasts.add(n); }
+        public void addAST(GNode n) { this.cppasts.add(n); }
 
         public String toString() {
             String ast_string = "";
