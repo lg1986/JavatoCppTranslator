@@ -16,6 +16,15 @@ public class DependencyVTableTraversal extends Visitor {
 
     public GNode currentClass;
 
+    public GNode createObjectNode(String returnType, String name) {
+        GNode hashNode = GNode.create("MethodDeclaration");
+        hashNode.addNode(null);
+        hashNode.addNode(null);
+        hashNode.addNode(GNode.create("Type(QualifiedIdentifier("+returnType+"), null))"));
+        hashNode.addNode(GNode.create(name));
+        hashNode.addNode(null);
+        return hashNode;
+    }
 
     /**
      * DependencyVTableTraversal Constructor
@@ -23,10 +32,10 @@ public class DependencyVTableTraversal extends Visitor {
      */
     public DependencyVTableTraversal() {
         object = new JppObject();
-        object.methods.add(new MethodObject("Object", "hashCode", null));
-        object.methods.add(new MethodObject("Object", "equals", null));
-        object.methods.add(new MethodObject("Object","toString", null));
-        object.methods.add(new MethodObject("Object", "getClass", null));
+        object.methods.add(new MethodObject("Object", "hashCode", null, "int_32"));
+        object.methods.add(new MethodObject("Object", "equals", null, "bool"));
+        object.methods.add(new MethodObject("Object","toString", null, "String"));
+        object.methods.add(new MethodObject("Object", "getClass", null, "Class"));
     }
 
     /**
@@ -52,38 +61,10 @@ public class DependencyVTableTraversal extends Visitor {
     }
 
     /**
-     * Helper method. Check if the method was already created
-     * or overriden by the subclass while iterating over the
-     * methods of the super class.
-     * @param methodName
+     *
+     * @param n
      * @return
      */
-    public boolean checkIfContains(String methodName) {
-        for(MethodObject objmeth: currentObject.methods) {
-            if(objmeth.methodName == methodName) {
-                System.out.println(currentClassName+" "+objmeth.methodName+" "+methodName);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * The doesExtend method is essentially to
-     * "inherit" all the methods from the super
-     * class into the current class.
-     * @param objmeth
-     * @return
-     */
-    public void checkAndInheritMethods(MethodObject objmeth) {
-        if(!checkIfContains(objmeth.methodName)) {
-            currentObject.methods.add(objmeth);
-            GNode methodNode = GNode.create(objmeth.methodName);
-            GNode inherits = GNode.create(objmeth.classInherits);
-            currentClass.addNode(methodNode.addNode(inherits).addNode(objmeth.methodDecl));
-        }
-    }
-
     public boolean doesExtend(GNode n) {
         try {
             Node extendExpression = n.getNode(3);
@@ -112,6 +93,7 @@ public class DependencyVTableTraversal extends Visitor {
      * @param n
      */
     public void visitMethodDeclaration(GNode n) {
+        System.out.println(n.toString());
         try {
             String method_name = n.get(3).toString();
             GNode methDetails = collateDetails(n, "MethodDeclaration", 5);
@@ -151,6 +133,8 @@ public class DependencyVTableTraversal extends Visitor {
                 if(!currentObject.methnames.contains(objmeth.methodName)) {
                     currentObject.methods.add(objmeth);
                     currentObject.methnames.add(objmeth.methodName);
+                    GNode objMethDecl = createObjectNode(objmeth.returnType, objmeth.methodName);
+                    currentClass.addNode(objMethDecl);
                 }
             }
             vtable.addASTNode(currentClass);
@@ -194,11 +178,19 @@ public class DependencyVTableTraversal extends Visitor {
         private String classInherits;
         private String methodName;
         private GNode methodDecl;
+        private String returnType;
 
         public MethodObject(String classInherits, String methodName, GNode methodDecl) {
             this.classInherits = classInherits;
             this.methodName = methodName;
             this.methodDecl = methodDecl;
+        }
+
+        public MethodObject(String classInherits, String methodName, GNode methodDecl, String returnType) {
+            this.classInherits = classInherits;
+            this.methodName = methodName;
+            this.methodDecl = methodDecl;
+            this.returnType = returnType;
         }
 
         public String toString() {
