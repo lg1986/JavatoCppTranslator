@@ -80,20 +80,27 @@ public class CreateHeaderVTable extends Visitor {
         try {
             String meth_name = n.getNode(3).toString().replace("()", "");
             String ret_type = n.getNode(2).getNode(0).get(0).toString();
-//            String params = n.getNode(4);
+            Node params = n.getNode(4);
             String cl = n.getNode(5).get(0).toString().replace("()", "");
+            String paramList = currentClassName +", ";
 
+            if(params != null) {
+
+                for (int i = 0; i < params.size(); i++) {
+                    if(params.getNode(i) != null)
+                        paramList += params.getNode(i).getNode(2).get(0).toString() + ", ";
+                }
+            }
+            paramList = "( " + paramList + " )";
             if(cl.compareTo(currentClassName) == 0) {
-                System.out.println("here!");
                 currentMethodString = meth_name+"("+"__"+currentClassName+"::"+meth_name+"),";
                 printer.pln(currentMethodString);
             } else {
-                currentMethodString = (meth_name+"(("+ret_type+"(*)("+"::"+currentClassName+"))");
-                currentMethodString += "&__"+cl+"::"+meth_name+")";
+                currentMethodString = (meth_name+"(("+ret_type+"(*)"+paramList+")");
+                currentMethodString += " &__"+cl+"::"+meth_name+"), ";
                 printer.pln(currentMethodString);
             }
         } catch (Exception e) {
-            System.out.println(n);
         }
 
         visit(n);

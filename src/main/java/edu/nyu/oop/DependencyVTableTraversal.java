@@ -18,20 +18,44 @@ public class DependencyVTableTraversal extends Visitor {
 
     public GNode createObjectNode(String returnType, String name) {
         GNode hashNode = GNode.create("MethodDeclaration");
+
+        // Modifier
         hashNode.addNode(null);
+
+        // Modi
         hashNode.addNode(null);
+
+        // return type
         GNode type = GNode.create("Type");
         GNode qul = GNode.create("QualifiedIdentifier");
         type.addNode(qul.add(returnType.replace("()", "")));
         hashNode.addNode(type);
+
+        // Name
         hashNode.addNode(GNode.create(name));
-        hashNode.addNode(null);
+
+        // Param
+        GNode fms = GNode.create("FormalParameters");
+        if(name == "equals") {
+            System.out.println("here!");
+            GNode fm = GNode.create("FormalParameter");
+            fm.addNode(null);
+            fm.addNode(GNode.create("Type"));
+            GNode fmqul = GNode.create("QualifiedIdentifier");
+            fmqul.add("Object");
+            fm.addNode(fmqul);
+            fms.addNode(fm);
+        } else {
+            fms.addNode(null);
+        }
+        hashNode.addNode(fms);
+
+        // Extender
         GNode extendsNode = GNode.create("ExtendsObjectPram");
         GNode inhertis = GNode.create("Object");
         extendsNode.add(inhertis);
         hashNode.addNode(extendsNode);
 
-//        System.out.println(hashNode.getNode(5).get(0));
         return hashNode;
     }
 
@@ -85,6 +109,7 @@ public class DependencyVTableTraversal extends Visitor {
                     if(!currentObject.methnames.contains(objmeth.methodName)) {
                         currentObject.methods.add(objmeth);
                         currentObject.methnames.add(objmeth.methodName);
+                        currentClass.addNode(objmeth.methodDecl);
                     }
                 }
                 return true;
@@ -109,7 +134,7 @@ public class DependencyVTableTraversal extends Visitor {
             currentObject.methods.add(objmeth);
             currentObject.methnames.add(method_name);
 
-            GNode extendsNode = GNode.create("ExtendsObjectPram");
+            GNode extendsNode = GNode.create("ExtendsObjectParam");
             GNode inhertis = GNode.create(objmeth.classInherits);
             extendsNode.addNode(inhertis);
             methDetails.addNode(extendsNode);
@@ -173,7 +198,6 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
-        System.out.println(vtable.toString());
         return vtable;
     }
 
