@@ -20,7 +20,7 @@ public class CppPrinter extends Visitor {
     public List<Node> cppContainer = new ArrayList<Node>();
     private Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
-    public CppPrinter(Node n) throws IOException{
+    public CppPrinter(Node n) throws IOException {
         Writer w;
         try {
             FileOutputStream fos = new FileOutputStream("output/cppOutput.cpp");
@@ -84,7 +84,7 @@ public class CppPrinter extends Visitor {
     // Printing current line
     // @param Current line
     private void cout(String line) {
-    printer.incr().indent().pln("cout << \"" + line + "\" << endl;").decr();
+        printer.incr().indent().pln("cout << \"" + line + "\" << endl;").decr();
     }
 
     public void writeCpp(Node n) throws IOException {

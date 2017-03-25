@@ -2,11 +2,15 @@
 #include "java_lang.h"
 
 using namespace edu::nyu::oop;
-namespace edu{
-namespace nyu{
-namespace oop{
+namespace edu
+{
+namespace nyu
+{
+namespace oop
+{
 
-int main(void) {
+int main(void)
+{
 };
 };
 };
