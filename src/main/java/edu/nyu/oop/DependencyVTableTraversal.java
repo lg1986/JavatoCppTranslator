@@ -15,6 +15,7 @@ public class DependencyVTableTraversal extends Visitor {
     public String currentClassName;
 
     public GNode currentClass;
+    private String packageName;
 
     public GNode createObjectNode(String returnType, String name) {
         GNode hashNode = GNode.create("MethodDeclaration");
@@ -37,7 +38,6 @@ public class DependencyVTableTraversal extends Visitor {
         // Param
         GNode fms = GNode.create("FormalParameters");
         if(name == "equals") {
-            System.out.println("here!");
             GNode fm = GNode.create("FormalParameter");
             fm.addNode(null);
             fm.addNode(GNode.create("Type"));
@@ -156,13 +156,16 @@ public class DependencyVTableTraversal extends Visitor {
      */
     public void visitClassDeclaration(GNode n) {
         try {
+            String class_name = n.get(1).toString().replace("()", "");
+            System.out.println(class_name);
+            if(class_name.toLowerCase().compareTo(packageName) == 0) return;
             currentObject = new JppObject();
             currentClassName = (n.get(1).toString());
             currentClass = GNode.create("ClassDeclaration");
             currentClass.addNode(GNode.create(currentClassName));
             visit(n);
-            for(MethodObject objmeth: object.methods) {
-                if(!currentObject.methnames.contains(objmeth.methodName)) {
+            for (MethodObject objmeth : object.methods) {
+                if (!currentObject.methnames.contains(objmeth.methodName)) {
                     currentObject.methods.add(objmeth);
                     currentObject.methnames.add(objmeth.methodName);
                     GNode objMethDecl = createObjectNode(objmeth.returnType, objmeth.methodName);
@@ -172,8 +175,19 @@ public class DependencyVTableTraversal extends Visitor {
             doesExtend(n);
             vtable.addASTNode(currentClass);
             vtable.objects.put(currentClassName, currentObject);
-        } catch (Exception e) {
-            System.out.println(e);
+        } catch (Exception ignore) {
+
+        }
+    }
+
+    public void visitPackageDeclaration(GNode n) {
+
+        try {
+            this.packageName = n.getNode(1).get(1).toString();
+            System.out.println(packageName);
+            visit(n);
+        } catch (Exception ignored) {
+
 
         }
     }
@@ -198,7 +212,6 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
-        System.out.println(vtable.toString());
         return vtable;
     }
 

@@ -18,6 +18,7 @@ public class CreateHeaderDataLayout extends Visitor {
 
     private Printer printer;
     private ArrayList<GNode> dataLayout = new ArrayList<GNode>();
+    private String packageName;
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -73,7 +74,10 @@ public class CreateHeaderDataLayout extends Visitor {
      * @throws IOException
      */
     public void writeStartBaseLayout() throws IOException {
-        printer.pln("using namespace edu::nyu::oop;");
+        printer.pln("#pragma once;");
+        printer.pln("#include \"java_lang.h\";");
+
+//        printer.pln("using namespace edu::nyu::oop;");
         printer.pln("namespace edu{");
         printer.pln("namespace nyu{");
         printer.pln("namespace oop{");
@@ -89,14 +93,15 @@ public class CreateHeaderDataLayout extends Visitor {
     // Write vptr to the respective vtable
     // Write the static class method to retrive the class of the object
     public void writeClassBase(String className) throws IOException {
-        String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr";
+        String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr;";
         printer.pln(v_ptr);
-        printer.pln("static Class __class()");
+        printer.pln("static Class __class();");
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
         String arg_name = null;
         String arg_type = null;
+
 
         try {
             Node temp = n.getNode(0);
@@ -108,7 +113,6 @@ public class CreateHeaderDataLayout extends Visitor {
             }
             printer.p(arg_type+" "+arg_name);
         } catch (IndexOutOfBoundsException e) {
-
         }
 
         printer.pln(")");
@@ -120,9 +124,16 @@ public class CreateHeaderDataLayout extends Visitor {
         if(n.get(1) != null) {
             decorator = n.get(1).toString().replace("()", "");
         }
-        String return_type = n.get(2).toString().replace("Type()", "").toLowerCase();
+        Node return_type = n.getNode(2);
+
+        String ret = "";
+        if(return_type.size() > 0) {
+            ret = return_type.getNode(0).get(0).toString().replace("Type", "").replace("()", "");
+        } else {
+            ret = return_type.toString().replace("Type", "").replace("()", "");
+        }
         String method_name = n.get(3).toString();
-        printer.p(return_type+" "+method_name+"(");
+        printer.p(ret+" "+method_name+"(");
         visit(n);
     }
 
@@ -133,13 +144,27 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
-        String class_name = "__"+n.get(1).toString().replace("()", "");
-        printer.pln("struct "+class_name+";");
-        printer.pln("struct "+class_name+"_VT;");
-        printer.pln("struct "+class_name+" {");
-        writeClassBase(n.get(1).toString());
-        visit(n);
-        printer.pln("};");
+        String class_name = n.get(1).toString().replace("()", "");
+        if(class_name.toLowerCase().compareTo(packageName) == 0) {
+            return;
+        } else {
+            class_name = "__" + class_name;
+            printer.pln("struct " + class_name + ";");
+            printer.pln("struct " + class_name + "_VT;");
+            printer.pln("struct " + class_name + " {");
+            writeClassBase(n.get(1).toString());
+            visit(n);
+            printer.pln("};");
+        }
+    }
+
+    public void visitPackageDeclaration(GNode n) {
+        try {
+            this.packageName = n.getNode(0).getNode(1).get(1).toString();
+            visit(n);
+        } catch (Exception ignored) {
+
+        }
     }
 
 
