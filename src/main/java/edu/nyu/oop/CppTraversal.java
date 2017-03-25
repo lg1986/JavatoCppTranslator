@@ -177,14 +177,17 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitSubscriptExpression(GNode n){
+        cpp.addAST(n);
         visit(n);
     }
 
     public void visitExpressionStatement(GNode n){
+        cpp.addAST(n);
         visit(n);
     }
 
     public void visitCallExpression(GNode n){
+        cpp.addAST(n);
         visit(n);
     }
 
@@ -195,6 +198,7 @@ public class CppTraversal extends Visitor {
     }
 
     public void visitArguments(GNode n){
+        cpp.addAST(n);
         visit(n);
     }
 
