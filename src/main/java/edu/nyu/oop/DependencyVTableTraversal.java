@@ -143,7 +143,6 @@ public class DependencyVTableTraversal extends Visitor {
                     currentObject.methnames.add(objmeth.methodName);
                     GNode objMethDecl = createObjectNode(objmeth.returnType, objmeth.methodName);
                     currentClass.addNode(objMethDecl);
-                    System.out.println(objMethDecl);
                 }
             }
             vtable.addASTNode(currentClass);
@@ -174,6 +173,7 @@ public class DependencyVTableTraversal extends Visitor {
         for(Node n: dependencyList) {
             super.dispatch(n);
         }
+        System.out.println(vtable.toString());
         return vtable;
     }
 
