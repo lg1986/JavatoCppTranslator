@@ -20,14 +20,10 @@ public class MethodTraversal extends Visitor {
      * Creates the TranslatedMethodNodeBlock
      */
     public void createCppMethodBlock(){
-        GNode retNode = GNode.create(methObj.returnType.replace("()", ""));
-        GNode nameNode = GNode.create(methObj.methName.replace("()", ""));
-        GNode methBlock = GNode.create(methObj.block.replace("()", ""));
-        GNode params = GNode.create(methObj.parameters.replace("()", ""));
-        methodNode.add(retNode);
-        methodNode.add(nameNode);
-        methodNode.add(params);
-        methodNode.add(methBlock);
+        methodNode.add(methObj.returnType.replace("()", ""));
+        methodNode.add(methObj.methName.replace("()", ""));
+        methodNode.add(methObj.block.replace("()", ""));
+        methodNode.add(methObj.parameters.replace("()", ""));
     }
 
     public void visitStringLiteral(GNode n){
@@ -37,12 +33,16 @@ public class MethodTraversal extends Visitor {
         else if(current == "Block"){
             methObj.block += n.get(0).toString();
         }
+        else if(current == "Arguments"){
+            String arg =
+            methObj.block += "("+n.get(0).toString()+")";
+        }
         visit(n);
     }
 
     public void visitIntegerLiteral(GNode n){
         if(current == "ReturnStatement"){
-            methObj.block += "return "+n.get(0)+"";
+            methObj.block += "return "+n.get(0);
         }
         visit(n);
     }
@@ -51,6 +51,34 @@ public class MethodTraversal extends Visitor {
         current = "ReturnStatement";
         visit(n);
     }
+
+
+    public void getCallDetails(GNode n){
+        String callStatement = "";
+        Node secp = n.getNode(0);
+        callStatement += secp.getNode(0).get(0);
+        callStatement += "." + secp.get(1).toString();
+        callStatement += "." + n.get(2);
+        if(callStatement.compareTo("System.out.println") == 0){
+            callStatement = callStatement.replace("System.out.println", "cout << ");
+        }
+        methObj.block += callStatement;
+
+    }
+
+    public void visitArguments(GNode n){
+        current = "Arguments";
+        visit(n);
+        current = "CallExpression";
+    }
+
+    public void visitCallExpression(GNode n){
+        current = "CallExpression";
+        getCallDetails(n);
+        visit(n);
+        current = "Block";
+    }
+
 
     public void visitDeclarator(GNode n){
         if(current == "Block"){
@@ -136,5 +164,10 @@ public class MethodTraversal extends Visitor {
         this.methodNode = methNode;
         createCppMethodBlock();
         return methObj;
+    }
+
+    static class CallExpObject {
+        String call = "";
+        String args = "";
     }
 }

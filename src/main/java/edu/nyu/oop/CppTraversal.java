@@ -84,7 +84,6 @@ public class CppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
-        System.out.println(cpp);
         return cpp;
     }
 
