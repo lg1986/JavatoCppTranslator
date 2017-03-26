@@ -167,10 +167,9 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitPackageDeclaration(GNode n) {
         try {
             this.packageName = n.getNode(0).getNode(1).get(1).toString();
-            visit(n);
         } catch (Exception ignored) {
-
         }
+        visit(n);
     }
 
 
