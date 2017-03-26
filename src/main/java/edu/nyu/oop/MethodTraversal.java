@@ -14,6 +14,21 @@ public class MethodTraversal extends Visitor {
     public cppMethodObject methObj;
 
     public String current;
+    GNode methodNode;
+
+    /**
+     * Creates the TranslatedMethodNodeBlock
+     */
+    public void createCppMethodBlock(){
+        GNode retNode = GNode.create(methObj.returnType.replace("()", ""));
+        GNode nameNode = GNode.create(methObj.methName.replace("()", ""));
+        GNode methBlock = GNode.create(methObj.block.replace("()", ""));
+        GNode params = GNode.create(methObj.parameters.replace("()", ""));
+        methodNode.add(retNode);
+        methodNode.add(nameNode);
+        methodNode.add(params);
+        methodNode.add(methBlock);
+    }
 
     public void visitStringLiteral(GNode n){
         if(current == "ReturnStatement"){
@@ -26,7 +41,6 @@ public class MethodTraversal extends Visitor {
     }
 
     public void visitIntegerLiteral(GNode n){
-        System.out.println(n);
         if(current == "ReturnStatement"){
             methObj.block += "return "+n.get(0)+"";
         }
@@ -52,6 +66,18 @@ public class MethodTraversal extends Visitor {
         }
         visit(n);
     }
+    public void visitExpression(GNode n){
+        if(current == "Block"){
+            String var = n.getNode(0).get(0).toString();
+            String val = n.getNode(2).get(0).toString();
+            String exp = n.get(1).toString();
+            methObj.block += var + " " + exp +" "+val+" \n";
+        }
+    }
+
+    public void visitExpressionStatement(GNode n){
+        visit(n);
+    }
 
     public void visitFieldDeclaration(GNode n){
         if(current == "Block"){
@@ -62,9 +88,10 @@ public class MethodTraversal extends Visitor {
         methObj.block +=" \n";
     }
 
+
     public void visitBlock(GNode n){
-        current = "Block";
         System.out.println(n);
+        current = "Block";
         visit(n);
     }
 
@@ -78,12 +105,13 @@ public class MethodTraversal extends Visitor {
         visit(n);
     }
 
+
     public void visitMethodDeclaration(GNode n){
         try {
             methObj = new cppMethodObject();
             methObj.methName = n.get(3).toString();
-            Node k = n.getNode(2);
-            if(k.toString().compareTo("VoidType()") == 0){
+            Node retNode = n.getNode(2);
+            if(retNode.toString().compareTo("VoidType()") == 0){
                 methObj.returnType = "void";
             } else {
                 methObj.returnType = n.getNode(2).getNode(0).get(0).toString();
@@ -91,6 +119,7 @@ public class MethodTraversal extends Visitor {
         } catch (Exception e){
             System.out.println("Error: "+n);
         }
+
         visit(n);
     }
 
@@ -102,8 +131,10 @@ public class MethodTraversal extends Visitor {
         }
     }
 
-    public cppMethodObject getBlock(Node n){
+    public cppMethodObject getBlock(Node n, GNode methNode){
         super.dispatch(n);
+        this.methodNode = methNode;
+        createCppMethodBlock();
         return methObj;
     }
 }

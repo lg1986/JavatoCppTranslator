@@ -25,9 +25,15 @@ public class CppTraversal extends Visitor {
 
     ArrayList<cppClassObject> objects = new ArrayList<cppClassObject>();
 
+    public void visitFieldDeclaration(GNode n){
+        visit(n);
+    }
+
     public void visitMethodDeclaration(GNode n) {
         MethodTraversal methTrav = new MethodTraversal();
-        methObj = methTrav.getBlock(n);
+        GNode methNode = GNode.create("MethodDeclaration");
+        methObj = methTrav.getBlock(n, methNode);
+        classNode.addNode(methNode);
         classObj.methods.add(methObj);
     }
 
@@ -78,7 +84,7 @@ public class CppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
-        System.out.println(objects.toString());
+        System.out.println(cpp);
         return cpp;
     }
 
@@ -96,7 +102,7 @@ public class CppTraversal extends Visitor {
     }
 
     static class cppClassObject {
-        ArrayList<String> fields = new ArrayList<String>()
+        ArrayList<String> fields = new ArrayList<String>();
         ArrayList<cppMethodObject> methods = new ArrayList<cppMethodObject>();
         String cName;
 
