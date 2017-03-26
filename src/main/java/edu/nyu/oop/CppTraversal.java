@@ -33,13 +33,7 @@ public class CppTraversal extends Visitor {
 
     GNode addClassCPP(GNode n) {
         classNode = GNode.create("ClassDeclaration");
-        classNode.addNode(GNode.create("struct " + n.get(1).toString()));
-        if (n.toString().length() > 2) {
-            GNode pointerClass = GNode.create("ClassDeclarationPointer");
-            pointerClass.addNode(GNode.create(" ->_vptr->"));
-            classNode.addNode(pointerClass);
-
-        }
+        classNode.addNode(GNode.create(n.get(1).toString()));
         return classNode;
     }
 
@@ -52,12 +46,6 @@ public class CppTraversal extends Visitor {
         if (!(className.equals(null) || type.equals(null) || node == null) && node != null) {
             field.addNode(GNode.create(node.get(0).toString())); //class
             field.addNode(GNode.create(node.get(2).toString())); //type
-        }
-        // check if the field calls a function, in which case we need to add a vptr Node in between
-        if(node.toString().length() > 2) {
-            GNode pointerField = GNode.create("FieldDeclarationPointer");
-            pointerField.addNode(GNode.create(" ->_vptr->"));
-            field.addNode(pointerField);
         }
         return field;
     }
@@ -233,8 +221,7 @@ public class CppTraversal extends Visitor {
             //packageNode = GNode.create("PackageDeclaration", 20);
             //packageNode.addNode(n);
             super.dispatch(n);
-            System.out.println("CLASSNODE : "+ classNode.toString());
-            cpp.addAST(classNode);
+
         }
         return cpp;
     }
@@ -246,7 +233,7 @@ public class CppTraversal extends Visitor {
             return cppasts;
         }
 
-        public void addAST(GNode n) {
+        public void addAST(Node n) {
             this.cppasts.add(n);
         }
 
