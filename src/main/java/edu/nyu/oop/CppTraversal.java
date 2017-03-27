@@ -23,9 +23,26 @@ public class CppTraversal extends Visitor {
     public cppMethodObject methObj;
     public cppClassObject classObj;
     public fieldObject fieldObj;
+    public constructorObject constructorObj;
 
     ArrayList<cppClassObject> objects = new ArrayList<cppClassObject>();
 
+
+    public void visitConstructorDeclaration(GNode n){
+        try{
+            GNode constructorNode = GNode.create("ConstructorDeclaration");
+            constructorObj = new constructorObject();
+            constructorObj.cName = n.get(2).toString();
+            classObj.constructors.add(constructorObj);
+            visit(n);
+        }
+        catch (NullPointerException e){
+            visit(n);
+        }
+        catch (IndexOutOfBoundsException e){
+            visit(n);
+        }
+    }
     public void visitFieldDeclaration(GNode n){
         try {
             GNode fieldNode = GNode.create("FieldDeclaration");
@@ -102,6 +119,17 @@ public class CppTraversal extends Visitor {
         return cpp;
     }
 
+    static class constructorObject {
+        String parameters = "";
+        String block = "";
+        String cName = "";
+
+        public String toString(){
+            return " parameters: "+parameters+
+                    "block:"+ block + "cName:"+cName;
+        }
+    }
+
     static class cppMethodObject {
         String returnType = "";
         String parameters = "";
@@ -130,11 +158,12 @@ public class CppTraversal extends Visitor {
     static class cppClassObject {
         ArrayList<fieldObject> fields = new ArrayList<fieldObject>();
         ArrayList<cppMethodObject> methods = new ArrayList<cppMethodObject>();
+        ArrayList<constructorObject> constructors = new ArrayList<constructorObject>();
         String cName;
 
         public String toString(){
             String s = "";
-            return methods.toString();
+            return fields.toString() + methods.toString() + constructors.toString();
         }
     }
 

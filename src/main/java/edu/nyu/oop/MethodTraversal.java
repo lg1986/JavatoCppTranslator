@@ -27,7 +27,7 @@ public class MethodTraversal extends Visitor {
     }
 
     public void visitStringLiteral(GNode n){
-        if(current == "ReturnStatement"){
+        if(current == "ReturnStatement" ){
             methObj.block += "return __rt::literal("+n.get(0)+")";
         }
         else if(current == "Block"){
@@ -52,7 +52,7 @@ public class MethodTraversal extends Visitor {
         visit(n);
     }
 
-    /*
+
     public void getCallDetails(GNode n){
         String callStatement = "";
         Node secp = n.getNode(0);
@@ -65,7 +65,7 @@ public class MethodTraversal extends Visitor {
         methObj.block += callStatement;
 
     }
-    */
+
 
     public void visitPrimaryIdentifier(GNode n) {
         if( current.compareTo("Arguments") == 0)
