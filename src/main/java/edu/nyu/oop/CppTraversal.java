@@ -22,10 +22,21 @@ public class CppTraversal extends Visitor {
 
     public cppMethodObject methObj;
     public cppClassObject classObj;
+    public fieldObject fieldObj;
 
     ArrayList<cppClassObject> objects = new ArrayList<cppClassObject>();
 
     public void visitFieldDeclaration(GNode n){
+        GNode fieldNode = GNode.create("FieldDeclaration");
+        String modifier = n.getNode(0).getNode(0).get(0).toString();
+        String type = n.getNode(1).getNode(0).get(0).toString();
+        String name = n.getNode(2).getNode(0).get(0).toString();
+        String value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+        fieldObj.modifier = modifier;
+        fieldObj.type = type;
+        fieldObj.name = name;
+        fieldObj.value = value;
+        classObj.fields.add(fieldObj);
         visit(n);
     }
 
@@ -100,8 +111,20 @@ public class CppTraversal extends Visitor {
         }
     }
 
+    static class fieldObject {
+        String modifier = "";
+        String type = "";
+        String name = "";
+        String value = "";
+
+        public String toString(){
+            return "Modifier type: "+modifier+" type: "+type+
+                    "name:"+ name +" value:"+value;
+        }
+    }
+
     static class cppClassObject {
-        ArrayList<String> fields = new ArrayList<String>();
+        ArrayList<fieldObject> fields = new ArrayList<fieldObject>();
         ArrayList<cppMethodObject> methods = new ArrayList<cppMethodObject>();
         String cName;
 
