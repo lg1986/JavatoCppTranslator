@@ -27,17 +27,21 @@ public class CppTraversal extends Visitor {
     ArrayList<cppClassObject> objects = new ArrayList<cppClassObject>();
 
     public void visitFieldDeclaration(GNode n){
-        GNode fieldNode = GNode.create("FieldDeclaration");
-        String modifier = n.getNode(0).getNode(0).get(0).toString();
-        String type = n.getNode(1).getNode(0).get(0).toString();
-        String name = n.getNode(2).getNode(0).get(0).toString();
-        String value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
-        fieldObj.modifier = modifier;
-        fieldObj.type = type;
-        fieldObj.name = name;
-        fieldObj.value = value;
-        classObj.fields.add(fieldObj);
-        visit(n);
+        try {
+            GNode fieldNode = GNode.create("FieldDeclaration");
+            fieldObj.modifier = n.getNode(0).getNode(0).get(0).toString();
+            fieldObj.type = n.getNode(1).getNode(0).get(0).toString();
+            fieldObj.name = n.getNode(2).getNode(0).get(0).toString();
+            fieldObj.value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+            classObj.fields.add(fieldObj);
+            visit(n);
+        }
+        catch (NullPointerException e) {
+            visit(n);
+        }
+        catch (IndexOutOfBoundsException e){
+            visit(n);
+        }
     }
 
     public void visitMethodDeclaration(GNode n) {
