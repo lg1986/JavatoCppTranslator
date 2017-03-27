@@ -34,6 +34,12 @@ public class CppTraversal extends Visitor {
             constructorObj = new constructorObject();
             constructorObj.cName = n.get(2).toString();
             constructorNode.addNode(GNode.create(constructorObj.cName));
+            if(n.getNode(3) != null){
+                constructorObj.type = n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString();
+                constructorObj.parameters = n.getNode(3).getNode(0).get(3).toString();
+                constructorNode.addNode(GNode.create(constructorObj.type.replace("()","")));
+                constructorNode.addNode(GNode.create(constructorObj.parameters.replace("()","")));
+            }
             visit(n);
             classNode.addNode(constructorNode);
             objects.add(classObj);
@@ -139,6 +145,7 @@ public class CppTraversal extends Visitor {
         String parameters = "";
         String block = "";
         String cName = "";
+        String type = "";
 
         public String toString(){
             return " parameters: "+parameters+
