@@ -29,7 +29,7 @@ public class MethodTraversal extends Visitor {
     }
 
     public void visitStringLiteral(GNode n){
-        if(current == "ReturnStatement"){
+        if(current == "ReturnStatement" ){
             methObj.block += "return __rt::literal("+n.get(0)+")";
         }
         else if(current == "Block"){
@@ -55,14 +55,27 @@ public class MethodTraversal extends Visitor {
     }
 
 
+    public void getCallDetails(GNode n) {
+        String callStatement = "";
+        Node secp = n.getNode(0);
+        callStatement += secp.getNode(0).get(0);
+        callStatement += "." + secp.get(1).toString();
+        callStatement += "." + n.get(2);
+        if (callStatement.compareTo("System.out.println") == 0) {
+            callStatement = callStatement.replace("System.out.println", "cout << ");
+        }
+        methObj.block += callStatement;
+    }
+
     public void visitSelectionExpression(GNode n) {
         methObj.block += n.getNode(0).get(0).toString()+".";
         methObj.block += n.get(1).toString();
     }
 
-//    public void visitPrimaryIdentifier(GNode n){
-//        methObj.block += n.get(0).toString();
-//    }
+
+    public void visitPrimaryIdentifier(GNode n){
+        methObj.block += "."+n.get(0).toString();
+    }
 
 
 
@@ -87,7 +100,6 @@ public class MethodTraversal extends Visitor {
                 String arg = x.getArgDetails(n.getNode(3));
             } else {
                 visit(n);
-                methObj.block += "."+n.get(2).toString();
             }
         } catch (Exception e){
             visit(n);

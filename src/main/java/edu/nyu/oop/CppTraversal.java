@@ -23,16 +23,54 @@ public class CppTraversal extends Visitor {
     public cppMethodObject methObj;
     public cppClassObject classObj;
     public fieldObject fieldObj;
+    public constructorObject constructorObj;
 
     ArrayList<cppClassObject> objects = new ArrayList<cppClassObject>();
 
+
+    public void visitConstructorDeclaration(GNode n){
+        try{
+            GNode constructorNode = GNode.create("ConstructorDeclaration");
+            constructorObj = new constructorObject();
+            constructorObj.cName = n.get(2).toString();
+            constructorNode.addNode(GNode.create(constructorObj.cName));
+            if(n.getNode(3) != null){
+                constructorObj.type = n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString();
+                constructorObj.parameters = n.getNode(3).getNode(0).get(3).toString();
+                constructorNode.addNode(GNode.create(constructorObj.type.replace("()","")));
+                constructorNode.addNode(GNode.create(constructorObj.parameters.replace("()","")));
+            }
+            visit(n);
+            classNode.addNode(constructorNode);
+            objects.add(classObj);
+
+        }
+        catch (NullPointerException e){
+            visit(n);
+        }
+        catch (IndexOutOfBoundsException e){
+            visit(n);
+        }
+    }
     public void visitFieldDeclaration(GNode n){
         try {
             GNode fieldNode = GNode.create("FieldDeclaration");
-            fieldObj.modifier = n.getNode(0).getNode(0).get(0).toString();
+            fieldObj = new fieldObject();
+            className  = n.get(1).toString().replace("()", "");
+            classObj = new cppClassObject();
+            classObj.cName = className;
+
+            if (!(n.getNode(0).getNode(0).get(0).equals(null))) {
+                fieldObj.modifier = n.getNode(0).getNode(0).get(0).toString();
+            }
             fieldObj.type = n.getNode(1).getNode(0).get(0).toString();
             fieldObj.name = n.getNode(2).getNode(0).get(0).toString();
-            fieldObj.value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+            if (n.getNode(2).getNode(0).getNode(2)==(null)){
+                fieldObj.value = null;
+            }
+            else {
+                fieldObj.value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+            }
             classObj.fields.add(fieldObj);
             visit(n);
         }
@@ -99,7 +137,20 @@ public class CppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
+        System.out.println(objects.toString());
         return cpp;
+    }
+
+    static class constructorObject {
+        String parameters = "";
+        String block = "";
+        String cName = "";
+        String type = "";
+
+        public String toString(){
+            return " parameters: "+parameters+
+                    "block:"+ block + "cName:"+cName;
+        }
     }
 
     static class cppMethodObject {
@@ -130,11 +181,13 @@ public class CppTraversal extends Visitor {
     static class cppClassObject {
         ArrayList<fieldObject> fields = new ArrayList<fieldObject>();
         ArrayList<cppMethodObject> methods = new ArrayList<cppMethodObject>();
+        ArrayList<constructorObject> constructors = new ArrayList<constructorObject>();
         String cName;
 
         public String toString(){
             String s = "";
-            return methods.toString();
+            return fields.toString() + methods.toString() + constructors.toString();
+
         }
     }
 
