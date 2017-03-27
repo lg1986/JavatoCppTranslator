@@ -52,7 +52,7 @@ public class MethodTraversal extends Visitor {
         visit(n);
     }
 
-
+    /*
     public void getCallDetails(GNode n){
         String callStatement = "";
         Node secp = n.getNode(0);
@@ -65,18 +65,39 @@ public class MethodTraversal extends Visitor {
         methObj.block += callStatement;
 
     }
+    */
+
+    public void visitPrimaryIdentifier(GNode n) {
+        if( current.compareTo("Arguments") == 0)
+           methObj.block += "." + n.get(0);
+        visit(n);
+
+    }
+
+    public void visitSelectionExpression(GNode n) {
+        methObj.block += n.getNode(0).get(0).toString();
+        methObj.block += "." + n.get(1).toString();
+        visit(n);
+    }
 
     public void visitArguments(GNode n){
-        current = "Arguments";
+        //current = "Arguments";
         visit(n);
-        current = "CallExpression";
+        //current = "CallExpression";
     }
 
     public void visitCallExpression(GNode n){
         current = "CallExpression";
-        getCallDetails(n);
+        //getCallDetails(n);
         visit(n);
-        current = "Block";
+        methObj.block += "." + n.get(2);
+        // check for System.out.println
+        if(methObj.block.compareTo("System.out.println") == 0){
+            methObj.block = methObj.block.replace("System.out.println", "cout << ");
+        }
+        // visit arguments
+        current = "Arguments";
+        visit(n.getNode(n.size() - 1));
     }
 
 
