@@ -33,8 +33,11 @@ public class CppTraversal extends Visitor {
             GNode constructorNode = GNode.create("ConstructorDeclaration");
             constructorObj = new constructorObject();
             constructorObj.cName = n.get(2).toString();
-            classObj.constructors.add(constructorObj);
+            constructorNode.addNode(GNode.create(constructorObj.cName));
             visit(n);
+            classNode.addNode(constructorNode);
+            objects.add(classObj);
+
         }
         catch (NullPointerException e){
             visit(n);
