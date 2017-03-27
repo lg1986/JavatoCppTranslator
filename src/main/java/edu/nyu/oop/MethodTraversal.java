@@ -4,6 +4,7 @@ import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
 import edu.nyu.oop.CppTraversal.cppMethodObject;
+import xtc.type.MethodT;
 
 /**
  * Created by rishabh on 25/03/17.
@@ -15,6 +16,7 @@ public class MethodTraversal extends Visitor {
 
     public String current;
     GNode methodNode;
+
 
     /**
      * Creates the TranslatedMethodNodeBlock
@@ -52,54 +54,46 @@ public class MethodTraversal extends Visitor {
         visit(n);
     }
 
-    /*
-    public void getCallDetails(GNode n){
-        String callStatement = "";
-        Node secp = n.getNode(0);
-        callStatement += secp.getNode(0).get(0);
-        callStatement += "." + secp.get(1).toString();
-        callStatement += "." + n.get(2);
-        if(callStatement.compareTo("System.out.println") == 0){
-            callStatement = callStatement.replace("System.out.println", "cout << ");
-        }
-        methObj.block += callStatement;
-
-    }
-    */
-
-    public void visitPrimaryIdentifier(GNode n) {
-        if( current.compareTo("Arguments") == 0)
-           methObj.block += "." + n.get(0);
-        visit(n);
-
-    }
 
     public void visitSelectionExpression(GNode n) {
-        methObj.block += n.getNode(0).get(0).toString();
-        methObj.block += "." + n.get(1).toString();
-        visit(n);
+        methObj.block += n.getNode(0).get(0).toString()+".";
+        methObj.block += n.get(1).toString();
     }
 
+//    public void visitPrimaryIdentifier(GNode n){
+//        methObj.block += n.get(0).toString();
+//    }
+
+
+
     public void visitArguments(GNode n){
-        //current = "Arguments";
         visit(n);
-        //current = "CallExpression";
     }
 
     public void visitCallExpression(GNode n){
-        current = "CallExpression";
-        //getCallDetails(n);
-        visit(n);
-        methObj.block += "." + n.get(2);
-        // check for System.out.println
-        if(methObj.block.compareTo("System.out.println") == 0){
-            methObj.block = methObj.block.replace("System.out.println", "cout << ");
-        }
-        // visit arguments
-        current = "Arguments";
-        visit(n.getNode(n.size() - 1));
-    }
 
+        // If we have a call expression as an arg
+        try {
+
+            System.out.println(n.getNode(n.size()-1));
+            if (n.getNode(n.size() - 1) != null
+                    && n.getNode(n.size() - 1).getNode(0).getName().toString().compareTo("CallExpression") == 0) {
+
+                Node secp = n.getNode(0);
+                String call = secp.getNode(0).get(0).toString() + "." + secp.get(1).toString();
+                methObj.block += call;
+                methObj.block += "." + n.get(2);
+                ArgumentsTraversal x = new ArgumentsTraversal();
+                String arg = x.getArgDetails(n.getNode(3));
+            } else {
+                visit(n);
+                methObj.block += "."+n.get(2).toString();
+            }
+        } catch (Exception e){
+            visit(n);
+            methObj.block += "."+n.get(2).toString();
+        }
+    }
 
     public void visitDeclarator(GNode n){
         if(current == "Block"){
@@ -139,7 +133,6 @@ public class MethodTraversal extends Visitor {
 
 
     public void visitBlock(GNode n){
-        System.out.println(n);
         current = "Block";
         visit(n);
     }

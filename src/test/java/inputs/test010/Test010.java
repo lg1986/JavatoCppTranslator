@@ -8,7 +8,8 @@ class A {
     }
 
     public void printOther(A other) {
-        System.out.println("a");
+        System.out.println(other.toString());
+        other.toString();
     }
 
     public String toString() {
