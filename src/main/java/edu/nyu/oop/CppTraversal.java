@@ -29,10 +29,22 @@ public class CppTraversal extends Visitor {
     public void visitFieldDeclaration(GNode n){
         try {
             GNode fieldNode = GNode.create("FieldDeclaration");
-            fieldObj.modifier = n.getNode(0).getNode(0).get(0).toString();
+            fieldObj = new fieldObject();
+            className  = n.get(1).toString().replace("()", "");
+            classObj = new cppClassObject();
+            classObj.cName = className;
+
+            if (!(n.getNode(0).getNode(0).get(0).equals(null))) {
+                fieldObj.modifier = n.getNode(0).getNode(0).get(0).toString();
+            }
             fieldObj.type = n.getNode(1).getNode(0).get(0).toString();
             fieldObj.name = n.getNode(2).getNode(0).get(0).toString();
-            fieldObj.value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+            if (n.getNode(2).getNode(0).getNode(2)==(null)){
+                fieldObj.value = null;
+            }
+            else {
+                fieldObj.value = n.getNode(2).getNode(0).getNode(2).get(0).toString();
+            }
             classObj.fields.add(fieldObj);
             visit(n);
         }
@@ -99,6 +111,7 @@ public class CppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
+        System.out.println(objects.toString());
         return cpp;
     }
 
@@ -134,7 +147,7 @@ public class CppTraversal extends Visitor {
 
         public String toString(){
             String s = "";
-            return methods.toString();
+            return fields.toString()+" "+methods.toString();
         }
     }
 
