@@ -13,11 +13,15 @@ import java.util.List;
 
 public class jppPrinter extends Visitor {
 
-    private Printer printer;
+
     private List<Node> jppList;
     private String packageName;
 
     private String currentClassName;
+
+    private Printer printer;
+    private Printer globalPrinter;
+    private Printer mainPrinter;
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -26,18 +30,29 @@ public class jppPrinter extends Visitor {
      */
     public jppPrinter(Node n) throws IOException {
         Writer w;
+        Writer w2;
         try {
-            FileOutputStream fos = new FileOutputStream("output/output.cpp");
-            OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
+
+            FileOutputStream fosMain = new FileOutputStream("output/main.cpp");
+            FileOutputStream fosPrinter = new FileOutputStream("output/output.cpp");
+
+            OutputStreamWriter ows = new OutputStreamWriter(fosMain, "utf-8");
+            OutputStreamWriter ows2 = new OutputStreamWriter(fosPrinter, "utf-8");
+
             w = new BufferedWriter(ows);
-            this.printer = new Printer(w);
+            w2 = new BufferedWriter(ows2);
+
+            this.mainPrinter = new Printer(w);
+            this.printer = new Printer(w2);
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
+        this.globalPrinter = this.printer;
         getOutputImplementations(n);
         writeStartBaseLayout();
         collect();
         writeEndBaseLayout();
+        globalPrinter.flush();
         printer.flush();
     }
 
@@ -56,43 +71,43 @@ public class jppPrinter extends Visitor {
     }
 
     public void writeStartBaseLayout() {
-        printer.pln("#include \"output.h\"");
-        printer.pln("namespace edu{");
-        printer.pln("namespace nyu{");
-        printer.pln("namespace oop{");
+        globalPrinter.pln("#include \"output.h\"");
+        globalPrinter.pln("namespace edu{");
+        globalPrinter.pln("namespace nyu{");
+        globalPrinter.pln("namespace oop{");
     }
 
     public void writeEndBaseLayout() {
-        printer.pln("};");
-        printer.pln("};");
-        printer.pln("};");
+        globalPrinter.pln("};");
+        globalPrinter.pln("};");
+        globalPrinter.pln("};");
     }
 
 
 
     public void printClassGenerics(String currentClassName) {
         currentClassName = "__"+currentClassName;
-        printer.pln(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) {}");
+        globalPrinter.pln(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) {}");
 
-        printer.pln("Class "+currentClassName+"::__class() {");
-        printer.indentMore();
-        printer.pln("static Class k = ");
-        printer.indentMore().indentMore();
+        globalPrinter.pln("Class "+currentClassName+"::__class() {");
+        globalPrinter.indentMore();
+        globalPrinter.pln("static Class k = ");
+        globalPrinter.indentMore().indentMore();
         String nextLine = "new __Class(__rt::literal(\"nyu.nyu.oop."+currentClassName.replace("__","")+"\"), __Object::__class());";
-        printer.pln(nextLine);
-        printer.indentMore();
-        printer.pln("return k;");
-        printer.pln("}");
-        printer.pln(currentClassName+"_VT " +currentClassName+"::__vtable");
+        globalPrinter.pln(nextLine);
+        globalPrinter.indentMore();
+        globalPrinter.pln("return k;");
+        globalPrinter.pln("}");
+        globalPrinter.pln(currentClassName+"_VT " +currentClassName+"::__vtable");
 
     }
 
     public void visitStringLiteral(GNode n) {
-        printer.p(n.get(0).toString().replace("", "")+";");
+        globalPrinter.p(n.get(0).toString().replace("", "")+";");
         visit(n);
     }
     public void visitIntegerLiteral(GNode n) {
-        printer.p(n.get(0).toString().replace("\"", "")+";");
+        globalPrinter.p(n.get(0).toString().replace("\"", "")+";");
         visit(n);
     }
 
@@ -114,40 +129,40 @@ public class jppPrinter extends Visitor {
             call = call.replace("System.out.print", "cout <<");
             call += "<< endl";
         }
-        printer.pln(call+";");
+        globalPrinter.pln(call+";");
         visit(n);
     }
 
     public void visitNewClassExpression(GNode n) {
         System.out.println(n);
-        printer.p("new __"+n.getNode(2).get(0).toString()+"()");
+        globalPrinter.p("new __"+n.getNode(2).get(0).toString()+"()");
     }
 
     public void visitDeclarator(GNode n) {
 
         if(n.get(2) == null) {
-            printer.p(" " + n.get(0).toString()+";");
+            globalPrinter.p(" " + n.get(0).toString()+";");
         } else {
-            printer.p(" " + n.get(0).toString()+" = ");
+            globalPrinter.p(" " + n.get(0).toString()+" = ");
             visit(n);
         }
-        printer.pln();
+        globalPrinter.pln();
     }
 
     public void visitQualifiedIdentifier(GNode n) {
-        printer.p(n.get(0).toString());
+        globalPrinter.p(n.get(0).toString());
         visit(n);
     }
 
     public void visitPrimaryIdentifier(GNode n) {
-        printer.p(n.get(0).toString());
+        globalPrinter.p(n.get(0).toString());
         visit(n);
     }
     public void visitReturnStatement(GNode n) {
         System.out.println(n);
-        printer.p("return ");
+        globalPrinter.p("return ");
         visit(n);
-        printer.pln(";");
+        globalPrinter.pln(";");
     }
     public void visitBlock(GNode n) {
         System.out.println(n);
@@ -155,13 +170,13 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitFormalParameter(GNode n) {
-        printer.p(","+n.getNode(1).getNode(0).get(0)+" "+n.get(3));
+        globalPrinter.p(","+n.getNode(1).getNode(0).get(0)+" "+n.get(3));
         visit(n);
     }
 
     public void visitFormalParameters(GNode n) {
         visit(n);
-        printer.pln("){");
+        globalPrinter.pln("){");
     }
 
     public String getRetType(GNode n) {
@@ -182,12 +197,12 @@ public class jppPrinter extends Visitor {
 
         String methodName = n.get(3).toString();
         String retType = getRetType(n);
-        printer.p(retType+" __"+currentClassName+"::"+methodName);
+        globalPrinter.p(retType+" __"+currentClassName+"::"+methodName);
         String paramList = "("+currentClassName+" __this";
-        printer.p(paramList);
+        globalPrinter.p(paramList);
         System.out.println(n);
         visit(n);
-        printer.pln("}");
+        globalPrinter.pln("}");
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
@@ -195,8 +210,9 @@ public class jppPrinter extends Visitor {
         String className = n.get(1).toString().replace("()", "");
         currentClassName = className;
         if(className.toLowerCase().compareTo(this.packageName) == 0) {
-            return;
+            this.globalPrinter = this.mainPrinter;
         } else {
+            this.globalPrinter = this.printer;
             printClassGenerics(className);
         }
         visit(n);

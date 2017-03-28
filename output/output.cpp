@@ -13,16 +13,14 @@ Class __A::__class()
     return k;
 }
 __A_VT __A::__vtable
-String a;
-__B::__B() : __vptr(&__vtable) {}
-Class __B::__class()
+String __A::toString(A __thisString)
 {
-    static Class k =
-        new __Class(__rt::literal("nyu.nyu.oop.B"), __Object::__class());
-    return k;
+    return __rt::literal("A");;
 }
-__B_VT __B::__vtable
-AString b;
-};
-};
-};
+void __A::mainSub(A __this)
+{
+    A a = new __A()
+    String s = a.toString();;
+
+    cout <<(a->_vptr->toString(a)->data)<< endl;
+}
