@@ -121,6 +121,7 @@ public class DependencyVTableTraversal extends Visitor {
         return false;
     }
 
+
     /**
      * visits Method Declaration. To the existing JppObject's
      * MethodObject ArrayList the current method is added

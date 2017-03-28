@@ -92,6 +92,7 @@ public class CreateHeaderDataLayout extends Visitor {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr;";
         printer.pln(v_ptr);
         printer.pln("static Class __class();");
+        printer.pln("__"+className+";");
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
@@ -107,11 +108,11 @@ public class CreateHeaderDataLayout extends Visitor {
             if(arr != null) {
                 arg_type += "[]";
             }
-            printer.p(arg_type+" "+arg_name);
+            printer.p(", "+arg_type+" "+arg_name);
         } catch (IndexOutOfBoundsException e) {
         }
 
-        printer.pln(")");
+        printer.pln(");");
         visit(n);
     }
 
@@ -126,18 +127,36 @@ public class CreateHeaderDataLayout extends Visitor {
         if(return_type.size() > 0) {
             ret = return_type.getNode(0).get(0).toString().replace("Type", "").replace("()", "");
         } else {
-            ret = return_type.toString().replace("Type", "").replace("()", "");
+            ret = "void";
         }
         String method_name = n.get(3).toString();
-        printer.p(ret+" "+method_name+"(");
+        printer.p(ret+" "+method_name.replace("()", "")+"(A ");
         visit(n);
     }
 
+
     public void visitConstructorDeclaration(GNode n) {
-        String constructor = "__"+n.get(2).toString().replace("()", "");
-        printer.p(constructor+"(");
+        String className = n.get(2).toString().replace("()", "").toString();
+        String constructor = "static "+className+" __init";
+        printer.p(constructor+"("+className+" __this");
         visit(n);
     }
+
+    public void visitDeclarator(GNode n) {
+        printer.pln(n.get(0).toString()+";");
+    }
+    public void visitDeclarators(GNode n) {
+        visit(n);
+    }
+
+    public void visitFieldDeclaration(GNode n) {
+        if(n.getNode(0).size() > 0) {
+            printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
+            visit(n.getNode(2));
+        }
+    }
+
+
 
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = n.get(1).toString().replace("()", "");
