@@ -125,8 +125,12 @@ public class jppPrinter extends Visitor {
 
 
     public void visitDeclarator(GNode n) {
-        printer.p(" "+n.get(0).toString()+" = ");
-        visit(n);
+        if(n.get(2) == null) {
+            printer.p(" " + n.get(0).toString()+";");
+        } else {
+            printer.p(" " + n.get(0).toString()+" = ");
+            visit(n);
+        }
         printer.pln();
     }
 
