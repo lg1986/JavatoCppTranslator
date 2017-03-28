@@ -150,13 +150,9 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-
         printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
         visit(n.getNode(2));
-
     }
-
-
 
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = n.get(1).toString().replace("()", "");
