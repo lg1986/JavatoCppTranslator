@@ -191,6 +191,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) throws IOException {
+        // if class has the main then use the main printer
         String className = n.get(1).toString().replace("()", "");
         currentClassName = className;
         if(className.toLowerCase().compareTo(this.packageName) == 0) {
