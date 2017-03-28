@@ -13,13 +13,16 @@ Class __A::__class()
     return k;
 }
 __A_VT __A::__vtable
-String fld;
-,String fString)
+String a;
+__B::__B() : __vptr(&__vtable) {}
+Class __B::__class()
 {
-    String __A::getFld(A __thisString)
-    {
-        return ;
-    }
+    static Class k =
+        new __Class(__rt::literal("nyu.nyu.oop.B"), __Object::__class());
+    return k;
+}
+__B_VT __B::__vtable
+AString b;
 };
 };
 };
