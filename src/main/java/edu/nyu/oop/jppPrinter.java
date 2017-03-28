@@ -140,14 +140,33 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitPrimaryIdentifier(GNode n) {
+        System.out.println("here!"+n);
         printer.p(n.get(0).toString());
         visit(n);
     }
     public void visitReturnStatement(GNode n) {
-        System.out.println(n);
         printer.p("return ");
         visit(n);
         printer.pln(";");
+    }
+
+    public void getCorrectExp(GNode n) {
+        System.out.println(n);
+        if(n.getNode(0).getName().compareTo("PrimaryIdentifier")==0) {
+
+            printer.p(n.getNode(0).get(0)+" = ");
+        }
+        if(n.getNode(2).getName().compareTo("PrimaryIdentifier")==0) {
+            printer.p(n.getNode(2).get(0)+";");
+        }
+    }
+
+    public void visitExpression(GNode n) {
+        getCorrectExp(n);
+    }
+
+    public void visitExpressionStatement(GNode n) {
+        visit(n);
     }
     public void visitBlock(GNode n) {
         System.out.println(n);
@@ -156,7 +175,6 @@ public class jppPrinter extends Visitor {
 
     public void visitFormalParameter(GNode n) {
         printer.p(","+n.getNode(1).getNode(0).get(0)+" "+n.get(3));
-        visit(n);
     }
 
     public void visitFormalParameters(GNode n) {
@@ -198,7 +216,8 @@ public class jppPrinter extends Visitor {
         } else {
             printClassGenerics(className);
         }
-        visit(n);
+        System.out.println(n);
+        visit(n.getNode(5));
 
     }
 
