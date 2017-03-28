@@ -4,9 +4,8 @@ class A {
     public String toString() {
         return "A";
     }
-    public void mainSub(){
+    public void mainSub() {
         A a = new A();
-        String k = "s";
         String s = a.toString();
         System.out.println(a.toString());
     }

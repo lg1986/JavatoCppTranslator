@@ -9,13 +9,9 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable
-String __A::toString(A __thisString){
-return __rt::literal("A");
-}
-void __A::mainSub(A __this){
-A a = new __A
-String k = __rt::literal("s")
-String s = 
+String a = 
+String __A::toString(A __thisString,int i){
+return __rt::literal("A");;
 }
 };
 };

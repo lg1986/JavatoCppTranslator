@@ -88,29 +88,49 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitStringLiteral(GNode n) {
-        printer.p(n.get(0).toString().replace("", ""));
+        printer.p(n.get(0).toString().replace("", "")+";");
         visit(n);
     }
     public void visitIntegerLiteral(GNode n) {
-        printer.p(n.get(0).toString().replace("\"", ""));
+        printer.p(n.get(0).toString().replace("\"", "")+";");
         visit(n);
     }
 
-    public void visitCallExpression(GNode n){
+    public void visitCallExpression(GNode n) {
+        String[] secp = n.get(0).toString().split(" ");
+        String call = "";
+        for(String s: secp) {
+            call += s+".";
+        }
+        call += n.get(2).toString();
+        if(n.getNode(3).size() > 0) {
+            call += "("+n.getNode(3).get(0).toString()+")";
+        } else {
+            call += "();";
+        }
+        if(call.contains("System.out.println") || call.contains("System.out.print")) {
 
+            call = call.replace("System.out.println", "cout <<");
+            call = call.replace("System.out.print", "cout <<");
+            call += "<< endl";
+        }
+        printer.pln(call+";");
+        visit(n);
     }
 
-    public void visitNewClassExpression(GNode n){
-        printer.p("new __"+n.getNode(2).get(0).toString());
+    public void visitNewClassExpression(GNode n) {
+        System.out.println(n);
+        printer.p("new __"+n.getNode(2).get(0).toString()+"()");
     }
 
-    public void visitDeclarator(GNode n){
+
+    public void visitDeclarator(GNode n) {
         printer.p(" "+n.get(0).toString()+" = ");
         visit(n);
         printer.pln();
     }
 
-    public void visitQualifiedIdentifier(GNode n){
+    public void visitQualifiedIdentifier(GNode n) {
         printer.p(n.get(0).toString());
         visit(n);
     }
@@ -138,10 +158,10 @@ public class jppPrinter extends Visitor {
         printer.pln("){");
     }
 
-    public String getRetType(GNode n){
+    public String getRetType(GNode n) {
 
         String retType = "";
-        if(n.getNode(2).size() == 0){
+        if(n.getNode(2).size() == 0) {
             retType = "void";
         } else {
             retType = n.getNode(2).getNode(0).get(0).toString();
