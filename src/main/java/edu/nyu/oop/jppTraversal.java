@@ -63,8 +63,6 @@ public class jppTraversal extends Visitor {
         visit(n);
         n.set(0, n.getNode(0).get(0).toString());
         fixArg(n.getNode(n.size()-1));
-        System.out.println(n);
-
     }
 
 
@@ -90,11 +88,11 @@ public class jppTraversal extends Visitor {
     }
 
 
-    public cppAST getSummary(List<Node> cppList) {
+    public List<Node> getSummary(List<Node> cppList) {
         for(Node n: cppList) {
             super.dispatch(n);
         }
-        return cpp;
+        return cppList;
     }
 
 

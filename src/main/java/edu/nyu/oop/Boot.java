@@ -123,9 +123,9 @@ public class Boot extends Tool {
             List<Node> astList = depe.getDependency();
             List<Node> jppList = jppTraversal.getSummary(astList).cppasts;
             System.out.println(jppList.toString());
-//            for(Node element:astList) {
-//                runtime.console().format(element).pln().flush();
-//            }
+            for(Node element:astList) {
+                runtime.console().format(element).pln().flush();
+            }
 
         }
 
