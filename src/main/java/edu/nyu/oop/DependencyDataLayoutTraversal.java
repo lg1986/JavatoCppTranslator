@@ -21,17 +21,13 @@ public class DependencyDataLayoutTraversal extends Visitor {
 
 
     public void visitFieldDeclaration(GNode n) {
-
-        if(n.getNode(0).size() > 0) {
-            dataFieldObj fi = new dataFieldObj();
-            currentField = n.getNode(1).getNode(0).get(0).toString()+" ";
-            currentField += n.getNode(2).getNode(0).get(0).toString();
-            fi.name = currentField;
-            fi.field = n;
-            currentobj.fields.add(fi);
-        }
+        dataFieldObj fi = new dataFieldObj();
+        currentField = n.getNode(1).getNode(0).get(0).toString()+" ";
+        currentField += n.getNode(2).getNode(0).get(0).toString();
+        fi.name = currentField;
+        fi.field = n;
+        currentobj.fields.add(fi);
         classNode.addNode(n);
-        visit(n);
     }
 
 
@@ -50,12 +46,10 @@ public class DependencyDataLayoutTraversal extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
         classNode.addNode(collateDetails(n, "MethodDeclaration", 5));
-        visit(n);
     }
 
     public void visitConstructorDeclaration(GNode n) {
         classNode.addNode(collateDetails(n, "ConstructorDeclaration", 5));
-        visit(n);
     }
 
     public boolean checkIfFieldIn(String fieldName) {

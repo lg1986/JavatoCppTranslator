@@ -150,10 +150,10 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-        if(n.getNode(0).size() > 0) {
-            printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
-            visit(n.getNode(2));
-        }
+
+        printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
+        visit(n.getNode(2));
+
     }
 
 

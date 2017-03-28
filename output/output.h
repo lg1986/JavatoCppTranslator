@@ -13,12 +13,11 @@ struct __A
     __A_VT* __vptr;
     static Class __class();
     __A();
-    String fld;
+    int x;
+    boolean b;
+    int y;
     static A __init(A __this);
-    static A __init(A __this, String s);
-    void setFld(A, String f);
-    void almostSetFld(A, String f);
-    String getFld(A );
+    static A __init(A __this, int x1);
 };
 struct __B;
 struct __B_VT;
@@ -27,8 +26,20 @@ struct __B
     __B_VT* __vptr;
     static Class __class();
     __B();
-    static B __init(B __this);
-    String fld;
+    int z;
+    static B __init(B __this, int x1);
+    int x;
+    boolean b;
+    int y;
+};
+struct __Input;
+struct __Input_VT;
+struct __Input
+{
+    __Input_VT* __vptr;
+    static Class __class();
+    __Input();
+    void main(A, String[] args);
 };
 struct __A_VT
 {
@@ -39,7 +50,6 @@ struct __A_VT
     String (*toString)(A);
     __A_VT()
         : __is_a(__A::__class()),
-          getFld(__A::getFld),
           hashCode((int_32(*)( A )) &__Object::hashCode),
           equals((bool(*)( A, Object )) &__Object::equals),
           toString((String(*)( A )) &__Object::toString),
@@ -60,7 +70,22 @@ struct __A_VT
           equals((bool(*)( B, Object )) &__Object::equals),
           toString((String(*)( B )) &__Object::toString),
           getClass((Class(*)( B )) &__Object::getClass),
-          getFld((String(*)( B )) &__A::getFld),
+    }
+
+
+    struct __Input_VT
+{
+    Class __is_a;
+    int32_t (*hashCode)(Input);
+    bool (*equals)(Input, Object);
+    Class (*getClass)(Input);
+    String (*toString)(Input);
+    __Input_VT()
+        : __is_a(__Input::__class()),
+          hashCode((int_32(*)( Input )) &__Object::hashCode),
+          equals((bool(*)( Input, Object )) &__Object::equals),
+          toString((String(*)( Input )) &__Object::toString),
+          getClass((Class(*)( Input )) &__Object::getClass),
     }
 
 
