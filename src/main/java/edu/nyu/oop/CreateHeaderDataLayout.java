@@ -150,9 +150,17 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-
-        printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
+        if(n.getNode(1).getNode(0).get(0).toString().compareTo("Integer")==0) {
+            printer.p("int32_t ");
+        } else if(n.getNode(1).getNode(0).get(0).toString().compareTo("int") == 0) {
+            printer.p("int32_t ");
+        } else if(n.getNode(1).getNode(0).get(0).toString().equals("boolean")) {
+            printer.p("bool ");
+        } else {
+            printer.p(n.getNode(1).getNode(0).get(0).toString() + " ");
+        }
         visit(n.getNode(2));
+
 
     }
 
