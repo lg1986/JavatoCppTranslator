@@ -12,7 +12,7 @@ Class __A::__class()
         new __Class(__rt::literal("nyu.nyu.oop.A"), __Object::__class());
     return k;
 }
-__A_VT __A::__vtable
+__A_VT __A::__vtable;
 String fld = __rt::literal("A");
 void __A::setFld(A __this,String f)
 {
@@ -34,7 +34,7 @@ Class __B::__class()
         new __Class(__rt::literal("nyu.nyu.oop.B"), __Object::__class());
     return k;
 }
-__B_VT __B::__vtable
+__B_VT __B::__vtable;
 };
 };
 };

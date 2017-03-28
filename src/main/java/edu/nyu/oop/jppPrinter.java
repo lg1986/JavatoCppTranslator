@@ -83,7 +83,7 @@ public class jppPrinter extends Visitor {
         printer.indentMore();
         printer.pln("return k;");
         printer.pln("}");
-        printer.pln(currentClassName+"_VT " +currentClassName+"::__vtable");
+        printer.pln(currentClassName+"_VT " +currentClassName+"::__vtable;");
 
     }
 
