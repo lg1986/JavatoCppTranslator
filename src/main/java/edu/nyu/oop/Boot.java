@@ -45,6 +45,7 @@ public class Boot extends Tool {
         bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
         bool("createVTableHeader", "createVTableHeader", false, "Create VTable Header").
         bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
+        bool("jppTraversal", "jppTraversal", false, "Traverse jpp").
         bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
@@ -104,13 +105,6 @@ public class Boot extends Tool {
 
         }
 
-//        if(runtime.test("createVTableHeader")) {
-//            try {
-//                CreateHeaderVTable head = new CreateHeaderVTable(n);
-//            } catch (IOException e) {
-//
-//            }
-//        }
 
         if(runtime.test("dependencyVTableTraversal")) {
             DependencyVTableTraversal visitor = new DependencyVTableTraversal();
@@ -118,6 +112,21 @@ public class Boot extends Tool {
             AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
             List<Node> dependencyList = depe.getDependency();
             ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
+        }
+
+
+
+        if(runtime.test("jppTraversal")) {
+            jppTraversal jppTraversal = new jppTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> astList = depe.getDependency();
+            List<Node> jppList = jppTraversal.getSummary(astList).cppasts;
+            System.out.println(jppList.toString());
+//            for(Node element:astList) {
+//                runtime.console().format(element).pln().flush();
+//            }
+
         }
 
     }
