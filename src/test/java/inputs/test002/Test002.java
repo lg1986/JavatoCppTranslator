@@ -2,7 +2,7 @@ package inputs.test002;
 
 class A {
     public String a;
-    public String toString() {
+    public String toString(int i) {
         return "A";
     }
 }

@@ -62,10 +62,6 @@ public class CreateHeaderDataLayout extends Visitor {
         DependencyDataLayoutTraversal dataLayoutVisitor = new DependencyDataLayoutTraversal();
         this.dataLayout = dataLayoutVisitor.getSummary(dependenceyList).dependencyAsts;
 
-        // Phase 2 - Data Layout VTable
-//        DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
-//        vTable = vTableVisitor.getSummary(dependenceyList).vtableAsts;
-
     }
 
 

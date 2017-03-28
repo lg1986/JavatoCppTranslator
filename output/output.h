@@ -1,19 +1,3 @@
-#pragma once;
-#include "java_lang.h";
-namespace edu
-{
-namespace nyu
-{
-namespace oop
-{
-struct __A;
-struct __A_VT;
-struct __A
-{
-    __A_VT* __vptr;
-    static Class __class();
-    String toString()()
-};
 struct __A_VT
 {
     Class __is_a;
@@ -30,6 +14,3 @@ struct __A_VT
     }
 
 
-    };
-    };
-    };
