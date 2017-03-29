@@ -172,7 +172,7 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = n.get(1).toString().replace("()", "");
         currentClassName = class_name;
-        if(class_name.toLowerCase().equals("input")) {
+        if(class_name.toLowerCase().equals(this.packageName)) {
             return;
         } else {
             class_name = "__" + class_name;

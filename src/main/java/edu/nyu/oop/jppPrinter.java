@@ -237,8 +237,8 @@ public class jppPrinter extends Visitor {
 
     public void visitClassDeclaration(GNode n) throws IOException {
         currentClassName = n.get(1).toString().replace("()", "");
-        if(currentClassName.toLowerCase().compareTo("input") == 0) {
-            System.out.println("here!");
+        if(currentClassName.toLowerCase().compareTo(this.packageName) == 0) {
+            MainPrinter mp = new MainPrinter(n);
             return;
         } else {
             printClassGenerics();

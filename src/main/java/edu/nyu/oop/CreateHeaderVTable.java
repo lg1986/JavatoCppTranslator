@@ -119,7 +119,7 @@ public class CreateHeaderVTable extends Visitor {
         currentClassName= n.get(0).toString().replace("()", "");
 
         // Check if the name of the file is the same and thus, has the main method
-        if(currentClassName.toLowerCase().equals("input")) {
+        if(currentClassName.toLowerCase().equals(this.packageName)) {
             return;
         } else {
             printStarterVTable(currentClassName);
