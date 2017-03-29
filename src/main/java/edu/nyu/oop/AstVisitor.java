@@ -39,11 +39,13 @@ public class AstVisitor extends Visitor {
         return f;
     }
 
-    // Double dispact visitImport declaration
+    // Double dispatch visitImport declaration
     public void visitImportDeclaration(GNode n) {
-        Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1))); // Creating new dependency
+        // Creating new dependency
+        Node dependency = NodeUtil.parseJavaFile(getFile(n.getNode(1)));
 
-        asts.addAST(dependency); // Adding to asts
+        // Adding to asts
+        asts.addAST(dependency);
         visit(dependency);
     }
 

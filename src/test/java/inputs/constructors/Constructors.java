@@ -15,7 +15,7 @@ class B extends A {
     }
 }
 
-public class Input {
+public class Constructors {
     public static void main(String[] args) {
         B b = new B();
         A a1 = new A();

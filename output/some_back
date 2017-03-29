@@ -1,0 +1,138 @@
+
+public void visitStringLiteral(GNode n)
+{
+    printer.p(n.get(0).toString().replace("", "")+";");
+    visit(n);
+}
+public void visitIntegerLiteral(GNode n)
+{
+    printer.p(n.get(0).toString().replace("\"", "")+";");
+    visit(n);
+}
+
+public void visitCallExpression(GNode n)
+{
+    String[] secp = n.get(0).toString().split(" ");
+    String call = "";
+    if(secp[0].compareTo("System")==0)
+    {
+        call = "";
+        for (String s : secp)
+        {
+            call += s + ".";
+        }
+        call += n.get(2).toString();
+        if (n.getNode(3).size() > 0)
+        {
+            call += "(" + n.getNode(3).get(0).toString() + ")";
+        }
+        else
+        {
+            call += "()";
+        }
+        if (call.contains("System.out.println") || call.contains("System.out.print"))
+        {
+
+            call = call.replace("System.out.println", "cout <<");
+            call = call.replace("System.out.print", "cout <<");
+            call += "<< endl";
+        }
+    }
+    else
+    {
+        call = n.get(0)+"->_vptr->"+n.get(2).toString()+"("+n.get(0)+")";
+    }
+    printer.p(call);
+    visit(n);
+    printer.pln(";");
+}
+
+public void visitNewClassExpression(GNode n)
+{
+    printer.p("new __"+n.getNode(2).get(0).toString()+"()");
+}
+
+public void visitDeclarator(GNode n)
+{
+    if(n.get(2) == null)
+    {
+        printer.p(" " + n.get(0).toString());
+    }
+    else
+    {
+        printer.p(" " + n.get(0).toString()+" = ");
+        visit(n);
+    }
+    printer.pln(";");
+}
+
+
+public void visitFieldDeclaration(GNode n)
+{
+    String t = (n.getNode(1).getNode(0).get(0).toString());
+    t = convertIntBool(t);
+    printer.p(t);
+    visit(n.getNode(2));
+
+}
+
+public void visitPrimaryIdentifier(GNode n)
+{
+    System.out.println("here!"+n);
+    printer.p(n.get(0).toString());
+    visit(n);
+}
+public void visitReturnStatement(GNode n)
+{
+    printer.p("return ");
+    visit(n);
+    printer.pln(";");
+}
+
+public void getCorrectExp(GNode n)
+{
+    System.out.println(n);
+    if(n.getNode(0).getName().compareTo("PrimaryIdentifier")==0)
+    {
+        printer.p(n.getNode(0).get(0)+" = ");
+    }
+    if(n.getNode(2).getName().compareTo("PrimaryIdentifier")==0)
+    {
+        printer.p(n.getNode(2).get(0)+";");
+    }
+}
+
+public void visitExpression(GNode n)
+{
+
+    getCorrectExp(n);
+}
+
+public void visitExpressionStatement(GNode n)
+{
+    visit(n);
+}
+public void visitBlock(GNode n)
+{
+    visit(n);
+}
+
+public void visitFormalParameters(GNode n)
+{
+    visit(n);
+}
+
+
+public String convertIntBool(String ty)
+{
+    String ret = ty;
+    if(ty.equals("int") || ty.equals("Integer")) ret = "int32_t";
+    if(ty.equals("boolean")) ret = "bool";
+    return ret;
+}
+
+public void visitClassDeclaration(GNode n) throws IOException
+{
+    System.out.println(n);
+    visit(n);
+}
