@@ -1,5 +1,8 @@
 Team j++ -- Translator 5
 
+Run everything - 
+runxtc -jppPrinter src/test/java/inputs/testX/testX.java
+
 Phase 1: 
 - Goal: Create the Java AST
 - Create the AstVisitor class
