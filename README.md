@@ -4,7 +4,8 @@ Phase 1:
 - Goal: Create the Java AST
 - Create the AstVisitor class
 - Visit each node using double dispatch 
-- Created a completeAST object that stores the AST & the dependencies
+- Created a completeAST object that stores the AST & the dependencies\
+- Command: runxtc -createAllAST <test-file-path-here>
 
 Phase 2: 
 - Goal: Create the data layout and vtable that represents the Java AST
@@ -18,6 +19,8 @@ Phase 2:
   - Uses the class name to access the object
   - Each class has an object representation with all of its methods
   - Allows to check inheritance
+  - Command 1: runxtc -dependencyTraversal <test-file-path-here>
+  - Command 2: runxtc -dependencyVTableTraversal <test-file-path-here>
   
 Phase 3: 
 - Goal: Create the header file output.h from the phase 2 ASTs 
@@ -25,6 +28,7 @@ Phase 3:
 - Generates the C++ syntax for the header file
 - Traverse to get the data layout AST
 - Visits each node of AST, prints the C++ version 
+- Command: runxtc -createHeaderFile <test-file-path-here>
 
 Phase 4: 
 - Goal: Create the C++ AST from the Java AST
@@ -32,11 +36,13 @@ Phase 4:
 - Traverses the Java AST, visits each scope, expressions, declarations, etc
 - Mutates the Java syntax into a C++ syntax 
 - Builds the C++ AST in the cppAST objects
+- Commmand: runxtc -jppTraversal <test-file-path-here>
 
 Phase 5: 
 - Goal: Printing C++ code from the C++ AST
 - Created the JppPrinter class
 - Traverses the C++ AST from phase 4 and prints the correct C++ syntax
 - Still in development
+- Command: runxtc -jppPrinter <test-file-path-here>
 
 
