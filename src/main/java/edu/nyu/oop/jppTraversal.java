@@ -17,15 +17,9 @@ public class jppTraversal extends Visitor {
     public void visitConstructorDeclaration(GNode n) {
         try {
             GNode constructorNode = GNode.create("ConstructorDeclaration");
-            // use n.set to modify node
-            // constructorObj.cName = n.get(2).toString();
-            // if getnode(3) isnt nulll -->
-            // constructorObj.type = n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString();
-            // constructorObj.parameters = n.getNode(3).getNode(0).get(3).toString();
             if(n.getNode(3) != null) {
-
-                n.set(1,n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString());
-                n.set(2,n.getNode(3).getNode(0).get(3).toString());
+                n.set(1,n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString()); // get the type
+                n.set(2,n.getNode(3).getNode(0).get(3).toString()); // get the params
             }
 
 
@@ -63,7 +57,10 @@ public class jppTraversal extends Visitor {
         n.set(1, null);
         visit(n);
     }
-
+    /**
+     * This translates Call Expressions and Selection Expressions
+     * @param n
+     */
     public void fixArg(Node n) {
 
         if(n != null && n.size()>0) {

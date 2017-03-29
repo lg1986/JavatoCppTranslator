@@ -25,10 +25,11 @@ public class AstVisitor extends Visitor {
 
     private completeAST asts = new completeAST();
 
-    // getFile - it gets the File object.
-    // the src/test/java folder is where all
-
-    // the dependcies and the test files are
+    /**
+     * This gets the File object
+     * the src/test/java folder is where all the dependencies and test files are
+     * @param k
+     */
     public File getFile(Node k) {
         String file_path = "src/test/java/";
         for(int i = 0; i<k.size()-1; i++) {

@@ -87,8 +87,11 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
 
-    // Write vptr to the respective vtable
-    // Write the static class method to retrive the class of the object
+    /**
+     * This writes the vptr to the respective vtable and writes the static class method to retrieve
+     * the class object
+     * @param className
+     */
     public void writeClassBase(String className) throws IOException {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr;";
         printer.pln(v_ptr);
