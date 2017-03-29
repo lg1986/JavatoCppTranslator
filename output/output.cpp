@@ -13,19 +13,10 @@ Class __A::__class()
     return k;
 }
 __A_VT __A::__vtable;
-String fld = __rt::literal("A");
-void __A::setFld(A __this,String f)
+A some;
+void __A::printOther(A __this,A other)
 {
-    fld = f;
-}
-void __A::almostSetFld(A __this,String f)
-{
-    String fld;
-    fld = f;
-}
-String __A::getFld(A __thisString)
-{
-    return fld;
+    cout <<(other->_vptr->toString(other)->data)<< endl
 }
 __B::__B() : __vptr(&__vtable) {}
 Class __B::__class()
@@ -35,6 +26,14 @@ Class __B::__class()
     return k;
 }
 __B_VT __B::__vtable;
+void __B::printOther(B __this,A other)
+{
+    cout <<(other->_vptr->toString(other)->data)<< endl
+}
+String __B::toString(B __thisString)
+{
+    return some->_vptr->toString(some);
+}
 };
 };
 };

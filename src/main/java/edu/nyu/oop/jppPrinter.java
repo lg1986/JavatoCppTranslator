@@ -9,6 +9,7 @@ import xtc.tree.Visitor;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class jppPrinter extends Visitor {
@@ -99,22 +100,27 @@ public class jppPrinter extends Visitor {
     public void visitCallExpression(GNode n) {
         String[] secp = n.get(0).toString().split(" ");
         String call = "";
-        for(String s: secp) {
-            call += s+".";
-        }
-        call += n.get(2).toString();
-        if(n.getNode(3).size() > 0) {
-            call += "("+n.getNode(3).get(0).toString()+")";
-        } else {
-            call += "();";
-        }
-        if(call.contains("System.out.println") || call.contains("System.out.print")) {
+        if(secp[0].compareTo("System")==0) {
+            call = "";
+            for (String s : secp) {
+                call += s + ".";
+            }
+            call += n.get(2).toString();
+            if (n.getNode(3).size() > 0) {
+                call += "(" + n.getNode(3).get(0).toString() + ")";
+            } else {
+                call += "()";
+            }
+            if (call.contains("System.out.println") || call.contains("System.out.print")) {
 
-            call = call.replace("System.out.println", "cout <<");
-            call = call.replace("System.out.print", "cout <<");
-            call += "<< endl";
+                call = call.replace("System.out.println", "cout <<");
+                call = call.replace("System.out.print", "cout <<");
+                call += "<< endl";
+            }
+        } else {
+            call = n.get(0)+"->_vptr->"+n.get(2).toString()+"("+n.get(0)+")";
         }
-        printer.pln(call+";");
+        printer.p(call);
         visit(n);
     }
 
