@@ -3,9 +3,11 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace java
+namespace nyu
 {
-namespace lang
+namespace edu
+{
+namespace oop
 {
 
 // java.lang.Object()
@@ -186,6 +188,7 @@ Class __Class::__class()
 // invokes the default no-arg constructor for __Class_VT.
 __Class_VT __Class::__vtable;
 
+}
 }
 }
 
