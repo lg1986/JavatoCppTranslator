@@ -52,45 +52,46 @@ public class CreateHeaderVTable extends Visitor {
 
     }
 
-    // 0 Modifiers
-    // 1
-    // 2 Return Type - Qualified Identifier
-    // 3 name
-    // 4 Formal Params
-
-    // Structured needed -  Return type (*nameOfMethod) ()
-
-    // Structure for VTable -
-    // name((returnTyoe (*)(name)) &__FROM::name),
+    public String getArg(GNode n) {
+        if(n.get(2).toString().compareTo("VoidType()")==0) {
+            return "void";
+        } else {
+            return n.getNode(2).getNode(0).get(0).toString();
+        }
+    }
 
 
     public void visitMethodDeclaration(GNode n) throws IOException {
-        try {
-            String meth_name = n.getNode(3).toString().replace("()", "");
-            String ret_type = n.getNode(2).getNode(0).get(0).toString();
-            Node params = n.getNode(4);
-            String cl = n.getNode(5).get(0).toString().replace("()", "");
-            String paramList = currentClassName +", ";
+//
+        String meth_name = n.getNode(3).toString().replace("()", "");
+        String ret_type = getArg(n);
 
-            if(params != null) {
+        Node params = n.getNode(4);
+        String cl = n.getNode(5).get(0).toString().replace("()", "");
+        String paramList = currentClassName +", ";
 
-                for (int i = 0; i < params.size(); i++) {
-                    if(params.getNode(i) != null)
-                        paramList += params.getNode(i).getNode(2).get(0).toString() + ", ";
+        if(params != null) {
+            for (int i = 0; i < params.size(); i++) {
+                if(params.getNode(i) != null) {
+                    if(params.getNode(i).getNode(1).size() > 0) {
+                        paramList += params.getNode(i).getNode(1).getNode(0).get(0)+" ";
+                        paramList += params.getNode(i).get(3) + ", ";
+                    } else {
+                        paramList += "Object ";
+                    }
                 }
             }
-            paramList = paramList.replaceAll(", $", "");
-            paramList = "( " + paramList + " )";
+        }
+        paramList = paramList.replaceAll(", $", "");
+        paramList = "( " + paramList + " )";
 
-            if(cl.compareTo(currentClassName) == 0) {
-                currentMethodString = meth_name+"("+"__"+currentClassName+"::"+meth_name+"),";
-                printer.pln(currentMethodString);
-            } else {
-                currentMethodString = (meth_name+"(("+ret_type+"(*)"+paramList+")");
-                currentMethodString += " &__"+cl+"::"+meth_name+"), ";
-                printer.pln(currentMethodString);
-            }
-        } catch (Exception e) {
+        if(cl.compareTo(currentClassName) == 0) {
+            currentMethodString = meth_name+"("+"__"+currentClassName+"::"+meth_name+"),";
+            printer.pln(currentMethodString);
+        } else {
+            currentMethodString = (meth_name+"(("+ret_type+"(*)"+paramList+")");
+            currentMethodString += " &__"+cl+"::"+meth_name+"), ";
+            printer.pln(currentMethodString);
         }
 
         visit(n);

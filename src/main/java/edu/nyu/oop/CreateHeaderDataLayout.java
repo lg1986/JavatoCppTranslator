@@ -20,6 +20,8 @@ public class CreateHeaderDataLayout extends Visitor {
     private ArrayList<GNode> dataLayout = new ArrayList<GNode>();
     private String packageName;
 
+    private String currentClassName;
+
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
@@ -130,13 +132,14 @@ public class CreateHeaderDataLayout extends Visitor {
             ret = "void";
         }
         String method_name = n.get(3).toString();
-        printer.p(ret+" "+method_name.replace("()", "")+"(A ");
+        printer.p(ret+" "+method_name.replace("()", "")+"("+currentClassName+" ");
         visit(n);
     }
 
 
     public void visitConstructorDeclaration(GNode n) {
         String className = n.get(2).toString().replace("()", "").toString();
+
         String constructor = "static "+className+" __init";
         printer.p(constructor+"("+className+" __this");
         visit(n);
@@ -164,6 +167,7 @@ public class CreateHeaderDataLayout extends Visitor {
 
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = n.get(1).toString().replace("()", "");
+        currentClassName = class_name;
         if(class_name.toLowerCase().compareTo(packageName) == 0) {
             return;
         } else {
