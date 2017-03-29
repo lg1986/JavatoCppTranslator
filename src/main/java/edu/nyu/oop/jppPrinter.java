@@ -244,7 +244,6 @@ public class jppPrinter extends Visitor {
             printClassGenerics();
         }
         visit(n.getNode(5));
-
     }
 
     public void visitPackageDeclaration(GNode n) {

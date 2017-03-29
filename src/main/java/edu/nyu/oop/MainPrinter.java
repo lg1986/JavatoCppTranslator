@@ -12,30 +12,7 @@ import java.io.*;
 public class MainPrinter extends Visitor {
     private Printer printer;
 
-    public void visitDeclarator(GNode n){
-
-    }
-
-    public void visitDeclarators(GNode n){
-        visit(n);
-    }
-
-    public void visitPrimitiveType(GNode n){
-        printer.p(n.get(0).toString());
-    }
-    public void visitQualifiedIdentifier(GNode n){
-        printer.p(n.get(0).toString());
-    }
-
-    public void visitFieldDeclaration(GNode n){
-        // get type
-        visit(n.getNode(1).getNode(0));
-
-        // get declarator
-    }
-
-    public void visitClassDeclaration(GNode n){
-        System.out.println(n);
+    public void visitClassDeclaration(GNode n) {
         visit(n);
     }
 
