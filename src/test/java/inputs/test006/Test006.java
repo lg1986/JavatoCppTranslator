@@ -3,7 +3,8 @@ package inputs.test006;
 class A {
     private String fld = "A";
 
-    public A() { }
+    public A() {}
+    public A(String s) { }
 
     public void setFld(String f) {
         fld = f;
@@ -19,9 +20,14 @@ class A {
     }
 }
 
+class B extends A {
+    public B() {
+    }
+}
+
 public class Test006 {
     public static void main(String[] args) {
-        A a = new A();
+        A a = new A("s");
         a.almostSetFld("B");
         System.out.println(a.getFld());
         a.setFld("B");
