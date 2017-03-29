@@ -65,7 +65,7 @@ public class DependencyVTableTraversal extends Visitor {
      */
     public DependencyVTableTraversal() {
         object = new JppObject();
-        object.methods.add(new MethodObject("Object", "hashCode", null, "int_32"));
+        object.methods.add(new MethodObject("Object", "hashCode", null, "int32_t"));
         object.methods.add(new MethodObject("Object", "equals", null, "bool"));
         object.methods.add(new MethodObject("Object","toString", null, "String"));
         object.methods.add(new MethodObject("Object", "getClass", null, "Class"));

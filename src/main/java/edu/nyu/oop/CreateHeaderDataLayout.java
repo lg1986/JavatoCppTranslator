@@ -72,12 +72,11 @@ public class CreateHeaderDataLayout extends Visitor {
      * @throws IOException
      */
     public void writeStartBaseLayout() throws IOException {
-        printer.pln("#pragma once;");
-        printer.pln("#include \"java_lang.h\";");
-
-//        printer.pln("using namespace edu::nyu::oop;");
-        printer.pln("namespace edu{");
+        printer.pln("#pragma once");
+        printer.pln("#include \"java_lang.h\"");
+        printer.pln("using namespace nyu::edu::oop;\n");
         printer.pln("namespace nyu{");
+        printer.pln("namespace edu{");
         printer.pln("namespace oop{");
     }
 
@@ -95,6 +94,8 @@ public class CreateHeaderDataLayout extends Visitor {
         printer.pln(v_ptr);
         printer.pln("static Class __class();");
         printer.pln("__"+className+";");
+        printer.pln("static __"+className.replace("()", "")+"_VT __vtable;");
+
     }
 
     public void visitFormalParameters(GNode n) throws IOException {
@@ -128,11 +129,13 @@ public class CreateHeaderDataLayout extends Visitor {
         String ret = "";
         if(return_type.size() > 0) {
             ret = return_type.getNode(0).get(0).toString().replace("Type", "").replace("()", "");
+            if(ret.equals("int") || ret.equals("Integer")) ret = "int32_t";
+            if(ret.equals("boolean")) ret = "bool";
         } else {
             ret = "void";
         }
         String method_name = n.get(3).toString();
-        printer.p(ret+" "+method_name.replace("()", "")+"("+currentClassName+" ");
+        printer.p("static "+ret+" "+method_name.replace("()", "")+"("+currentClassName+" ");
         visit(n);
     }
 
@@ -140,8 +143,8 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitConstructorDeclaration(GNode n) {
         String className = n.get(2).toString().replace("()", "").toString();
 
-        String constructor = "static "+className+" __init";
-        printer.p(constructor+"("+className+" __this");
+        String constructor = "static __"+className+" __init";
+        printer.p(constructor+"( __"+className+" __this");
         visit(n);
     }
 
@@ -153,6 +156,7 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
+        System.out.println(n);
         if(n.getNode(1).getNode(0).get(0).toString().compareTo("Integer")==0) {
             printer.p("int32_t ");
         } else if(n.getNode(1).getNode(0).get(0).toString().compareTo("int") == 0) {
@@ -168,12 +172,13 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitClassDeclaration(GNode n) throws IOException {
         String class_name = n.get(1).toString().replace("()", "");
         currentClassName = class_name;
-        if(class_name.toLowerCase().compareTo(packageName) == 0) {
+        if(class_name.toLowerCase().equals(this.packageName)) {
             return;
         } else {
             class_name = "__" + class_name;
             printer.pln("struct " + class_name + ";");
             printer.pln("struct " + class_name + "_VT;");
+            printer.pln("typedef "+class_name+"* "+class_name.replace("__", "")+";");
             printer.pln("struct " + class_name + " {");
             writeClassBase(n.get(1).toString());
             visit(n);
@@ -184,6 +189,7 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitPackageDeclaration(GNode n) {
         try {
             this.packageName = n.getNode(0).getNode(1).get(1).toString();
+            System.out.println("PACKAGE NAME: "+packageName+"\n \n");
             visit(n);
         } catch (Exception ignored) {
 

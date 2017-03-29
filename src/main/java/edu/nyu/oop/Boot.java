@@ -47,8 +47,7 @@ public class Boot extends Tool {
         bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
         bool("jppPrinter", "jppPrinter", false, "jpp Printer").
         bool("jppTraversal", "jppTraversal", false, "Traverse jpp").
-        bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel").
-        bool("runEverything", "runEverything", false, "Runs all phases");
+        bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
     }
 
     @Override
@@ -109,6 +108,7 @@ public class Boot extends Tool {
 
         if(runtime.test("jppPrinter")) {
             try {
+                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
                 jppPrinter jpp = new jppPrinter(n);
             } catch (IOException e) {
 
@@ -137,58 +137,6 @@ public class Boot extends Tool {
                 runtime.console().format(element).pln().flush();
             }
 
-        }
-
-        if (runtime.test("runEverything")) {
-
-            // Java AST
-            AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
-            AstVisitor astVisitor = new AstVisitor();
-
-            // Creating the data layout
-            System.out.println("\nData layout:");
-            DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> dependencyList = depe.getDependency();
-            ArrayList<GNode> dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
-            for(GNode data:dataLayout) {
-                runtime.console().format(data).pln().flush();
-            }
-
-            // Creating the vtable
-            System.out.println("\nVtable:");
-            DependencyVTableTraversal vTableVisitor = new DependencyVTableTraversal();
-            AstVisitor.completeAST depen = astVisitor.getAllASTs(n);
-            List<Node> depList = depen.getDependency();
-            ArrayList<GNode> vtable = vTableVisitor.getSummary(dependencyList).vtableAsts;
-            System.out.println("\n???");
-
-            // Creating the header file
-            try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            // Creating the C++ AST
-            System.out.println("\nC++ AST:");
-            jppTraversal jppTraversal = new jppTraversal();
-            AstVisitor astVisitor2 = new AstVisitor();
-            AstVisitor.completeAST depe2 = astVisitor2.getAllASTs(n);
-            List<Node> astList = depe2.getDependency();
-            List<Node> jppList = jppTraversal.getSummary(astList);
-            System.out.println(jppList.toString());
-            for(Node element:astList) {
-                runtime.console().format(element).pln().flush();
-            }
-
-            // Phase 5: Printing C++ code from JppPrinter
-            // Commmented out until completed
-//            try {
-//                jppPrinter jpp = new jppPrinter(n);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
 
     }

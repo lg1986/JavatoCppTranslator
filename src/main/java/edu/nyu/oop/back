@@ -1,0 +1,149 @@
+package edu.nyu.oop;
+
+import xtc.tree.GNode;
+import xtc.tree.Node;
+import xtc.tree.Printer;
+import xtc.tree.Visitor;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Created by rishabh on 18/03/17.
+ */
+public class CreateHeaderVTable extends Visitor {
+
+    private Printer printer;
+    public ArrayList<GNode> vtable = new ArrayList<GNode>();
+    public String currentMethodString = "";
+    public String currentClassName;
+    public String currentMethodName;
+
+    public String packageName;
+
+    public CreateHeaderVTable(Node n, Printer printer) throws IOException {
+        this.printer = printer;
+        getVTableAST(n);
+        collect();
+        printer.flush();
+
+    }
+
+    public void getVTableAST(Node n) {
+        AstVisitor astVisitor = new AstVisitor();
+        AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+        List<Node> dependenceyList = depe.getDependency();
+
+        DependencyVTableTraversal visitor = new DependencyVTableTraversal();
+        DependencyVTableTraversal.vtableAST a = visitor.getSummary(dependenceyList);
+        this.vtable = a.vtableAsts;
+    }
+
+    public void printStarterVTable(String name) {
+        printer.pln("struct __"+name+"_VT{");
+        printer.pln("Class __is_a;");
+        printer.pln("int32_t (*hashCode)("+name+");");
+        printer.pln("bool (*equals)("+name+", Object);");
+        printer.pln("Class (*getClass)("+name+");");
+        printer.pln("String (*toString)("+name+");");
+
+        printer.pln("__"+name+"_VT()");
+        printer.incr();
+        printer.p(": __is_a(__"+name+"::__class())");
+
+    }
+
+    public String getArg(GNode n) {
+        if(n.get(2).toString().compareTo("VoidType()")==0) {
+            return "void";
+        } else {
+            String ret =  n.getNode(2).getNode(0).get(0).toString();
+            if(ret.equals("int") || ret.equals("Integer")) ret = "int32_t";
+            if(ret.equals("boolean")) ret = "bool";
+            return ret;
+        }
+    }
+
+
+    public void visitMethodDeclaration(GNode n) throws IOException {
+//
+        String meth_name = n.getNode(3).toString().replace("()", "");
+        String ret_type = getArg(n);
+
+        Node params = n.getNode(4);
+        String cl = n.getNode(5).get(0).toString().replace("()", "");
+        String paramList = currentClassName +", ";
+
+        if(params != null) {
+            for (int i = 0; i < params.size(); i++) {
+                if(params.getNode(i) != null) {
+                    if(params.getNode(i).getNode(1).size() > 0) {
+                        paramList += params.getNode(i).getNode(1).getNode(0).get(0)+" ";
+                        paramList += params.getNode(i).get(3) + ", ";
+                    } else {
+                        paramList += "Object ";
+                    }
+                }
+            }
+        }
+        paramList = paramList.replaceAll(", $", "");
+        paramList = "( " + paramList + " )";
+
+        if(cl.compareTo(currentClassName) == 0) {
+            printer.pln(",");
+            currentMethodString = meth_name+"("+"&__"+currentClassName+"::"+meth_name+")";
+            printer.p(currentMethodString);
+        } else {
+            printer.pln(",");
+            currentMethodString = (meth_name+"(("+ret_type+"(*)"+paramList+")");
+            currentMethodString += " &__"+cl+"::"+meth_name+") ";
+            printer.p(currentMethodString);
+        }
+
+        visit(n);
+    }
+
+    public void visitClassDeclaration(GNode n) throws IOException {
+        String className = n.get(0).toString().replace("()", "");
+        currentClassName = className;
+
+        if(className.toLowerCase().compareTo("input") == 0) {
+            return;
+        } else {
+            printStarterVTable(className);
+
+            visit(n);
+            printer.pln("{");
+            printer.pln("}");
+            printer.pln("};");
+            printer.pln();
+            printer.pln();
+        }
+    }
+
+
+    public void visitPackageDeclaration(GNode n) {
+        try {
+            this.packageName = n.getNode(0).getNode(1).get(1).toString();
+            System.out.println("PACKAGE NAME: "+packageName+"\n \n");
+            visit(n);
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    public void visit(Node n) {
+        for(Object o: n) {
+            if(o instanceof Node) dispatch((Node) o);
+        }
+    }
+
+
+    public void collect() {
+        for(Node n: vtable) {
+            super.dispatch(n);
+        }
+
+    }
+}

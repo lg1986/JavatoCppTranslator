@@ -1,26 +1,6 @@
-/*
- * Object-Oriented Programming
- * Copyright (C) 2012 Robert Grimm
- * Modifications Copyright (C) 2013 Thomas Wies
- * Modifications Copyright (C) 2015 Randy Shepherd
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
- * USA.
- */
-
 #include "java_lang.h"
 
+#include <stdexcept>
 #include <sstream>
 
 namespace java
@@ -46,7 +26,7 @@ bool __Object::equals(Object __this, Object other)
 // java.lang.Object.getClass()
 Class __Object::getClass(Object __this)
 {
-    return __this->__vptr->__isa;
+    return __this->__vptr->__is_a;
 }
 
 // java.lang.Object.toString()
@@ -107,7 +87,7 @@ bool __String::equals(String __this, Object o)
     if (! k->__vptr->isInstance(k, o)) return false;
 
     // Do the actual comparison.
-    String other = (String)o; // Downcast.
+    String other = (String) o; // Downcast.
     return __this->data.compare(other->data) == 0;
 }
 
@@ -126,9 +106,9 @@ int32_t __String::length(String __this)
 // java.lang.String.charAt()
 char __String::charAt(String __this, int32_t idx)
 {
-    if (0 > idx || idx >= __this->data.length())
+    if (0 > idx || (unsigned) idx >= __this->data.length())
     {
-        // FIXME: signal that index is out of bounds.
+        throw std::out_of_range("Index out of bounds for string " + __this->data);
     }
 
     // Use std::string::operator[] to get character without
@@ -179,6 +159,9 @@ Class __Class::getSuperclass(Class __this)
 // java.lang.Class.isInstance(Object)
 bool __Class::isInstance(Class __this, Object o)
 {
+    // isInstance traverses the inheritance hierarchy upwards
+    // (until it hits null) to determine whether an object
+    // is an instance of a given class
     Class k = o->__vptr->getClass(o);
 
     do
@@ -214,7 +197,7 @@ namespace __rt
 // The function returning the canonical null value.
 java::lang::Object null()
 {
-    static java::lang::Object value(0);
+    static java::lang::Object value(0); // init the pointer type to 0, the 'null pointer'
     return value;
 }
 

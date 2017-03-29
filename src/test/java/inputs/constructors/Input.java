@@ -1,40 +1,40 @@
 package inputs.constructors;
 
 class A {
-    int x = 2;
-
-    boolean b;
-
-    int y;
-
-    {
-        y = x + 3;
+    public int method() {
+        return 12345;
     }
-
-    A() {
-        b = true;
+    public String toString() {
+        return "A";
     }
-
-    A(int x1) {
-        this();
-        x = x1;
-    }
-
 }
 
 class B extends A {
-    int z;
-
-    B(int x1) {
-        super(x1);
-        z = x1 + 1;
+    public String toString() {
+        return "B";
     }
 }
 
 public class Input {
     public static void main(String[] args) {
-        B b = new B(2);
+        B b = new B();
+        A a1 = new A();
+        A a2 = b;
 
-        System.out.println(b.z);
+        System.out.println(a1.toString());
+        System.out.println(a2.toString());
+
+        System.out.println(a1.method());
+        System.out.println(b.method());
+
+        Class ca1 = a1.getClass();
+        System.out.println(ca1.toString());
+
+        Class ca2 = a2.getClass();
+        System.out.println(ca2.toString());
+
+        if (a2 instanceof B) {
+            System.out.println(a2.getClass().getSuperclass().toString());
+        }
     }
 }

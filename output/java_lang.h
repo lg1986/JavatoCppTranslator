@@ -1,24 +1,3 @@
-/*
- * Object-Oriented Programming
- * Copyright (C) 2012 Robert Grimm
- * Modifications Copyright (C) 2013 Thomas Wies
- * Modifications Copyright (C) 2015 Randy Shepherd
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * version 2 as published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
- * USA.
- */
-
 #pragma once
 
 #include <stdint.h>
@@ -30,16 +9,20 @@
 // instead of fields/variables for all pointer values that are statically
 // initialized.
 
-// See http://www.parashift.com/c++-faq-lite/ctors.html#faq-10.14.
+// See https://isocpp.org/wiki/faq/ctors#static-init-order
 
 // ==========================================================================
 
-namespace java
+namespace nyu
 {
-namespace lang
+namespace edu
+{
+namespace oop
 {
 
 // Forward declarations of data layout and vtables.
+// This lets the compiler know that we have definitions forthcoming later in the program.
+// See http://www.learncpp.com/cpp-tutorial/17-forward-declarations/
 struct __Object;
 struct __Object_VT;
 
@@ -58,8 +41,11 @@ typedef __String* String;
 // ======================================================================
 
 // The data layout for java.lang.Object.
+// Think of this as roughly the 'properties' of java.lang.Object.
 struct __Object
 {
+    // A pointer to a vtable which could differ at runtime from the static
+    // reference we have to the Object vtable below. main.cc will demonstrate this.
     __Object_VT* __vptr;
 
     // The constructor.
@@ -71,25 +57,36 @@ struct __Object
     static Class getClass(Object);
     static String toString(Object);
 
-    // The function returning the class object representing
-    // java.lang.Object.
+    // The function returning the class object representing java.lang.Object.
     static Class __class();
 
-    // The vtable for java.lang.Object.
+    // The vtable for java.lang.Object itself.
+    // Moreover, always a reference to the behaviours of java.lang.Object.
     static __Object_VT __vtable;
 };
 
 // The vtable layout for java.lang.Object.
+// Think of this as roughly the 'methods' of java.lang.Object.
 struct __Object_VT
 {
-    Class __isa;
+    // The dynamic type, main.cc will demonstrate this.
+    Class __is_a;
+
+    // These properties are function pointers, the syntax:
+    // ex:   int32_t     (*sum)          (int32_t, int32_t);
+    //       return_type (*function_name)(arg_type_list);
+    // See http://www.learncpp.com/cpp-tutorial/78-function-pointers/
     int32_t (*hashCode)(Object);
     bool (*equals)(Object, Object);
     Class (*getClass)(Object);
     String (*toString)(Object);
 
+    // The vtable constructor. Notice that it is initializing
+    // the function pointer properties with references to the
+    // static implementations provided by Object itself.
+    // This is how "subclasses" will "inherit" from "superclasses"
     __Object_VT()
-        : __isa(__Object::__class()),
+        : __is_a(__Object::__class()),
           hashCode(&__Object::hashCode),
           equals(&__Object::equals),
           getClass(&__Object::getClass),
@@ -104,9 +101,11 @@ struct __Object_VT
 struct __String
 {
     __String_VT* __vptr;
+
+    // The member that contains the actual string data.
     std::string data;
 
-    // The constructor;
+    // The constructor
     __String(std::string data);
 
     // The methods implemented by java.lang.String.
@@ -116,8 +115,7 @@ struct __String
     static int32_t length(String);
     static char charAt(String, int32_t);
 
-    // The function returning the class object representing
-    // java.lang.String.
+    // The function returning the class object representing java.lang.String.
     static Class __class();
 
     // The vtable for java.lang.String.
@@ -127,7 +125,9 @@ struct __String
 // The vtable layout for java.lang.String.
 struct __String_VT
 {
-    Class __isa;
+    // The dynamic type.
+    Class __is_a;
+
     int32_t (*hashCode)(String);
     bool (*equals)(String, Object);
     Class (*getClass)(String);
@@ -136,10 +136,10 @@ struct __String_VT
     char (*charAt)(String, int32_t);
 
     __String_VT()
-        : __isa(__String::__class()),
+        : __is_a(__String::__class()),
           hashCode(&__String::hashCode),
           equals(&__String::equals),
-          getClass((Class(*)(String)) &__Object::getClass),
+          getClass((Class(*)(String)) &__Object::getClass), // "inheriting" getClass from Object
           toString(&__String::toString),
           length(&__String::length),
           charAt(&__String::charAt)
@@ -148,6 +148,10 @@ struct __String_VT
 };
 
 // ======================================================================
+
+// Class is a little special in that all other classes will be 'composed' with
+// a Class instance. Its purpose is to encapsulate type information about a runtime 'instance'.
+// See http://docs.oracle.com/javase/7/docs/api/java/lang/Class.html
 
 // The data layout for java.lang.Class.
 struct __Class
@@ -165,8 +169,7 @@ struct __Class
     static Class getSuperclass(Class);
     static bool isInstance(Class, Object);
 
-    // The function returning the class object representing
-    // java.lang.Class.
+    // The function returning the class object representing java.lang.Class.
     static Class __class();
 
     // The vtable for java.lang.Class.
@@ -176,7 +179,9 @@ struct __Class
 // The vtable layout for java.lang.Class.
 struct __Class_VT
 {
-    Class __isa;
+    // The dynamic type.
+    Class __is_a;
+
     int32_t (*hashCode)(Class);
     bool (*equals)(Class, Object);
     Class (*getClass)(Class);
@@ -186,7 +191,7 @@ struct __Class_VT
     bool (*isInstance)(Class, Object);
 
     __Class_VT()
-        : __isa(__Class::__class()),
+        : __is_a(__Class::__class()),
           hashCode((int32_t(*)(Class)) &__Object::hashCode),
           equals((bool(*)(Class,Object)) &__Object::equals),
           getClass((Class(*)(Class)) &__Object::getClass),
@@ -200,6 +205,7 @@ struct __Class_VT
 
 }
 }
+}
 
 // ==========================================================================
 
@@ -207,14 +213,14 @@ namespace __rt
 {
 
 // The function returning the canonical null value.
-java::lang::Object null();
+nyu::edu::oop::Object null();
 
-// Function for converting a C string lieral to a translated
+// Function for converting a C string literal to a translated
 // Java string.
-inline java::lang::String literal(const char * s)
+inline nyu::edu::oop::String literal(const char * s)
 {
     // C++ implicitly converts the C string to a std::string.
-    return new java::lang::__String(s);
+    return new nyu::edu::oop::__String(s);
 }
 
 }
