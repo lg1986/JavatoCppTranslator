@@ -4,9 +4,6 @@ class A {
     public String toString() {
         return "A";
     }
-    public int meth() {
-        return 1;
-    }
 }
 
 class B extends A {

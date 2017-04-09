@@ -13,90 +13,131 @@ public class jppTraversal extends Visitor {
 
     protected cppAST cpp = new cppAST();
     protected GNode classNode;
+    protected GNode methodNode;
 
-    public void visitConstructorDeclaration(GNode n) {
-        try {
-            GNode constructorNode = GNode.create("ConstructorDeclaration");
-            if(n.getNode(3) != null) {
-                n.set(1,n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString()); // get the type
-                n.set(2,n.getNode(3).getNode(0).get(3).toString()); // get the params
+
+
+
+    public String getModifier(Node n){
+        return n.get(0).toString();
+    }
+
+    public GNode getModifierNode(Node n){
+
+        // Basic Intialization
+        int numModifiers = n.size();
+        GNode modifiersParent = GNode.create("Modifiers");
+        GNode modifiersChild;
+
+        if(numModifiers > 0) {
+
+            // Create the Modifers String
+            String modifiersStr = "";
+            for (int i = 0; i < numModifiers; i++)
+                modifiersStr += getModifier(n.getNode(i)) + " ";
+
+            modifiersChild = GNode.create(modifiersStr);
+            modifiersParent.addNode(modifiersChild);
+
+            return modifiersParent;
+        } else {
+            // If no modifier just add a null
+            modifiersParent.addNode(null);
+
+            return modifiersParent;
+        }
+    }
+
+    // Get any type node from here
+    public GNode getTypeNode(Node n){
+        GNode typeParent = GNode.create("Type");
+        GNode typeChild;
+        String qfIdent;
+        if(n.get(0).toString().equals("VoidType")){
+            qfIdent = "void";
+            return typeParent;
+        } else {
+            qfIdent = n.getNode(0).get(0).toString();
+            if(n.get(1) != null) qfIdent += "[]";
+        }
+        typeChild = GNode.create(qfIdent);
+        typeParent.addNode(typeChild);
+        return typeParent;
+    }
+
+    // Get each FormalParameter
+    public GNode getFormalParameter(Node n){
+        GNode paramParentNode = GNode.create("FormalParameter");
+        GNode paramTypeNode = getTypeNode(n);
+        paramParentNode.addNode(paramTypeNode);
+        paramParentNode.add(n.get(3).toString());
+        return paramParentNode;
+    }
+
+    // Get FormalParametersNode
+    public GNode getFormalParameters(Node n){
+        int numFormalParameters = n.size();
+        GNode formalParamsParent = GNode.create("FormalParameters");
+        if(numFormalParameters > 0){
+            for(int i = 0; i<numFormalParameters; i++){
+                formalParamsParent.addNode(getFormalParameter(n.getNode(i)));
             }
-
-
-        } catch (NullPointerException e) {
-            visit(n);
-        } catch (IndexOutOfBoundsException e) {
-            visit(n);
         }
+        return formalParamsParent;
     }
 
-    public void visitStringLiteral(GNode n) {
-        n.set(0, "__rt::literal("+n.get(0)+")");
-        visit(n);
+    public GNode getStringLiteral(Node n){
+        GNode stringLiteralNode = GNode.create("StringLiteral");
+        stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
+        return stringLiteralNode;
     }
-
-    public void visitIntegerLiteral(GNode n) {
-        visit(n);
-    }
-
-    public void visitQualifiedIdentifier(GNode n) {
-        if(n.get(0).toString().compareTo("Integer")==0) {
-            n.set(0, "int32_t");
-        } else if(n.get(0).toString().compareTo("int") == 0) {
-            n.set(0, "int32_t");
+    public void visitReturnStatement(GNode n){
+        GNode retStateNode = GNode.create("ReturnStatement");
+        if(n.getNode(0).hasName("StringLiteral")) {
+            retStateNode.addNode(getStringLiteral(n.getNode(0)));
         }
-        visit(n);
-    }
-
-    public void visitArguments(GNode n) {
-        visit(n);
-    }
-
-    public void visitSelectionExpression(GNode n) {
-        n.set(0, n.getNode(0).get(0).toString()+" "+n.get(1).toString());
-        n.set(1, null);
-        visit(n);
-    }
-    /**
-     * This translates Call Expressions and Selection Expressions
-     * @param n
-     */
-    public void fixArg(Node n) {
-
-        if(n != null && n.size()>0) {
-            Node s = n.getNode(0);
-            if(s.getName().compareTo("CallExpression")==0) {
-                String obj = s.get(0).toString();
-                String call = s.get(2).toString();
-                String exp = obj+"->"+"_vptr->"+call+"("+obj+")"+"->data";
-                s.set(0, exp);
-                n.set(0, n.getNode(0).get(0));
-            } else if (s.getName().compareTo("SelectionExpression")==0) {
-                String[] obj = s.get(0).toString().split(" ");
-                String exp = obj[0]+"->_vptr->"+obj[1]+"->data";
-                s.set(0, exp);
-                n.set(0, n.getNode(0).get(0));
-            }
+        else if(n.getNode(0).hasName("IntegerLiteral")){
+            retStateNode.addNode(n.getNode(0));
         }
-    }
-    public void visitCallExpression(GNode n) {
-        visit(n);
-        n.set(0, n.getNode(0).get(0).toString());
-        fixArg(n.getNode(n.size()-1));
-    }
-
-
-    public void visitType(GNode n) {
-        visit(n);
+        else if(n.getNode(0).hasName(("PrimaryIdentifier"))){
+            retStateNode.addNode(n.getNode(0));
+        }
+        methodNode.addNode(retStateNode);
     }
 
-    public void visitFormalParameter(GNode n) {
-        visit(n);
+    public GNode getBlockNode(Node n){}
+
+    public void visitMethodDeclaration(GNode n){
+        // Creating the MethodDeclaraitonNode
+        methodNode = GNode.create("MethodDeclaration");
+
+        // Get return type Node
+        methodNode.addNode(getTypeNode(n.getNode(2)));
+
+        // get name of method
+        methodNode.add(n.get(3).toString());
+
+        // Formal Parameters
+        methodNode.add(getFormalParameters(n.getNode(4)));
+
+        visit(n.getNode(7));
+        classNode.addNode(methodNode);
     }
 
     public void visitClassDeclaration(GNode n) {
-        classNode = GNode.ensureVariable(n);
-        visit(n);
+        // Creating the GNode
+        classNode = GNode.create("ClassDeclaration");
+
+        // Name Node -- 0
+        classNode.add(n.get(3).toString());
+
+        // MethodDeclarations node -- 1
+        GNode methodDeclarationsNode = GNode.create("MethodDeclarations");
+        classNode.addNode(methodDeclarationsNode);
+
+        // Don't visit anything else but the ClassBody directly
+        visit(n.getNode(5));
+
     }
 
     public void visit(Node n) {

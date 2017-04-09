@@ -84,6 +84,11 @@ public class Boot extends Tool {
 
         if(runtime.test("createAllAST")) {
             AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
+            for(Node k: x.asts){
+                runtime.console().format(k).pln().flush();
+            }
+
+
         }
 
         if(runtime.test("dependencyTraversal")) {
@@ -109,7 +114,7 @@ public class Boot extends Tool {
         if(runtime.test("jppPrinter")) {
             try {
                 CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-                jppPrinter jpp = new jppPrinter(n);
+//                jppPrinter jpp = new jppPrinter(n);
             } catch (IOException e) {
 
             }
@@ -127,15 +132,15 @@ public class Boot extends Tool {
 
 
         if(runtime.test("jppTraversal")) {
-            jppTraversal jppTraversal = new jppTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> astList = depe.getDependency();
-            List<Node> jppList = jppTraversal.getSummary(astList);
-            System.out.println(jppList.toString());
-            for(Node element:astList) {
-                runtime.console().format(element).pln().flush();
-            }
+//            jppTraversal jppTraversal = new jppTraversal();
+//            AstVisitor astVisitor = new AstVisitor();
+//            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+//            List<Node> astList = depe.getDependency();
+//            List<Node> jppList = jppTraversal.getSummary(astList);
+//            System.out.println(jppList.toString());
+//            for(Node element:astList) {
+//                runtime.console().format(element).pln().flush();
+//            }
 
         }
 

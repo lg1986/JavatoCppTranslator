@@ -65,7 +65,7 @@ public class AstVisitor extends Visitor {
     }
 
     static class completeAST {
-        private List<Node> asts = new ArrayList<Node>();
+        public List<Node> asts = new ArrayList<Node>();
 
         public List<Node> getDependency() {
             return asts;
