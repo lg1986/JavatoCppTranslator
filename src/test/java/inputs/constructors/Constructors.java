@@ -1,40 +1,43 @@
 package inputs.constructors;
 
+
 class A {
-    public int method() {
-        return 12345;
-    }
     public String toString() {
         return "A";
     }
 }
 
-class B extends A {
-    public String toString() {
-        return "B";
-    }
-}
-
 public class Constructors {
     public static void main(String[] args) {
-        B b = new B();
-        A a1 = new A();
-        A a2 = b;
+        int[] ints = new int[2];
+        System.out.println(ints[1]);
 
-        System.out.println(a1.toString());
-        System.out.println(a2.toString());
+        float[] floats = new float[2];
+        System.out.println(floats[1]);
 
-        System.out.println(a1.method());
-        System.out.println(b.method());
+        A[] array = new A[5];
 
-        Class ca1 = a1.getClass();
-        System.out.println(ca1.toString());
+        for (int i = 0; i < array.length; ++i) {
+            A a = new A();
+            array[i] = a;
+        }
 
-        Class ca2 = a2.getClass();
-        System.out.println(ca2.toString());
+        for (int i = 0; i < array.length; ++i) {
+            A a = array[i];
+            System.out.println(a.toString());
+        }
 
-        if (a2 instanceof B) {
-            System.out.println(a2.getClass().getSuperclass().toString());
+        try {
+            System.out.println(array[128]);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("Caught ArrayIndexOutOfBoundsException");
+        }
+
+        try {
+            Object[] o = array;
+            o[2] = new Object();
+        } catch (ArrayStoreException e) {
+            System.out.println("Caught ArrayStoreException");
         }
     }
 }
