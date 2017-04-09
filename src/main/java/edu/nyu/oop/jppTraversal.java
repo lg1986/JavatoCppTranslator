@@ -105,8 +105,6 @@ public class jppTraversal extends Visitor {
         methodNode.addNode(retStateNode);
     }
 
-    public GNode getBlockNode(Node n){}
-
     public void visitMethodDeclaration(GNode n){
         // Creating the MethodDeclaraitonNode
         methodNode = GNode.create("MethodDeclaration");
