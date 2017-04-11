@@ -37,6 +37,11 @@ public class jppTraversal extends Visitor {
         }
     }
 
+    //================================================================================
+    // Controlling Center --> Everything comes here and then keeps growing
+    //================================================================================
+
+
     public void getCheckStatementNode(Node n, GNode currNode) {
         if(n.hasName("StringLiteral")) {
             currNode.addNode(getStringLiteral(n));
@@ -227,7 +232,6 @@ public class jppTraversal extends Visitor {
 
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
-
                 getCheckStatementNode(n.getNode(i), methodNode);
             } else {
                 methodNode.add(n.get(i));
@@ -274,8 +278,6 @@ public class jppTraversal extends Visitor {
     // Static class to hold the information collected
     // in a "container"
     //================================================================================
-
-
     static class cppAST {
         protected static List<Node> cppasts = new ArrayList<Node>();
 
