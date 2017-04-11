@@ -84,7 +84,7 @@ public class Boot extends Tool {
 
         if(runtime.test("createAllAST")) {
             AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
-            for(Node k: x.asts){
+            for(Node k: x.asts) {
                 runtime.console().format(k).pln().flush();
             }
 
@@ -114,7 +114,7 @@ public class Boot extends Tool {
         if(runtime.test("jppPrinter")) {
             try {
                 CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-//                jppPrinter jpp = new jppPrinter(n);
+                jppPrinter jpp = new jppPrinter(n);
             } catch (IOException e) {
 
             }
