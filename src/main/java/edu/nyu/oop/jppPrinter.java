@@ -202,7 +202,7 @@ public class jppPrinter extends Visitor {
         currentClassName = n.get(0).toString();
         currentC = n.get(0).toString();
 
-        if(currentClassName.equals("Test002")) {
+        if(currentClassName.equals("Test001")) {
             printer = mainPrinter;
         } else {
             printer = classPrinter;

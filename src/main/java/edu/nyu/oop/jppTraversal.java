@@ -11,9 +11,71 @@ import java.util.List;
 public class jppTraversal extends Visitor {
 
 
+    /**
+     * Class Members
+     */
     protected cppAST cpp = new cppAST();
     private GNode classNode;
 
+    //================================================================================
+    // Utils
+    //================================================================================
+
+    /**
+     * Check if the Object in the tre
+     * is actually a node or is it a string or a null
+     * value
+     * @param n
+     * @return
+     */
+
+    public boolean checkIfNode(Object n) {
+        if(n instanceof String) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public void getCheckStatementNode(Node n, GNode currNode) {
+        if(n.hasName("StringLiteral")) {
+            currNode.addNode(getStringLiteral(n));
+        } else if(n.hasName("IntegerLiteral")) {
+            currNode.addNode(n);
+        } else if(n.hasName("PrimaryIdentifier")) {
+            currNode.addNode(n);
+        } else if(n.hasName("Modifiers")) {
+            getModifierNode(n, currNode);
+        } else if(n.hasName("FormalParameters")) {
+            getFormalParameters(n, currNode);
+        } else if(n.hasName("Type")) {
+
+            getTypeNode(n, currNode);
+        } else if(n.hasName("Declarators")) {
+            getDeclaratorsNode(n, currNode);
+        } else if(n.hasName("Block")) {
+            getBlock(n, currNode);
+        } else if(n.hasName("FieldDeclaration")) {
+            getFieldDeclarationNode(n, currNode);
+        } else if(n.hasName("ReturnStatement")) {
+            GNode returnStatementNode = GNode.create("ReturnStatement");
+            getCheckStatementNode(n.getNode(0), returnStatementNode);
+            currNode.addNode(returnStatementNode);
+        }
+    }
+    //================================================================================
+    // MUTATORS, DECORATORS AND GENERATORS
+    //
+    // Specific Node methods to parse and add the Node to the new AST
+    // Each of the methods Mutate and Decorate and generate depending on
+    // the structure of the tree.
+    //================================================================================
+
+    /**
+     * To get the Modifiers and make the apt node
+     * @param n
+     * @return
+     */
     public String getModifier(Node n) {
         return n.get(0).toString();
     }
@@ -35,9 +97,13 @@ public class jppTraversal extends Visitor {
             modifiersParent.addNode(null);
         }
         currNode.addNode(modifiersParent);
-
     }
 
+    /**
+     * Get the declartors
+     * @param n
+     * @param parentDeclaratorNode
+     */
 
     public void getDeclaratorNode(Node n, GNode parentDeclaratorNode) {
         GNode childDeclaratorNode = GNode.create("Declarator");
@@ -56,6 +122,12 @@ public class jppTraversal extends Visitor {
         currNode.addNode(parentDeclaratorNode);
     }
 
+    /**
+     * Mutate StringLiteral to __rt::literal
+     * @param n
+     * @return
+     */
+
     public GNode getStringLiteral(Node n) {
         GNode stringLiteralNode = GNode.create("StringLiteral");
         stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
@@ -63,6 +135,12 @@ public class jppTraversal extends Visitor {
     }
 
 
+    /**
+     * Iterate through all the Block statements and parse them
+     * individually and add them to the tree
+     * @param n
+     * @param currNode
+     */
     public void getBlock(Node n, GNode currNode) {
         GNode blockNode = GNode.create("Block");
         int numStatements = n.size();
@@ -125,48 +203,23 @@ public class jppTraversal extends Visitor {
         currNode.addNode(typeParent);
     }
 
-    public boolean checkIfNode(Object n) {
-        if(n instanceof String) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-    public void getCheckStatementNode(Node n, GNode currNode) {
-        if(n.hasName("StringLiteral")) {
-            currNode.addNode(getStringLiteral(n));
-        } else if(n.hasName("IntegerLiteral")) {
-            currNode.addNode(n);
-        } else if(n.hasName("PrimaryIdentifier")) {
-            currNode.addNode(n);
-        } else if(n.hasName("Modifiers")) {
-            getModifierNode(n, currNode);
-        } else if(n.hasName("FormalParameters")) {
-            getFormalParameters(n, currNode);
-        } else if(n.hasName("Type")) {
 
-            getTypeNode(n, currNode);
-        } else if(n.hasName("Declarators")) {
-            getDeclaratorsNode(n, currNode);
-        } else if(n.hasName("Block")) {
-            getBlock(n, currNode);
-        } else if(n.hasName("FieldDeclaration")) {
-            GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
 
-            for(int i = 0; i<n.size(); i++) {
-                if(n.get(i) != null && checkIfNode(n.get(i))) {
-                    getCheckStatementNode(n.getNode(i), fieldDeclarationNode);
-                } else {
-                    fieldDeclarationNode.add(n.get(i));
-                }
+    public void getFieldDeclarationNode(Node n, GNode currNode){
+        GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                getCheckStatementNode(n.getNode(i), fieldDeclarationNode);
+            } else {
+                fieldDeclarationNode.add(n.get(i));
             }
-            currNode.addNode(fieldDeclarationNode);
-        } else if(n.hasName("ReturnStatement")) {
-            GNode returnStatementNode = GNode.create("ReturnStatement");
-            getCheckStatementNode(n.getNode(0), returnStatementNode);
-            currNode.addNode(returnStatementNode);
         }
+        currNode.addNode(fieldDeclarationNode);
     }
+
+    //================================================================================
+    // Generic Visit Methods
+    //================================================================================
 
     public void visitMethodDeclaration(GNode n) {
         // Creating the MethodDeclaraitonNode
@@ -215,6 +268,12 @@ public class jppTraversal extends Visitor {
         }
         return cpp.cppasts;
     }
+
+
+    //================================================================================
+    // Static class to hold the information collected
+    // in a "container"
+    //================================================================================
 
 
     static class cppAST {

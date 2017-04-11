@@ -5,6 +5,5 @@ using namespace nyu::edu::oop;
 using namespace std;
 int main()
 {
-    cout << "here!" << endl;
     return 0;
 }
