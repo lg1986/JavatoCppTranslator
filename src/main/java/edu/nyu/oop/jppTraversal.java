@@ -12,78 +12,48 @@ public class jppTraversal extends Visitor {
 
 
     protected cppAST cpp = new cppAST();
-    protected GNode classNode;
-    protected GNode methodNode;
-
-
-
+    private GNode classNode;
 
     public String getModifier(Node n){
         return n.get(0).toString();
     }
 
-    public GNode getModifierNode(Node n){
-
-        // Basic Intialization
+    public void getModifierNode(Node n, GNode currNode){
         int numModifiers = n.size();
         GNode modifiersParent = GNode.create("Modifiers");
         GNode modifiersChild;
 
         if(numModifiers > 0) {
-
             // Create the Modifers String
             String modifiersStr = "";
             for (int i = 0; i < numModifiers; i++)
                 modifiersStr += getModifier(n.getNode(i)) + " ";
-
             modifiersChild = GNode.create(modifiersStr);
             modifiersParent.addNode(modifiersChild);
-
-            return modifiersParent;
         } else {
             // If no modifier just add a null
             modifiersParent.addNode(null);
-
-            return modifiersParent;
         }
+        currNode.addNode(modifiersParent);
+
     }
 
-    // Get any type node from here
-    public GNode getTypeNode(Node n){
-        GNode typeParent = GNode.create("Type");
-        GNode typeChild;
-        String qfIdent;
-        if(n.get(0).toString().equals("VoidType")){
-            qfIdent = "void";
-            return typeParent;
-        } else {
-            qfIdent = n.getNode(0).get(0).toString();
-            if(n.get(1) != null) qfIdent += "[]";
-        }
-        typeChild = GNode.create(qfIdent);
-        typeParent.addNode(typeChild);
-        return typeParent;
+
+    public void getDeclaratorNode(Node n, GNode parentDeclaratorNode){
+        GNode childDeclaratorNode = GNode.create("Declarator");
+        childDeclaratorNode.add(n.get(0).toString());
+        childDeclaratorNode.add(null);
+        getCheckStatementNode(n.getNode(2), childDeclaratorNode);
+        parentDeclaratorNode.addNode(childDeclaratorNode);
     }
 
-    // Get each FormalParameter
-    public GNode getFormalParameter(Node n){
-        GNode paramParentNode = GNode.create("FormalParameter");
-        GNode paramTypeNode = getTypeNode(n);
-        paramParentNode.addNode(paramTypeNode);
-        paramParentNode.add(n.get(3).toString());
-        return paramParentNode;
-    }
-
-    // Get FormalParametersNode
-    public GNode getFormalParameters(Node n){
-        int numFormalParameters = n.size();
-        GNode formalParamsParent = GNode.create("FormalParameters");
-        if(numFormalParameters > 0){
-            for(int i = 0; i<numFormalParameters; i++){
-                formalParamsParent.addNode(getFormalParameter(n.getNode(i)));
-            }
+    public void getDeclaratorsNode(Node n, GNode currNode){
+        int numDeclarators = n.size();
+        GNode parentDeclaratorNode = GNode.create("Declarators");
+        for(int i = 0; i<numDeclarators; i++){
+            getDeclaratorNode(n.getNode(i), parentDeclaratorNode);
         }
-        return formalParamsParent;
+        currNode.addNode(parentDeclaratorNode);
     }
 
     public GNode getStringLiteral(Node n){
@@ -91,35 +61,116 @@ public class jppTraversal extends Visitor {
         stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
         return stringLiteralNode;
     }
-    public void visitReturnStatement(GNode n){
-        GNode retStateNode = GNode.create("ReturnStatement");
-        if(n.getNode(0).hasName("StringLiteral")) {
-            retStateNode.addNode(getStringLiteral(n.getNode(0)));
+
+    public void getCheckStatementNode(Node n, GNode currNode){
+        if(n.hasName("StringLiteral")){
+            currNode.addNode(getStringLiteral(n));
         }
-        else if(n.getNode(0).hasName("IntegerLiteral")){
-            retStateNode.addNode(n.getNode(0));
+        else if(n.hasName("IntegerLiteral")){
+            currNode.addNode(n);
         }
-        else if(n.getNode(0).hasName(("PrimaryIdentifier"))){
-            retStateNode.addNode(n.getNode(0));
+        else if(n.hasName("PrimaryIdentifier")){
+            currNode.addNode(n);
         }
-        methodNode.addNode(retStateNode);
+        else if(n.hasName("FieldDeclaration")){
+            GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
+
+            // ModifierNode
+            getModifierNode(n.getNode(0), fieldDeclarationNode);
+
+            //TypeNode
+            getTypeNode(n.getNode(1), fieldDeclarationNode);
+
+            //Declarator Node
+            getDeclaratorsNode(n.getNode(2), fieldDeclarationNode);
+
+            currNode.addNode(fieldDeclarationNode);
+        }
+        else if(n.hasName("ReturnStatement")){
+            GNode returnStatementNode = GNode.create("ReturnStatement");
+
+
+            getCheckStatementNode(n.getNode(0), returnStatementNode);
+
+            currNode.addNode(returnStatementNode);
+        }
+    }
+
+    public void getBlock(Node n, GNode currNode){
+        GNode blockNode = GNode.create("Block");
+        int numStatements = n.size();
+        for(int i =0; i<numStatements; i+=1){
+            getCheckStatementNode(n.getNode(i), blockNode);
+        }
+        currNode.addNode(blockNode);
+    }
+
+    /**
+     * Gets inidividual Formal Parameter
+     * @param n
+     * @return
+     */
+    public void getFormalParameter(Node n, GNode currNode){
+        GNode paramParentNode = GNode.create("FormalParameter");
+        getTypeNode(n.getNode(1), paramParentNode);
+        paramParentNode.add(n.get(3).toString());
+        currNode.addNode(paramParentNode);
+    }
+
+    /**
+     * Gets all the formal Parameters
+     * @param n
+     * @return
+     */
+    public void getFormalParameters(Node n, GNode currNode){
+        int numFormalParameters = n.size();
+        GNode formalParamsParent = GNode.create("FormalParameters");
+        if(numFormalParameters > 0){
+            for(int i = 0; i<numFormalParameters; i++){
+                getFormalParameter(n.getNode(i), formalParamsParent);
+            }
+        }
+        currNode.addNode(formalParamsParent);
+    }
+
+    /**
+     * Gets the TypeNode
+     * @param n
+     * @return
+     */
+    public void getTypeNode(Node n, GNode currNode){
+        GNode typeParent = GNode.create("Type");
+        GNode typeChild;
+        String qfIdent;
+
+        if(n.toString().equals("VoidType()")){
+            qfIdent = "void";
+            typeParent.add(qfIdent);
+        } else {
+            qfIdent = n.getNode(0).get(0).toString();
+            if(n.get(1) != null) qfIdent += "[]";
+        }
+        typeChild = GNode.create(qfIdent);
+        typeParent.addNode(typeChild);
+        currNode.addNode(typeParent);
     }
 
     public void visitMethodDeclaration(GNode n){
         // Creating the MethodDeclaraitonNode
-        methodNode = GNode.create("MethodDeclaration");
+        GNode methodNode = GNode.create("MethodDeclaration");
 
         // Get return type Node
-        methodNode.addNode(getTypeNode(n.getNode(2)));
+        getTypeNode(n.getNode(2), methodNode);
 
         // get name of method
         methodNode.add(n.get(3).toString());
 
         // Formal Parameters
-        methodNode.add(getFormalParameters(n.getNode(4)));
+        getFormalParameters(n.getNode(4),methodNode);
 
-        visit(n.getNode(7));
-        classNode.addNode(methodNode);
+        getBlock(n.getNode(7), methodNode);
+
+        classNode.getNode(1).addNode(methodNode);
     }
 
     public void visitClassDeclaration(GNode n) {
@@ -127,7 +178,7 @@ public class jppTraversal extends Visitor {
         classNode = GNode.create("ClassDeclaration");
 
         // Name Node -- 0
-        classNode.add(n.get(3).toString());
+        classNode.add(n.get(1).toString());
 
         // MethodDeclarations node -- 1
         GNode methodDeclarationsNode = GNode.create("MethodDeclarations");
@@ -135,6 +186,7 @@ public class jppTraversal extends Visitor {
 
         // Don't visit anything else but the ClassBody directly
         visit(n.getNode(5));
+        cpp.addAST(classNode);
 
     }
 
@@ -151,7 +203,8 @@ public class jppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
-        return cppList;
+        System.out.println("here!");
+        return cpp.cppasts;
     }
 
 

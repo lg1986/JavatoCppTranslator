@@ -132,15 +132,14 @@ public class Boot extends Tool {
 
 
         if(runtime.test("jppTraversal")) {
-//            jppTraversal jppTraversal = new jppTraversal();
-//            AstVisitor astVisitor = new AstVisitor();
-//            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-//            List<Node> astList = depe.getDependency();
-//            List<Node> jppList = jppTraversal.getSummary(astList);
-//            System.out.println(jppList.toString());
-//            for(Node element:astList) {
-//                runtime.console().format(element).pln().flush();
-//            }
+            jppTraversal jppTraversal = new jppTraversal();
+            AstVisitor astVisitor = new AstVisitor();
+            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
+            List<Node> astList = depe.getDependency();
+            List<Node> jppList = jppTraversal.getSummary(astList);
+            for(Node element:jppList) {
+                runtime.console().format(element).pln().flush();
+            }
 
         }
 
