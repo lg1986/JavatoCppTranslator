@@ -76,9 +76,20 @@ public class jppTraversal extends Visitor {
     // the structure of the tree.
     //================================================================================
 
+    public void getArgument(Node n, GNode currNode){
+
+    }
 
     public void getArguments(Node n, GNode currNode){
-
+        GNode argumentsNode = GNode.create("Arguments");
+        for(int i = 0; i<n.size(); i++){
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                getCheckStatementNode(n.getNode(i), argumentsNode);
+            } else {
+                argumentsNode.add(n.get(i));
+            }
+        }
+        currNode.addNode(argumentsNode);
     }
 
     public void getQualifiedIdentifierNode(Node n, GNode currNode){
@@ -94,6 +105,7 @@ public class jppTraversal extends Visitor {
                 newClassNode.add(n.get(i));
             }
         }
+        currNode.addNode(newClassNode);
     }
     /**
      * Iterate through all the Block statements and parse them
