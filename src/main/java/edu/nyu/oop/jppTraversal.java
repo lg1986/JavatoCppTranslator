@@ -40,12 +40,15 @@ public class jppTraversal extends Visitor {
     //================================================================================
     // Controlling Center --> Everything comes here and then keeps growing
     //================================================================================
-
-
     public void getCheckStatementNode(Node n, GNode currNode) {
         if(n.hasName("StringLiteral")) {
-            currNode.addNode(getStringLiteral(n));
-        } else if(n.hasName("IntegerLiteral")) {
+            getStringLiteral(n, currNode);
+        } else if(n.hasName("QualifiedIdentifier")){
+            getQualifiedIdentifierNode(n, currNode);
+        } else if(n.hasName("Arguments")){
+            getArguments(n, currNode);
+        }
+        else if(n.hasName("IntegerLiteral")) {
             currNode.addNode(n);
         } else if(n.hasName("PrimaryIdentifier")) {
             currNode.addNode(n);
@@ -54,7 +57,6 @@ public class jppTraversal extends Visitor {
         } else if(n.hasName("FormalParameters")) {
             getFormalParameters(n, currNode);
         } else if(n.hasName("Type")) {
-
             getTypeNode(n, currNode);
         } else if(n.hasName("Declarators")) {
             getDeclaratorsNode(n, currNode);
@@ -63,9 +65,7 @@ public class jppTraversal extends Visitor {
         } else if(n.hasName("FieldDeclaration")) {
             getFieldDeclarationNode(n, currNode);
         } else if(n.hasName("ReturnStatement")) {
-            GNode returnStatementNode = GNode.create("ReturnStatement");
-            getCheckStatementNode(n.getNode(0), returnStatementNode);
-            currNode.addNode(returnStatementNode);
+            getReturnStatementNode(n, currNode);
         }
     }
     //================================================================================
@@ -76,6 +76,67 @@ public class jppTraversal extends Visitor {
     // the structure of the tree.
     //================================================================================
 
+
+    public void getArguments(Node n, GNode currNode){
+
+    }
+
+    public void getQualifiedIdentifierNode(Node n, GNode currNode){
+        currNode.add(n.get(0).toString());
+    }
+
+    public void getNewClassExpression(Node n, GNode currNode){
+        GNode newClassNode =GNode.create("NewClassExpression");
+        for(int i = 0; i<n.size(); i++){
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                getCheckStatementNode(n.getNode(i), newClassNode);
+            } else {
+                newClassNode.add(n.get(i));
+            }
+        }
+    }
+    /**
+     * Iterate through all the Block statements and parse them
+     * individually and add them to the tree
+     * @param n
+     * @param currNode
+     */
+    public void getBlock(Node n, GNode currNode) {
+        GNode blockNode = GNode.create("Block");
+        int numStatements = n.size();
+        for(int i =0; i<numStatements; i+=1) {
+            getCheckStatementNode(n.getNode(i), blockNode);
+        }
+        currNode.addNode(blockNode);
+    }
+
+    /**
+     * Gets the field declaration Node
+     * @param n
+     * @param currNode
+     */
+    public void getFieldDeclarationNode(Node n, GNode currNode){
+        GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                getCheckStatementNode(n.getNode(i), fieldDeclarationNode);
+            } else {
+                fieldDeclarationNode.add(n.get(i));
+            }
+        }
+        currNode.addNode(fieldDeclarationNode);
+    }
+
+    /**
+     * Gets the return statement node and parses it accordingly
+     * @param n
+     * @param currNode
+     */
+    public void getReturnStatementNode(Node n, GNode currNode){
+        GNode returnStatementNode = GNode.create("ReturnStatement");
+        getCheckStatementNode(n.getNode(0), returnStatementNode);
+        currNode.addNode(returnStatementNode);
+    }
     /**
      * To get the Modifiers and make the apt node
      * @param n
@@ -104,12 +165,13 @@ public class jppTraversal extends Visitor {
         currNode.addNode(modifiersParent);
     }
 
+
+
     /**
      * Get the declartors
      * @param n
      * @param parentDeclaratorNode
      */
-
     public void getDeclaratorNode(Node n, GNode parentDeclaratorNode) {
         GNode childDeclaratorNode = GNode.create("Declarator");
         childDeclaratorNode.add(n.get(0).toString());
@@ -127,33 +189,8 @@ public class jppTraversal extends Visitor {
         currNode.addNode(parentDeclaratorNode);
     }
 
-    /**
-     * Mutate StringLiteral to __rt::literal
-     * @param n
-     * @return
-     */
-
-    public GNode getStringLiteral(Node n) {
-        GNode stringLiteralNode = GNode.create("StringLiteral");
-        stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
-        return stringLiteralNode;
-    }
 
 
-    /**
-     * Iterate through all the Block statements and parse them
-     * individually and add them to the tree
-     * @param n
-     * @param currNode
-     */
-    public void getBlock(Node n, GNode currNode) {
-        GNode blockNode = GNode.create("Block");
-        int numStatements = n.size();
-        for(int i =0; i<numStatements; i+=1) {
-            getCheckStatementNode(n.getNode(i), blockNode);
-        }
-        currNode.addNode(blockNode);
-    }
 
     /**
      * Gets inidividual Formal Parameter
@@ -210,16 +247,16 @@ public class jppTraversal extends Visitor {
 
 
 
-    public void getFieldDeclarationNode(Node n, GNode currNode){
-        GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                getCheckStatementNode(n.getNode(i), fieldDeclarationNode);
-            } else {
-                fieldDeclarationNode.add(n.get(i));
-            }
-        }
-        currNode.addNode(fieldDeclarationNode);
+
+    /**
+     * Mutate StringLiteral to __rt::literal
+     * @param n
+     * @return
+     */
+    public void getStringLiteral(Node n, GNode currNode) {
+        GNode stringLiteralNode = GNode.create("StringLiteral");
+        stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
+        currNode.addNode(stringLiteralNode);
     }
 
     //================================================================================
