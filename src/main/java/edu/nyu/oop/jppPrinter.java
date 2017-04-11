@@ -14,7 +14,9 @@ import java.util.List;
 
 public class jppPrinter extends Visitor {
 
+    private Printer classPrinter;
     private Printer printer;
+    private Printer mainPrinter;
     private List<Node> jppList;
     private String packageName;
 
@@ -27,19 +29,29 @@ public class jppPrinter extends Visitor {
      */
     public jppPrinter(Node n) throws IOException {
         Writer w;
+        Writer wMain;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.cpp");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
             w = new BufferedWriter(ows);
-            this.printer = new Printer(w);
+            this.classPrinter = new Printer(w);
+
+            FileOutputStream fosmain = new FileOutputStream("output/main.cpp");
+            OutputStreamWriter owsMain = new OutputStreamWriter(fosmain, "utf-8");
+            wMain = new BufferedWriter(owsMain);
+            this.mainPrinter = new Printer(wMain);
+
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
+        printer = classPrinter;
         getOutputImplementations(n);
         writeStartBaseLayout();
         collect();
+        printer = classPrinter;
         writeEndBaseLayout();
-        printer.flush();
+        classPrinter.flush();
+        mainPrinter.flush();
     }
 
     public void getOutputImplementations(Node n) {
@@ -89,7 +101,6 @@ public class jppPrinter extends Visitor {
     }
 
     public boolean checkIfNode(Object n) {
-        System.out.println(n.getClass());
         if(n instanceof String) {
             return false;
         } else {
@@ -100,29 +111,53 @@ public class jppPrinter extends Visitor {
     public void printCheckStatementNode(Node n) {
         if(n.hasName("ReturnType")) {
             printer.p(n.get(0).toString());
-        }
-        else if(n.hasName("FormalParameter")) {
+        } else if(n.hasName("Type")) {
+            printer.p(n.get(0).toString());
+        } else if(n.hasName("FormalParameter")) {
             printCheckStatementNode(n.getNode(0));
             printer.p(" "+n.get(1));
-        }
-        else if(n.hasName("FormalParameters")) {
+        } else if(n.hasName("FormalParameters")) {
             printer.p("(");
             for(int i =0; i<n.size(); i++) {
                 printCheckStatementNode(n.getNode(i));
                 if(i != n.size()-1) printer.p(", ");
             }
-            printer.p(")");
+            printer.p(") { \n");
+        } else if(n.hasName("ReturnStatement")) {
+            printer.p("return ");
+            printCheckStatementNode(n.getNode(0));
+            printer.pln(";\n } \n");
+        } else if(n.hasName("StringLiteral")) {
+            printer.p(n.get(0).toString());
+        } else if(n.hasName("Block")) {
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.get(i))) {
+                    printCheckStatementNode(n.getNode(i));
+
+                } else if(n.get(i) != null && !checkIfNode(n.get(i))) {
+                    printer.p(n.get(i).toString());
+                }
+            }
         }
     }
 
     public void visitMethodDeclaration(GNode n) {
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                printCheckStatementNode(n.getNode(i));
-            } else if(n.get(i) != null && !checkIfNode(n.get(i))) {
-                printer.p(" "+currentClassName+"::"+
-                          n.get(i).toString());
+
+        if(!n.get(2).toString().equals("main")) {
+            for (int i = 0; i < n.size(); i++) {
+                if (n.get(i) != null && checkIfNode(n.get(i))) {
+                    printCheckStatementNode(n.getNode(i));
+                } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
+                    printer.p(" " + currentClassName + "::" +
+                              n.get(i).toString());
+                }
             }
+        } else {
+
+            printer.pln("int main(){ ");
+            System.out.println(n);
+            printCheckStatementNode(n.getNode(6));
+
         }
 
     }
@@ -130,10 +165,13 @@ public class jppPrinter extends Visitor {
     public void visitClassDeclaration(GNode n) {
         currentClassName = n.get(0).toString();
 
-        if(!currentClassName.equals("Test001")) {
+        if(currentClassName.equals("Test002")) {
+            printer = mainPrinter;
+        } else {
+            printer = classPrinter;
             printClassGenerics();
-            visit(n.getNode(1));
         }
+        visit(n.getNode(1));
     }
 
     public void visitPackageDeclaration(GNode n) {

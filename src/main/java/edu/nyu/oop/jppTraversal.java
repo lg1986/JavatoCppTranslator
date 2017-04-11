@@ -126,7 +126,6 @@ public class jppTraversal extends Visitor {
     }
 
     public boolean checkIfNode(Object n) {
-        System.out.println(n.getClass());
         if(n instanceof String) {
             return false;
         } else {
@@ -214,7 +213,6 @@ public class jppTraversal extends Visitor {
         for(Node n: cppList) {
             super.dispatch(n);
         }
-        System.out.println("here!");
         return cpp.cppasts;
     }
 
