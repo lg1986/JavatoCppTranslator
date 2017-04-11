@@ -108,41 +108,72 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printCheckStatementNode(Node n) {
-        if(n.hasName("ReturnType")) {
-            printer.p(n.get(0).toString());
-        } else if(n.hasName("Type")) {
-            printer.p(n.get(0).toString());
-        } else if(n.hasName("FormalParameter")) {
-            printCheckStatementNode(n.getNode(0));
-            printer.p(" "+n.get(1));
-        } else if(n.hasName("FormalParameters")) {
-            printer.p("(");
-            for(int i =0; i<n.size(); i++) {
+    public void printBlock(Node n){
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i));
-                if(i != n.size()-1) printer.p(", ");
-            }
-            printer.p(") { \n");
-        } else if(n.hasName("ReturnStatement")) {
-            printer.p("return ");
-            printCheckStatementNode(n.getNode(0));
-            printer.pln(";\n } \n");
-        } else if(n.hasName("StringLiteral")) {
-            printer.p(n.get(0).toString());
-        } else if(n.hasName("Block")) {
-            for(int i = 0; i<n.size(); i++) {
-                if(n.get(i) != null && checkIfNode(n.get(i))) {
-                    printCheckStatementNode(n.getNode(i));
 
-                } else if(n.get(i) != null && !checkIfNode(n.get(i))) {
-                    printer.p(n.get(i).toString());
-                }
+            } else if(n.get(i) != null && !checkIfNode(n.get(i))) {
+                printer.p(n.get(i).toString());
             }
         }
     }
 
-    public void visitMethodDeclaration(GNode n) {
+    public void printReturnStatement(Node n){
+        printer.p("return ");
+        printCheckStatementNode(n.getNode(0));
+        printer.pln(";\n } \n");
+    }
 
+    public void printFormalParameters(Node n){
+        printer.p("(");
+        for(int i =0; i<n.size(); i++) {
+            printCheckStatementNode(n.getNode(i));
+            if(i != n.size()-1) printer.p(", ");
+        }
+        printer.p(") { \n");
+    }
+
+    public void printFormalParameter(Node n){
+        printCheckStatementNode(n.getNode(0));
+        printer.p(" "+n.get(1));
+    }
+
+    public void printType(Node n){
+        printer.p(n.get(0).toString());
+    }
+
+    public void printStringLiteral(Node n){
+        printer.p(n.get(0).toString());
+    }
+
+
+    public void printCheckStatementNode(Node n) {
+        if(n.hasName("StringLiteral")) {
+            printStringLiteral(n);
+        }
+        else if(n.hasName("ReturnType")) {
+            printType(n);
+        }
+        else if(n.hasName("Type")) {
+            printType(n);
+        }
+        else if(n.hasName("FormalParameter")) {
+            printFormalParameter(n);
+        }
+        else if(n.hasName("FormalParameters")) {
+            printFormalParameters(n);
+        }
+        else if(n.hasName("ReturnStatement")) {
+            printReturnStatement(n);
+        }
+        else if(n.hasName("Block")) {
+            printBlock(n);
+        }
+
+    }
+
+    public void visitMethodDeclaration(GNode n) {
         if(!n.get(2).toString().equals("main")) {
             for (int i = 0; i < n.size(); i++) {
                 if (n.get(i) != null && checkIfNode(n.get(i))) {
@@ -153,7 +184,6 @@ public class jppPrinter extends Visitor {
                 }
             }
         } else {
-
             printer.pln("int main(){ ");
             System.out.println(n);
             printCheckStatementNode(n.getNode(6));
