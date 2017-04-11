@@ -3,11 +3,9 @@
 #include <stdexcept>
 #include <sstream>
 
-namespace nyu
+namespace java
 {
-namespace edu
-{
-namespace oop
+namespace lang
 {
 
 // java.lang.Object()
@@ -16,7 +14,7 @@ __Object::__Object() : __vptr(&__vtable) {}
 // java.lang.Object.hashCode()
 int32_t __Object::hashCode(Object __this)
 {
-    return (int32_t)(intptr_t) __this;
+    return (int32_t)(intptr_t) __this.raw();
 }
 
 // java.lang.Object.equals(Object)
@@ -39,7 +37,7 @@ String __Object::toString(Object __this)
 
     std::ostringstream sout;
     sout << k->__vptr->getName(k)->data
-         << '@' << std::hex << (uintptr_t) __this;
+         << '@' << std::hex << (uintptr_t) __this.raw();
     return new __String(sout.str());
 }
 
@@ -89,7 +87,7 @@ bool __String::equals(String __this, Object o)
     if (! k->__vptr->isInstance(k, o)) return false;
 
     // Do the actual comparison.
-    String other = (String) o; // Downcast.
+    String other = o; // Implicit downcast.
     return __this->data.compare(other->data) == 0;
 }
 
@@ -102,7 +100,7 @@ String __String::toString(String __this)
 // java.lang.String.length()
 int32_t __String::length(String __this)
 {
-    return __this->data.length();
+    return (int32_t) __this->data.length();
 }
 
 // java.lang.String.charAt()
@@ -130,13 +128,33 @@ Class __String::__class()
 // invokes the default no-arg constructor for __String_VT.
 __String_VT __String::__vtable;
 
+// Overload << operator for convenient printing of String objects
+std::ostream& operator<<(std::ostream& out, String s)
+{
+    out << s->data;
+    return out;
+}
+
+String operator+(String s, char t)
+{
+    return new __String(safeToString(s)->data + t);
+}
+
+String operator+(char s, String t)
+{
+    return new __String(s + safeToString(t)->data);
+}
+
+
 // =======================================================================
 
 // java.lang.Class(String, Class)
-__Class::__Class(String name, Class parent)
+__Class::__Class(String name, Class parent, Class component, bool primitive)
     : __vptr(&__vtable),
       name(name),
-      parent(parent)
+      parent(parent),
+      component(component),
+      primitive(primitive)
 {
 }
 
@@ -158,6 +176,24 @@ Class __Class::getSuperclass(Class __this)
     return __this->parent;
 }
 
+// java.lang.Class.isPrimitive()
+bool __Class::isPrimitive(Class __this)
+{
+    return __this->primitive;
+}
+
+// java.lang.Class.isArray()
+bool __Class::isArray(Class __this)
+{
+    return (Class)__rt::null() != __this->component;
+}
+
+// java.lang.Class.getComponentType()
+Class __Class::getComponentType(Class __this)
+{
+    return __this->component;
+}
+
 // java.lang.Class.isInstance(Object)
 bool __Class::isInstance(Class __this, Object o)
 {
@@ -169,6 +205,9 @@ bool __Class::isInstance(Class __this, Object o)
     do
     {
         if (__this->__vptr->equals(__this, (Object)k)) return true;
+
+        // FIXME: handle covariance of arrays
+
         k = k->__vptr->getSuperclass(k);
     }
     while ((Class)__rt::null() != k);
@@ -190,7 +229,6 @@ __Class_VT __Class::__vtable;
 
 }
 }
-}
 
 // ===========================================================================
 
@@ -202,6 +240,46 @@ java::lang::Object null()
 {
     static java::lang::Object value(0); // init the pointer type to 0, the 'null pointer'
     return value;
+}
+
+// Template specialization for arrays of ints.
+template<>
+java::lang::Class __Array<int32_t>::__class()
+{
+    // The Class object representing int.class
+    static java::lang::Class ik =
+        new java::lang::__Class(__rt::literal("int"),
+                                (java::lang::Class) __rt::null(),
+                                (java::lang::Class) __rt::null(),
+                                true);
+    // The Class object representing int[].class
+    static java::lang::Class k =
+        new java::lang::__Class(literal("[I"),
+                                java::lang::__Object::__class(),
+                                ik);
+    return k;
+}
+
+// Template specialization for arrays of objects.
+template<>
+java::lang::Class __Array<java::lang::Object>::__class()
+{
+    static java::lang::Class k =
+        new java::lang::__Class(literal("[Ljava.lang.Object;"),
+                                java::lang::__Object::__class(),
+                                java::lang::__Object::__class());
+    return k;
+}
+
+// Template specialization for arrays of strings.
+template<>
+java::lang::Class __Array<java::lang::String>::__class()
+{
+    static java::lang::Class k =
+        new java::lang::__Class(literal("[Ljava.lang.String;"),
+                                java::lang::__Object::__class(),
+                                java::lang::__String::__class());
+    return k;
 }
 
 }

@@ -74,7 +74,7 @@ public class CreateHeaderDataLayout extends Visitor {
     public void writeStartBaseLayout() throws IOException {
         printer.pln("#pragma once");
         printer.pln("#include \"java_lang.h\"");
-        printer.pln("using namespace nyu::edu::oop;\n");
+        printer.pln("using namespace java::lang;\n");
         printer.pln("namespace nyu{");
         printer.pln("namespace edu{");
         printer.pln("namespace oop{");

@@ -21,6 +21,7 @@ public class jppPrinter extends Visitor {
     private String packageName;
 
     private String currentClassName;
+    private String currentC;
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -48,7 +49,6 @@ public class jppPrinter extends Visitor {
         getOutputImplementations(n);
         writeStartBaseLayout();
         collect();
-        printer = classPrinter;
         writeEndBaseLayout();
         classPrinter.flush();
         mainPrinter.flush();
@@ -69,34 +69,45 @@ public class jppPrinter extends Visitor {
     }
 
     public void writeStartBaseLayout() {
-        printer.pln("#include \"output.h\"");
-        printer.pln("using namespace nyu::edu::oop;");
-        printer.pln("namespace nyu{");
-        printer.pln("namespace edu{");
-        printer.pln("namespace oop{");
+        classPrinter.pln("#include \"output.h\"");
+        classPrinter.pln("using namespace java::lang;");
+        classPrinter.pln("namespace nyu{");
+        classPrinter.pln("namespace edu{");
+        classPrinter.pln("namespace oop{");
+
+        mainPrinter.pln("#include <iostream>");
+        mainPrinter.pln("#include \"java_lang.h\"");
+        mainPrinter.pln("#include \"output.h\"");
+        mainPrinter.pln("using namespace nyu::edu::oop;");
+        mainPrinter.pln("using namespace std;");
     }
 
     public void writeEndBaseLayout() {
-        printer.pln("}");
-        printer.pln("}");
-        printer.pln("}");
+        classPrinter.pln("}");
+        classPrinter.pln("}");
+        classPrinter.pln("}");
+
+        mainPrinter.pln("return 0;");
+        mainPrinter.pln("}");
     }
 
 
 
     public void printClassGenerics() {
         currentClassName = "__"+currentClassName;
-        printer.pln(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) {}");
-        printer.pln("Class "+currentClassName+"::__class() {");
-        printer.indentMore();
-        printer.pln("static Class k = ");
-        printer.indentMore().indentMore();
+        classPrinter.pln(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) {}");
+        classPrinter.pln("Class "+currentClassName+"::__class() {");
+        classPrinter.indentMore();
+        classPrinter.pln("static Class k = ");
+        classPrinter.indentMore().indentMore();
         String nextLine = "new __Class(__rt::literal(\"nyu.edu.oop."+currentClassName.replace("__","")+"\"), __Object::__class());";
-        printer.pln(nextLine);
-        printer.indentMore();
-        printer.pln("return k;");
-        printer.pln("}");
-        printer.pln(currentClassName+"_VT " +currentClassName+"::__vtable;");
+        classPrinter.pln(nextLine);
+        classPrinter.indentMore();
+        classPrinter.pln("return k;");
+        classPrinter.pln("}");
+        classPrinter.pln(currentClassName+"_VT " +currentClassName+"::__vtable;");
+
+
 
     }
 
@@ -108,7 +119,7 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printBlock(Node n){
+    public void printBlock(Node n) {
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i));
@@ -119,14 +130,15 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printReturnStatement(Node n){
+    public void printReturnStatement(Node n) {
         printer.p("return ");
         printCheckStatementNode(n.getNode(0));
         printer.pln(";\n } \n");
     }
 
-    public void printFormalParameters(Node n){
-        printer.p("(");
+    public void printFormalParameters(Node n) {
+        printer.p("("+currentC+" __this, ");
+
         for(int i =0; i<n.size(); i++) {
             printCheckStatementNode(n.getNode(i));
             if(i != n.size()-1) printer.p(", ");
@@ -134,16 +146,16 @@ public class jppPrinter extends Visitor {
         printer.p(") { \n");
     }
 
-    public void printFormalParameter(Node n){
+    public void printFormalParameter(Node n) {
         printCheckStatementNode(n.getNode(0));
         printer.p(" "+n.get(1));
     }
 
-    public void printType(Node n){
+    public void printType(Node n) {
         printer.p(n.get(0).toString());
     }
 
-    public void printStringLiteral(Node n){
+    public void printStringLiteral(Node n) {
         printer.p(n.get(0).toString());
     }
 
@@ -151,23 +163,17 @@ public class jppPrinter extends Visitor {
     public void printCheckStatementNode(Node n) {
         if(n.hasName("StringLiteral")) {
             printStringLiteral(n);
-        }
-        else if(n.hasName("ReturnType")) {
+        } else if(n.hasName("ReturnType")) {
             printType(n);
-        }
-        else if(n.hasName("Type")) {
+        } else if(n.hasName("Type")) {
             printType(n);
-        }
-        else if(n.hasName("FormalParameter")) {
+        } else if(n.hasName("FormalParameter")) {
             printFormalParameter(n);
-        }
-        else if(n.hasName("FormalParameters")) {
+        } else if(n.hasName("FormalParameters")) {
             printFormalParameters(n);
-        }
-        else if(n.hasName("ReturnStatement")) {
+        } else if(n.hasName("ReturnStatement")) {
             printReturnStatement(n);
-        }
-        else if(n.hasName("Block")) {
+        } else if(n.hasName("Block")) {
             printBlock(n);
         }
 
@@ -194,6 +200,7 @@ public class jppPrinter extends Visitor {
 
     public void visitClassDeclaration(GNode n) {
         currentClassName = n.get(0).toString();
+        currentC = n.get(0).toString();
 
         if(currentClassName.equals("Test002")) {
             printer = mainPrinter;
