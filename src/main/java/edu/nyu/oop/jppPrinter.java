@@ -160,6 +160,29 @@ public class jppPrinter extends Visitor {
     }
 
 
+    // visitCallExpression Method added @hunter 4/11
+    public void printCallExpression(Node n) {
+        System.out.println(n);
+        if (null == n.getNode(0))
+            printer.p("__this");
+        else if (n.getNode(0).hasName("ThisExpression"))
+            printer.p("__this");
+        else printer.p(n.getNode(0));
+
+        // method name
+        printer.p("->__vptr->").p(n.getString(2));
+
+        if (n.getNode(3).size() > 0)
+            printer.p(n.getNode(3));
+
+        else if ("toString".equals(n.getString(2)) || "getClass".equals(n.getString(2)))
+            printer.p("(").p(n.getNode(0)).p(")");
+
+        else printer.p("()");
+
+        System.out.println("Testing");
+    }
+
     public void printCheckStatementNode(Node n) {
         if(n.hasName("StringLiteral")) {
             printStringLiteral(n);
@@ -175,7 +198,13 @@ public class jppPrinter extends Visitor {
             printReturnStatement(n);
         } else if(n.hasName("Block")) {
             printBlock(n);
+        } else if(n.hasName("CallExpression")){
+            printCallExpression(n);
+        } else if(n.hasName("ExpressionStatement")){
+            System.out.println("here! \n \n");
+            printCheckStatementNode(n.getNode(0));
         }
+
 
     }
 
@@ -218,6 +247,8 @@ public class jppPrinter extends Visitor {
 
         }
     }
+
+
 
     public void visit(Node n) {
         for(Object o: n) {

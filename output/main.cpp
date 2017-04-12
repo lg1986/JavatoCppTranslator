@@ -3,7 +3,5 @@
 #include "output.h"
 using namespace nyu::edu::oop;
 using namespace std;
-int main()
-{
-    return 0;
+return 0;
 }

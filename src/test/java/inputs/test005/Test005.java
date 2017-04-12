@@ -2,6 +2,7 @@ package inputs.test005;
 
 class A {
     public String toString() {
+        System.out.println("here!");
         return "A";
     }
 }

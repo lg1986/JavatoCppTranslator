@@ -7,7 +7,7 @@ import xtc.tree.Visitor;
 import java.util.ArrayList;
 import java.util.List;
 
-
+//TODO: ADD EXPRESSIONSTATEMENT, CALLEXPRESSION, SELECTIONEXPRESSION NODE METHODS
 public class jppTraversal extends Visitor {
 
 
@@ -37,18 +37,33 @@ public class jppTraversal extends Visitor {
         }
     }
 
+    /** Helper method to remove for loops in every get method
+     *
+     * @param n
+     * @param createdNode
+     * @return
+     */
+    //TODO: implement in get methods, figure out how to deal with the methods that use an if after the for loop
+    public void throwToCheckStatement(Node n, GNode createdNode){
+        for (int i = 0; i < n.size(); i++){
+            getCheckStatementNode(n.getNode(i), createdNode);
+        }
+    }
+
     //================================================================================
     // Controlling Center --> Everything comes here and then keeps growing
     //================================================================================
+    // TODO: add additional hasName() for singlular declarators, arguments... ect.
     public void getCheckStatementNode(Node n, GNode currNode) {
         if(n.hasName("StringLiteral")) {
             getStringLiteral(n, currNode);
         } else if(n.hasName("QualifiedIdentifier")){
             getQualifiedIdentifierNode(n, currNode);
-        } else if(n.hasName("Arguments")){
+        } else if(n.hasName("Arguments")) {
             getArguments(n, currNode);
-        }
-        else if(n.hasName("IntegerLiteral")) {
+        } else if (n.hasName("Argument")) {
+            getArgument(n, currNode);
+        } else if(n.hasName("IntegerLiteral")) {
             currNode.addNode(n);
         } else if(n.hasName("PrimaryIdentifier")) {
             currNode.addNode(n);
@@ -56,10 +71,14 @@ public class jppTraversal extends Visitor {
             getModifierNode(n, currNode);
         } else if(n.hasName("FormalParameters")) {
             getFormalParameters(n, currNode);
+        } else if(n.hasName("FormalParameter")) {
+            getFormalParameter(n, currNode);
         } else if(n.hasName("Type")) {
             getTypeNode(n, currNode);
         } else if(n.hasName("Declarators")) {
             getDeclaratorsNode(n, currNode);
+        } else if(n.hasName("Declarator")) {
+            getDeclaratorNode(n, currNode);
         } else if(n.hasName("Block")) {
             getBlock(n, currNode);
         } else if(n.hasName("FieldDeclaration")) {
@@ -77,7 +96,10 @@ public class jppTraversal extends Visitor {
     //================================================================================
 
     public void getArgument(Node n, GNode currNode){
-
+        GNode argumentParentNode = GNode.create("Argument");
+        getTypeNode(n.getNode(1), argumentParentNode);
+        argumentParentNode.add(n.get(3).toString());
+        currNode.addNode(argumentParentNode);
     }
 
     public void getArguments(Node n, GNode currNode){
@@ -180,7 +202,7 @@ public class jppTraversal extends Visitor {
 
 
     /**
-     * Get the declartors
+     * Get the declarators
      * @param n
      * @param parentDeclaratorNode
      */
@@ -196,7 +218,7 @@ public class jppTraversal extends Visitor {
         int numDeclarators = n.size();
         GNode parentDeclaratorNode = GNode.create("Declarators");
         for(int i = 0; i<numDeclarators; i++) {
-            getDeclaratorNode(n.getNode(i), parentDeclaratorNode);
+            getCheckStatementNode(n.getNode(i), parentDeclaratorNode);
         }
         currNode.addNode(parentDeclaratorNode);
     }
@@ -205,7 +227,7 @@ public class jppTraversal extends Visitor {
 
 
     /**
-     * Gets inidividual Formal Parameter
+     * Gets individual Formal Parameter
      * @param n
      * @return
      */
@@ -226,7 +248,7 @@ public class jppTraversal extends Visitor {
         GNode formalParamsParent = GNode.create("FormalParameters");
         if(numFormalParameters > 0) {
             for(int i = 0; i<numFormalParameters; i++) {
-                getFormalParameter(n.getNode(i), formalParamsParent);
+                getCheckStatementNode(n.getNode(i), formalParamsParent);
             }
         }
         currNode.addNode(formalParamsParent);
