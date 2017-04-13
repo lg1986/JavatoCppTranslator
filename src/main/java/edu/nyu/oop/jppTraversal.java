@@ -85,6 +85,12 @@ public class jppTraversal extends Visitor {
             getFieldDeclarationNode(n, currNode);
         } else if(n.hasName("ReturnStatement")) {
             getReturnStatementNode(n, currNode);
+        } else if(n.hasName("NewClassExpression")){
+            getNewClassExpression(n, currNode);
+        } else if(n.hasName("CallExpression")){
+            getCallExpression(n, currNode);
+        } else if(n.hasName("ExpressionStatement")){
+            getExpressionStatement(n, currNode);
         }
     }
     //================================================================================
@@ -94,6 +100,30 @@ public class jppTraversal extends Visitor {
     // Each of the methods Mutate and Decorate and generate depending on
     // the structure of the tree.
     //================================================================================
+
+    public void getExpressionStatement(Node n, GNode currNode){
+        GNode expNode = GNode.create("ExpressionStatement");
+        for(int i = 0; i<n.size(); i++){
+            if(n.get(i) != null && checkIfNode(n.get(i))){
+                getCheckStatementNode(n.getNode(i), expNode);
+            } else{
+                expNode.add(n.get(i));
+            }
+        }
+        currNode.addNode(expNode);
+    }
+
+    public void getCallExpression(Node n, GNode currNode){
+        GNode callExpNode = GNode.create("CallExpression");
+        for(int i = 0; i<n.size(); i++){
+            if(n.get(i) != null && checkIfNode(n.get(i))){
+                getCheckStatementNode(n.getNode(i), callExpNode);
+            } else{
+                callExpNode.add(n.get(i));
+            }
+        }
+        currNode.addNode(callExpNode);
+    }
 
     public void getArgument(Node n, GNode currNode){
         GNode argumentParentNode = GNode.create("Argument");

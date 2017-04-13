@@ -2,7 +2,8 @@ package inputs.test005;
 
 class A {
     public String toString() {
-        System.out.println("here!");
+        A a1 = new A();
+        a1.toString();
         return "A";
     }
 }

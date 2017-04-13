@@ -106,9 +106,6 @@ public class jppPrinter extends Visitor {
         classPrinter.pln("return k;");
         classPrinter.pln("}");
         classPrinter.pln(currentClassName+"_VT " +currentClassName+"::__vtable;");
-
-
-
     }
 
     public boolean checkIfNode(Object n) {
@@ -116,6 +113,45 @@ public class jppPrinter extends Visitor {
             return false;
         } else {
             return true;
+        }
+    }
+
+
+    public void printCheckStatementNode(Node n) {
+        if(n.hasName("StringLiteral")) {
+            printStringLiteral(n);
+        } else if(n.hasName("ReturnType")) {
+            printType(n);
+        } else if(n.hasName("Type")) {
+            printType(n);
+        } else if(n.hasName("FormalParameter")) {
+            printFormalParameter(n);
+        } else if(n.hasName("FormalParameters")) {
+            printFormalParameters(n);
+        } else if(n.hasName("ReturnStatement")) {
+            printReturnStatement(n);
+        } else if(n.hasName("Block")) {
+            printBlock(n);
+        } else if(n.hasName("CallExpression")){
+            printCallExpression(n);
+        } else if(n.hasName("ExpressionStatement")){
+            printCheckStatementNode(n.getNode(0));
+        }
+
+
+    }
+
+    public void printCallExpression(Node n) {
+        for(int i = 0; i<n.size(); i++){
+            if(n.get(i) != null && checkIfNode(n.get(i))){
+                if(n.getNode(i).hasName("PrimaryIdentifier")){
+                    printer.p(n.getNode(i).get(0).toString() + "->"+"__vptr->");
+                } else {
+                    printCheckStatementNode(n.getNode(i));
+                }
+            } else if(n.get(i) != null){
+                printer.p(n.get(i).toString());
+            }
         }
     }
 
@@ -160,53 +196,8 @@ public class jppPrinter extends Visitor {
     }
 
 
-    // visitCallExpression Method added @hunter 4/11
-    public void printCallExpression(Node n) {
-        System.out.println(n);
-        if (null == n.getNode(0))
-            printer.p("__this");
-        else if (n.getNode(0).hasName("ThisExpression"))
-            printer.p("__this");
-        else printer.p(n.getNode(0));
-
-        // method name
-        printer.p("->__vptr->").p(n.getString(2));
-
-        if (n.getNode(3).size() > 0)
-            printer.p(n.getNode(3));
-
-        else if ("toString".equals(n.getString(2)) || "getClass".equals(n.getString(2)))
-            printer.p("(").p(n.getNode(0)).p(")");
-
-        else printer.p("()");
-
-        System.out.println("Testing");
-    }
-
-    public void printCheckStatementNode(Node n) {
-        if(n.hasName("StringLiteral")) {
-            printStringLiteral(n);
-        } else if(n.hasName("ReturnType")) {
-            printType(n);
-        } else if(n.hasName("Type")) {
-            printType(n);
-        } else if(n.hasName("FormalParameter")) {
-            printFormalParameter(n);
-        } else if(n.hasName("FormalParameters")) {
-            printFormalParameters(n);
-        } else if(n.hasName("ReturnStatement")) {
-            printReturnStatement(n);
-        } else if(n.hasName("Block")) {
-            printBlock(n);
-        } else if(n.hasName("CallExpression")){
-            printCallExpression(n);
-        } else if(n.hasName("ExpressionStatement")){
-            System.out.println("here! \n \n");
-            printCheckStatementNode(n.getNode(0));
-        }
 
 
-    }
 
     public void visitMethodDeclaration(GNode n) {
         if(!n.get(2).toString().equals("main")) {
@@ -220,9 +211,7 @@ public class jppPrinter extends Visitor {
             }
         } else {
             printer.pln("int main(){ ");
-            System.out.println(n);
             printCheckStatementNode(n.getNode(6));
-
         }
 
     }
