@@ -289,9 +289,7 @@ public class jppTraversal extends Visitor {
      * @return
      */
     public void getStringLiteral(Node n, GNode currNode) {
-        GNode stringLiteralNode = GNode.create("StringLiteral");
-        stringLiteralNode.add("__rt::literal("+n.get(0).toString()+")");
-        currNode.addNode(stringLiteralNode);
+        currNode.addNode(n);
     }
 
     //================================================================================

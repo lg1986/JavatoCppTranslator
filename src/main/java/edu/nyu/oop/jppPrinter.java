@@ -257,17 +257,18 @@ public class jppPrinter extends Visitor {
 
     public void printFormalParameters(Node n, String from) {
         printer.p("("+currentC+" __this ");
+        if(n.size() > 0) printer.p(", ");
 
         for(int i =0; i<n.size(); i++) {
             printCheckStatementNode(n.getNode(i), "FormalParameters");
-            if(i != n.size()-1) printer.p(", ");
+            if(i != n.size()-1) printer.p(" ,");
         }
         printer.p(") { \n");
     }
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
-        printer.p(" ,"+n.get(1));
+        printer.p(" "+n.get(1));
     }
 
     public void printType(Node n, String from) {
@@ -323,7 +324,7 @@ public class jppPrinter extends Visitor {
         currentClassName = n.get(0).toString();
         currentC = n.get(0).toString();
 
-        if(currentClassName.equals("Test001")) {
+        if(currentClassName.equals("Test002")) {
             printer = mainPrinter;
         } else {
             printer = classPrinter;
