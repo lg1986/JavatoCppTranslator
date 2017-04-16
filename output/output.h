@@ -17,20 +17,19 @@ struct __A
     static Class __class();
     __A();
     static __A_VT __vtable;
-    String a;
-    static String toString(A, int i);
+    static String toString(A );
 };
 struct __A_VT
 {
     Class __is_a;
-    String(*toString)( A, int32_t i );
+    String(*toString)( A );
     int32_t(*hashCode)( A );
     bool(*equals)( A, Object  );
     Class(*getClass)( A );
 
     __A_VT()
         : __is_a(__A::__class()),
-          toString((String(*)( A, int32_t i ))&__A::toString),
+          toString((String(*)( A ))&__A::toString),
           hashCode((int32_t(*)( A ))&__Object::hashCode),
           equals((bool(*)( A, Object  ))&__Object::equals),
           getClass((Class(*)( A ))&__Object::getClass)

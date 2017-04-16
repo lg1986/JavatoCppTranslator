@@ -178,15 +178,7 @@ public class jppTraversal extends Visitor {
      * @param currNode
      */
     public void getFieldDeclarationNode(Node n, GNode currNode) {
-        GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                getCheckStatementNode(n.getNode(i), fieldDeclarationNode);
-            } else {
-                fieldDeclarationNode.add(n.get(i));
-            }
-        }
-        currNode.addNode(fieldDeclarationNode);
+        currNode.addNode(n);
     }
 
     /**

@@ -23,6 +23,7 @@ public class jppPrinter extends Visitor {
     private String currentClassName;
     private String currentC;
 
+    private String callExpIdentifier;
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
@@ -158,6 +159,7 @@ public class jppPrinter extends Visitor {
         printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
             printer.p("->__vptr->");
+            callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
 
     }
@@ -172,6 +174,9 @@ public class jppPrinter extends Visitor {
 
     public void printArguments(Node n, String from) {
         printer.p("(");
+        if(from.equals("CallExpression")) {
+            printer.p(callExpIdentifier);
+        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), from);
@@ -204,9 +209,9 @@ public class jppPrinter extends Visitor {
                 printCheckStatementNode(n.getNode(i), "FieldDeclaration");
             }
         }
-        printer.p("; \n");
     }
     public void printDeclarator(Node n, String from) {
+        System.out.println(n);
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Declarator");
@@ -227,15 +232,14 @@ public class jppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        System.out.println(n);
-        boolean println = false;
+        callExpIdentifier = "";
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i)!=null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "CallExpression");
             } else if(n.get(i) != null) {
                 if(n.get(i).equals("println")) {
                     printer.p("cout <<");
-                    println = true;
+
                 } else {
                     printer.p(n.get(i).toString());
                 }
@@ -243,26 +247,16 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printBlock(Node n, String from) {
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                printCheckStatementNode(n.getNode(i), "Block");
-            } else if(n.get(i) != null) {
-                printer.p(n.get(i).toString());
-            }
-        }
-    }
+
 
     public void printReturnStatement(Node n, String from) {
 
         printer.p("return ");
         printCheckStatementNode(n.getNode(0), "ReturnStatement");
-
-        printer.pln(";\n } \n");
     }
 
     public void printFormalParameters(Node n, String from) {
-        printer.p("("+currentC+" __this, ");
+        printer.p("("+currentC+" __this ");
 
         for(int i =0; i<n.size(); i++) {
             printCheckStatementNode(n.getNode(i), "FormalParameters");
@@ -273,22 +267,41 @@ public class jppPrinter extends Visitor {
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
-        printer.p(" "+n.get(1));
+        printer.p(" ,"+n.get(1));
     }
 
     public void printType(Node n, String from) {
-        printer.p(n.get(0).toString());
+        for(int i =0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "printType");
+            } else if(n.get(i) != null) {
+                printer.p(n.get(i).toString());
+            }
+        }
     }
 
     public void printStringLiteral(Node n, String from) {
-        printer.p(n.get(0).toString());
+        printer.p("__rt::literal("+n.get(0).toString()+")");
     }
 
+
+    public void printBlock(Node n, String from) {
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "Block");
+            } else if(n.get(i) != null) {
+                printer.p(n.get(i).toString());
+            }
+            printer.p("; \n");
+        }
+        if(printer != mainPrinter) printer.p("} \n");
+    }
 
 
 
 
     public void visitMethodDeclaration(GNode n) {
+        System.out.println(n);
         if(!n.get(2).toString().equals("main")) {
             for (int i = 0; i < n.size(); i++) {
                 if (n.get(i) != null && checkIfNode(n.get(i))) {
