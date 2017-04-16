@@ -44,8 +44,8 @@ public class jppTraversal extends Visitor {
      * @return
      */
     //TODO: implement in get methods, figure out how to deal with the methods that use an if after the for loop
-    public void throwToCheckStatement(Node n, GNode createdNode){
-        for (int i = 0; i < n.size(); i++){
+    public void throwToCheckStatement(Node n, GNode createdNode) {
+        for (int i = 0; i < n.size(); i++) {
             getCheckStatementNode(n.getNode(i), createdNode);
         }
     }
@@ -57,7 +57,7 @@ public class jppTraversal extends Visitor {
     public void getCheckStatementNode(Node n, GNode currNode) {
         if(n.hasName("StringLiteral")) {
             getStringLiteral(n, currNode);
-        } else if(n.hasName("QualifiedIdentifier")){
+        } else if(n.hasName("QualifiedIdentifier")) {
             getQualifiedIdentifierNode(n, currNode);
         } else if(n.hasName("Arguments")) {
             getArguments(n, currNode);
@@ -77,19 +77,17 @@ public class jppTraversal extends Visitor {
             getTypeNode(n, currNode);
         } else if(n.hasName("Declarators")) {
             getDeclaratorsNode(n, currNode);
-        } else if(n.hasName("Declarator")) {
-            getDeclaratorNode(n, currNode);
         } else if(n.hasName("Block")) {
             getBlock(n, currNode);
         } else if(n.hasName("FieldDeclaration")) {
             getFieldDeclarationNode(n, currNode);
         } else if(n.hasName("ReturnStatement")) {
             getReturnStatementNode(n, currNode);
-        } else if(n.hasName("NewClassExpression")){
+        } else if(n.hasName("NewClassExpression")) {
             getNewClassExpression(n, currNode);
-        } else if(n.hasName("CallExpression")){
+        } else if(n.hasName("CallExpression")) {
             getCallExpression(n, currNode);
-        } else if(n.hasName("ExpressionStatement")){
+        } else if(n.hasName("ExpressionStatement")) {
             getExpressionStatement(n, currNode);
         }
     }
@@ -101,40 +99,40 @@ public class jppTraversal extends Visitor {
     // the structure of the tree.
     //================================================================================
 
-    public void getExpressionStatement(Node n, GNode currNode){
+    public void getExpressionStatement(Node n, GNode currNode) {
         GNode expNode = GNode.create("ExpressionStatement");
-        for(int i = 0; i<n.size(); i++){
-            if(n.get(i) != null && checkIfNode(n.get(i))){
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
                 getCheckStatementNode(n.getNode(i), expNode);
-            } else{
+            } else {
                 expNode.add(n.get(i));
             }
         }
         currNode.addNode(expNode);
     }
 
-    public void getCallExpression(Node n, GNode currNode){
+    public void getCallExpression(Node n, GNode currNode) {
         GNode callExpNode = GNode.create("CallExpression");
-        for(int i = 0; i<n.size(); i++){
-            if(n.get(i) != null && checkIfNode(n.get(i))){
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
                 getCheckStatementNode(n.getNode(i), callExpNode);
-            } else{
+            } else {
                 callExpNode.add(n.get(i));
             }
         }
         currNode.addNode(callExpNode);
     }
 
-    public void getArgument(Node n, GNode currNode){
+    public void getArgument(Node n, GNode currNode) {
         GNode argumentParentNode = GNode.create("Argument");
         getTypeNode(n.getNode(1), argumentParentNode);
         argumentParentNode.add(n.get(3).toString());
         currNode.addNode(argumentParentNode);
     }
 
-    public void getArguments(Node n, GNode currNode){
+    public void getArguments(Node n, GNode currNode) {
         GNode argumentsNode = GNode.create("Arguments");
-        for(int i = 0; i<n.size(); i++){
+        for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 getCheckStatementNode(n.getNode(i), argumentsNode);
             } else {
@@ -144,13 +142,13 @@ public class jppTraversal extends Visitor {
         currNode.addNode(argumentsNode);
     }
 
-    public void getQualifiedIdentifierNode(Node n, GNode currNode){
+    public void getQualifiedIdentifierNode(Node n, GNode currNode) {
         currNode.add(n.get(0).toString());
     }
 
-    public void getNewClassExpression(Node n, GNode currNode){
+    public void getNewClassExpression(Node n, GNode currNode) {
         GNode newClassNode =GNode.create("NewClassExpression");
-        for(int i = 0; i<n.size(); i++){
+        for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 getCheckStatementNode(n.getNode(i), newClassNode);
             } else {
@@ -179,7 +177,7 @@ public class jppTraversal extends Visitor {
      * @param n
      * @param currNode
      */
-    public void getFieldDeclarationNode(Node n, GNode currNode){
+    public void getFieldDeclarationNode(Node n, GNode currNode) {
         GNode fieldDeclarationNode = GNode.create("FieldDeclaration");
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
@@ -196,7 +194,7 @@ public class jppTraversal extends Visitor {
      * @param n
      * @param currNode
      */
-    public void getReturnStatementNode(Node n, GNode currNode){
+    public void getReturnStatementNode(Node n, GNode currNode) {
         GNode returnStatementNode = GNode.create("ReturnStatement");
         getCheckStatementNode(n.getNode(0), returnStatementNode);
         currNode.addNode(returnStatementNode);
@@ -230,27 +228,8 @@ public class jppTraversal extends Visitor {
     }
 
 
-
-    /**
-     * Get the declarators
-     * @param n
-     * @param parentDeclaratorNode
-     */
-    public void getDeclaratorNode(Node n, GNode parentDeclaratorNode) {
-        GNode childDeclaratorNode = GNode.create("Declarator");
-        childDeclaratorNode.add(n.get(0).toString());
-        childDeclaratorNode.add(null);
-        getCheckStatementNode(n.getNode(2), childDeclaratorNode);
-        parentDeclaratorNode.addNode(childDeclaratorNode);
-    }
-
     public void getDeclaratorsNode(Node n, GNode currNode) {
-        int numDeclarators = n.size();
-        GNode parentDeclaratorNode = GNode.create("Declarators");
-        for(int i = 0; i<numDeclarators; i++) {
-            getCheckStatementNode(n.getNode(i), parentDeclaratorNode);
-        }
-        currNode.addNode(parentDeclaratorNode);
+        currNode.addNode(n);
     }
 
 

@@ -117,81 +117,170 @@ public class jppPrinter extends Visitor {
     }
 
 
-    public void printCheckStatementNode(Node n) {
+    public void printCheckStatementNode(Node n, String from) {
         if(n.hasName("StringLiteral")) {
-            printStringLiteral(n);
+            printStringLiteral(n, from);
         } else if(n.hasName("ReturnType")) {
-            printType(n);
+            printType(n, from);
         } else if(n.hasName("Type")) {
-            printType(n);
+            printType(n, from);
         } else if(n.hasName("FormalParameter")) {
-            printFormalParameter(n);
+            printFormalParameter(n, from);
         } else if(n.hasName("FormalParameters")) {
-            printFormalParameters(n);
+            printFormalParameters(n, from);
         } else if(n.hasName("ReturnStatement")) {
-            printReturnStatement(n);
+            printReturnStatement(n, from);
         } else if(n.hasName("Block")) {
-            printBlock(n);
-        } else if(n.hasName("CallExpression")){
-            printCallExpression(n);
-        } else if(n.hasName("ExpressionStatement")){
-            printCheckStatementNode(n.getNode(0));
+            printBlock(n, from);
+        } else if(n.hasName("CallExpression")) {
+            printCallExpression(n, from);
+        } else if(n.hasName("ExpressionStatement")) {
+            printExpressionStatement(n, from);
+        } else if(n.hasName("Declarators")) {
+            printDeclarators(n, from);
+        } else if(n.hasName(("Declarator"))) {
+            printDeclarator(n, from);
+        } else if(n.hasName("FieldDeclaration")) {
+            printFieldDeclaration(n, from);
+        } else if(n.hasName("NewClassExpression")) {
+            printNewClassExpression(n, from);
+        } else if(n.hasName("Arguments")) {
+            printArguments(n, from);
+        } else if(n.hasName("QualifiedIdentifier")) {
+            printQualifiedIdentifier(n, from);
+        } else if(n.hasName("PrimaryIdentifier")) {
+            printPrimaryIdentifier(n, from);
         }
-
 
     }
 
-    public void printCallExpression(Node n) {
-        for(int i = 0; i<n.size(); i++){
-            if(n.get(i) != null && checkIfNode(n.get(i))){
-                if(n.getNode(i).hasName("PrimaryIdentifier")){
-                    printer.p(n.getNode(i).get(0).toString() + "->"+"__vptr->");
-                } else {
-                    printCheckStatementNode(n.getNode(i));
-                }
-            } else if(n.get(i) != null){
-                printer.p(n.get(i).toString());
+    public void printPrimaryIdentifier(Node n, String from) {
+        printer.p(n.get(0).toString().replace("\"", ""));
+        if(from.equals("CallExpression")) {
+            printer.p("->__vptr->");
+        }
+
+    }
+
+    public void printQualifiedIdentifier(Node n, String from) {
+        if(from.equals("NewClassExpression")) {
+            printer.p("new __");
+        }
+        printer.p(n.get(0).toString().replace("\"", ""));
+
+    }
+
+    public void printArguments(Node n, String from) {
+        printer.p("(");
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                printCheckStatementNode(n.getNode(i), from);
+            }
+        }
+        printer.p(")");
+    }
+
+    public void printNewClassExpression(Node n, String from) {
+        System.out.println(n);
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                printCheckStatementNode(n.getNode(i), "NewClassExpression");
             }
         }
     }
 
-    public void printBlock(Node n) {
+    public void printExpressionStatement(Node n, String from) {
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                printCheckStatementNode(n.getNode(i), "ExpressionStatement");
+            }
+        }
+    }
+
+    public void printFieldDeclaration(Node n, String from) {
+        System.out.println(n);
+        for(int i = 0; i < n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "FieldDeclaration");
+            }
+        }
+        printer.p("; \n");
+    }
+    public void printDeclarator(Node n, String from) {
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
-                printCheckStatementNode(n.getNode(i));
+                printCheckStatementNode(n.getNode(i), "Declarator");
+            } else if(n.get(i) instanceof String) {
+                printer.p(" "+n.get(i).toString().replace("\"", "")+" = ");
+            }
+        }
+    }
 
-            } else if(n.get(i) != null && !checkIfNode(n.get(i))) {
+
+    public void printDeclarators(Node n, String from) {
+
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printDeclarator(n.getNode(i), from);
+            }
+        }
+    }
+
+    public void printCallExpression(Node n, String from) {
+        System.out.println(n);
+        boolean println = false;
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i)!=null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "CallExpression");
+            } else if(n.get(i) != null) {
+                if(n.get(i).equals("println")) {
+                    printer.p("cout <<");
+                    println = true;
+                } else {
+                    printer.p(n.get(i).toString());
+                }
+            }
+        }
+    }
+
+    public void printBlock(Node n, String from) {
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "Block");
+            } else if(n.get(i) != null) {
                 printer.p(n.get(i).toString());
             }
         }
     }
 
-    public void printReturnStatement(Node n) {
+    public void printReturnStatement(Node n, String from) {
+
         printer.p("return ");
-        printCheckStatementNode(n.getNode(0));
+        printCheckStatementNode(n.getNode(0), "ReturnStatement");
+
         printer.pln(";\n } \n");
     }
 
-    public void printFormalParameters(Node n) {
+    public void printFormalParameters(Node n, String from) {
         printer.p("("+currentC+" __this, ");
 
         for(int i =0; i<n.size(); i++) {
-            printCheckStatementNode(n.getNode(i));
+            printCheckStatementNode(n.getNode(i), "FormalParameters");
             if(i != n.size()-1) printer.p(", ");
         }
         printer.p(") { \n");
     }
 
-    public void printFormalParameter(Node n) {
-        printCheckStatementNode(n.getNode(0));
+    public void printFormalParameter(Node n, String from) {
+        printCheckStatementNode(n.getNode(0), "FormalParameter");
         printer.p(" "+n.get(1));
     }
 
-    public void printType(Node n) {
+    public void printType(Node n, String from) {
         printer.p(n.get(0).toString());
     }
 
-    public void printStringLiteral(Node n) {
+    public void printStringLiteral(Node n, String from) {
         printer.p(n.get(0).toString());
     }
 
@@ -203,7 +292,7 @@ public class jppPrinter extends Visitor {
         if(!n.get(2).toString().equals("main")) {
             for (int i = 0; i < n.size(); i++) {
                 if (n.get(i) != null && checkIfNode(n.get(i))) {
-                    printCheckStatementNode(n.getNode(i));
+                    printCheckStatementNode(n.getNode(i), "MethodDeclaration");
                 } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
                     printer.p(" " + currentClassName + "::" +
                               n.get(i).toString());
@@ -211,12 +300,13 @@ public class jppPrinter extends Visitor {
             }
         } else {
             printer.pln("int main(){ ");
-            printCheckStatementNode(n.getNode(6));
+            printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
 
     }
 
     public void visitClassDeclaration(GNode n) {
+
         currentClassName = n.get(0).toString();
         currentC = n.get(0).toString();
 
