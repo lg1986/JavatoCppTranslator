@@ -317,6 +317,7 @@ public class jppTraversal extends Visitor {
         // Name Node -- 0
         classNode.add(n.get(1).toString());
 
+
         // MethodDeclarations node -- 1
         GNode methodDeclarationsNode = GNode.create("MethodDeclarations");
         classNode.addNode(methodDeclarationsNode);

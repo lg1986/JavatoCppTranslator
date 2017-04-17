@@ -314,6 +314,7 @@ public class jppPrinter extends Visitor {
             }
         } else {
             printer.pln("int main(){ ");
+            //printer.pln("***********************************");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
 
@@ -322,6 +323,7 @@ public class jppPrinter extends Visitor {
     public void visitClassDeclaration(GNode n) {
 
         currentClassName = n.get(0).toString();
+
         currentC = n.get(0).toString();
 
         if(currentClassName.equals("Test002")) {
@@ -340,7 +342,6 @@ public class jppPrinter extends Visitor {
 
         }
     }
-
 
 
     public void visit(Node n) {
