@@ -327,6 +327,13 @@ public class jppTraversal extends Visitor {
 
     }
 
+    public void visitConstructorDeclaration(GNode n){
+        GNode constructorNode = GNode.create("ConstructorDeclaration");
+        System.out.println("************************************\n");
+        System.out.println(n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString()); // type
+        System.out.println(n.getNode(3).getNode(0).get(3).toString()); // variable name
+    }
+
     public void visit(Node n) {
         for (Object o : n) {
             if (o instanceof Node) {
