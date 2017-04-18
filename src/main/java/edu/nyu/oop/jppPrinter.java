@@ -301,17 +301,11 @@ public class jppPrinter extends Visitor {
 
     public void visitConstructorDeclaration(GNode n){
         //  A a = __A::__init(new __A(), 'z');
-        /*
-        for (int i = 0; i < n.size(); i++) {
-            if (n.get(i) != null && checkIfNode(n.get(i))) {
-                printCheckStatementNode(n.getNode(i), "ConstructorDeclaration");
-            } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
-                printer.p(currentClassName + " "  +
-                        n.get(i).toString());
-            }
-        }
-        */
-        printer.p("********************");
+        String className = n.get(2).toString().replace("()", "").toString();
+        //String constructor = "static __"+className+" __init";
+        //printer.p(constructor+"( __"+className+" __this");
+        printer.p("\n**********\n");
+        visit(n);
 
     }
 
