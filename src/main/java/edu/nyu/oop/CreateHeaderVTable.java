@@ -115,6 +115,12 @@ public class CreateHeaderVTable extends Visitor {
         }
     }
 
+    public void visitConstructorDeclaration(GNode n) throws IOException{
+        currentClassName= n.get(0).toString().replace("()", "");
+        printer.pln("************************\n");
+
+    }
+
     public void visitClassDeclaration(GNode n) throws IOException {
         currentClassName= n.get(0).toString().replace("()", "");
 

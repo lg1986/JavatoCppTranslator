@@ -10,8 +10,19 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-String __A::toString(A __this , int32_t i) { 
-return __rt::literal("A"); 
+String __A::getFld(A __this ) { 
+return fld; 
+} 
+__Test003::__Test003() : __vptr(&__vtable) {}
+Class __Test003::__class() {
+  static Class k = 
+    new __Class(__rt::literal("nyu.edu.oop.Test003"), __Object::__class());
+  return k;
+}
+__Test003_VT __Test003::__vtable;
+int main(){ 
+A a = new __A(__rt::literal("A")); 
+cout <<(a->__vptr->getFld(a)); 
 } 
 }
 }

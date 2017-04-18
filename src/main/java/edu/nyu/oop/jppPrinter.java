@@ -299,7 +299,21 @@ public class jppPrinter extends Visitor {
     }
 
 
+    public void visitConstructorDeclaration(GNode n){
+        //  A a = __A::__init(new __A(), 'z');
+        /*
+        for (int i = 0; i < n.size(); i++) {
+            if (n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "ConstructorDeclaration");
+            } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
+                printer.p(currentClassName + " "  +
+                        n.get(i).toString());
+            }
+        }
+        */
+        printer.p("********************");
 
+    }
 
     public void visitMethodDeclaration(GNode n) {
         System.out.println(n);
@@ -314,7 +328,6 @@ public class jppPrinter extends Visitor {
             }
         } else {
             printer.pln("int main(){ ");
-            //printer.pln("***********************************");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
 

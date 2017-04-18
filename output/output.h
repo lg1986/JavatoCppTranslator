@@ -13,21 +13,24 @@ __A_VT* __vptr;
 static Class __class();
 __A();
 static __A_VT __vtable;
-String a;
-static String toString(A , int i);
+String fld;
+static __A __init( __A __this, String f);
+static String getFld(A );
 };
 struct __A_VT{ 
 Class __is_a; 
-String(*toString)( A, int32_t i ); 
+String(*getFld)( A ); 
 int32_t(*hashCode)( A ); 
 bool(*equals)( A, Object  ); 
+String(*toString)( A ); 
 Class(*getClass)( A ); 
 
 __A_VT() 
 	: __is_a(__A::__class()),
-toString((String(*)( A, int32_t i ))&__A::toString),
+getFld((String(*)( A ))&__A::getFld),
 hashCode((int32_t(*)( A ))&__Object::hashCode),
 equals((bool(*)( A, Object  ))&__Object::equals),
+toString((String(*)( A ))&__Object::toString),
 getClass((Class(*)( A ))&__Object::getClass)
 {
 }
