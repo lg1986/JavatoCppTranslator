@@ -336,7 +336,9 @@ public class jppTraversal extends Visitor {
         System.out.println("Name: " + varName + "  type: " + type + "\n");
         constructorNode.add(type);
         constructorNode.add(varName);
-        System.out.println(constructorNode.get(0));
+//        System.out.println(constructorNode.get(0));
+//        System.out.println(constructorNode.get(1));
+        classNode.addNode(constructorNode);
     }
 
     public void visit(Node n) {
