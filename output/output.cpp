@@ -10,7 +10,7 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-String __A::getFld(A __this ) { 
+A::__init(new__A()String __A::getFld(A __this ) { 
 return fld; 
 } 
 __Test003::__Test003() : __vptr(&__vtable) {}

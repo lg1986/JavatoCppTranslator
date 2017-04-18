@@ -329,13 +329,16 @@ public class jppTraversal extends Visitor {
     }
 
     public void visitConstructorDeclaration(GNode n){
+
         GNode constructorNode = GNode.create("ConstructorDeclaration");
-        String type = n.getNode(3).getNode(0).getNode(1).getNode(0).get(0).toString();
-        String varName = n.getNode(3).getNode(0).get(3).toString();
-        System.out.println("Name: " + varName + "  type: " + type + "\n");
-        constructorNode.add(type);
-        constructorNode.add(varName);
-        classNode.addNode(constructorNode);
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                getCheckStatementNode(n.getNode(i), constructorNode);
+            } else {
+                constructorNode.add(n.get(i));
+            }
+        }
+        classNode.getNode(1).addNode(constructorNode);
     }
 
     public void visit(Node n) {

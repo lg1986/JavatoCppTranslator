@@ -300,6 +300,7 @@ public class jppPrinter extends Visitor {
 
 
     public void visitConstructorDeclaration(GNode n){
+        System.out.println(n);
         //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();
         // static __A __init( __A __this, String f);
@@ -308,6 +309,7 @@ public class jppPrinter extends Visitor {
         String constructor = className + "::__init(new__" + className + "()"; // need to add variable name
         printer.p(constructor);
         visit(n);
+
 
     }
 
