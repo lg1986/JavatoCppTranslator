@@ -299,7 +299,13 @@ public class jppPrinter extends Visitor {
     }
 
     public void printStringLiteral(Node n, String from) {
-        printer.p("__rt::literal("+n.get(0).toString()+")");
+        if(from.equals("NewClassExpression")){
+            printer.p(n.get(0).toString());
+        }
+        else{
+            printer.p("__rt::literal("+n.get(0).toString()+")");
+        }
+
     }
 
 
