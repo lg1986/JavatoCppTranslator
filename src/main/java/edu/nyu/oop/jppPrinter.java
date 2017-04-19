@@ -92,11 +92,24 @@ public class jppPrinter extends Visitor {
         mainPrinter.pln("}");
     }
 
+    public void printClassFieldInitializers(Node n) {
+        for(int i = 0; i<n.size(); i++) {
+            Node k = n.getNode(i);
+            printer.p("," + k.get(1).toString() + "(");
+            String typ = k.get(0).toString();
+            if (typ.equals("String")) {
+                printer.p("__rt::literal(\"\"))");
+            }
+        }
 
+    }
 
-    public void printClassGenerics() {
+    public void printClassGenerics(Node n) {
         currentClassName = "__"+currentClassName;
-        classPrinter.pln(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) {}");
+        classPrinter.p(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) ");
+        printClassFieldInitializers(n);
+        printer.pln("{}");
+
         classPrinter.pln("Class "+currentClassName+"::__class() {");
         classPrinter.indentMore();
         classPrinter.pln("static Class k = ");
@@ -186,7 +199,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printNewClassExpression(Node n, String from) {
-        System.out.println(n);
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "NewClassExpression");
@@ -203,7 +215,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFieldDeclaration(Node n, String from) {
-        System.out.println(n);
         for(int i = 0; i < n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "FieldDeclaration");
@@ -211,7 +222,6 @@ public class jppPrinter extends Visitor {
         }
     }
     public void printDeclarator(Node n, String from) {
-        System.out.println(n);
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Declarator");
@@ -232,9 +242,11 @@ public class jppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
+        System.out.println(n);
         callExpIdentifier = "";
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i)!=null && checkIfNode(n.get(i))) {
+
                 printCheckStatementNode(n.getNode(i), "CallExpression");
             } else if(n.get(i) != null) {
                 if(n.get(i).equals("println")) {
@@ -302,7 +314,6 @@ public class jppPrinter extends Visitor {
 
 
     public void visitMethodDeclaration(GNode n) {
-        System.out.println(n);
         if(!n.get(2).toString().equals("main")) {
             for (int i = 0; i < n.size(); i++) {
                 if (n.get(i) != null && checkIfNode(n.get(i))) {
@@ -324,11 +335,11 @@ public class jppPrinter extends Visitor {
         currentClassName = n.get(0).toString();
         currentC = n.get(0).toString();
 
-        if(currentClassName.equals("Test002")) {
+        if(currentClassName.equals("Test003")) {
             printer = mainPrinter;
         } else {
             printer = classPrinter;
-            printClassGenerics();
+            printClassGenerics(n.getNode(2));
         }
         visit(n.getNode(1));
     }

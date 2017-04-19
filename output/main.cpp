@@ -3,10 +3,9 @@
 #include "output.h"
 using namespace nyu::edu::oop;
 using namespace std;
-int main(){ 
-A a = new __A(); 
-Object o = (Object) a;
-//cout <<(a->__vptr->);
-cout <<(o->__vptr->toString(o)); 
-return 0;
+int main()
+{
+    A a = new __A(__rt::literal("A"));
+    cout <<(a->__vptr->getFld(a));
+    return 0;
 }

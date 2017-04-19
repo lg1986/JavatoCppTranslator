@@ -6,7 +6,7 @@ namespace edu
 {
 namespace oop
 {
-__A::__A() : __vptr(&__vtable), a(__rt::literal("a")){}
+__A::__A() : __vptr(&__vtable),fld(__rt::literal("")) {}
 Class __A::__class()
 {
     static Class k =
@@ -14,9 +14,9 @@ Class __A::__class()
     return k;
 }
 __A_VT __A::__vtable;
-String __A::toString(A __this, int32_t i)
+String __A::getFld(A __this )
 {
-    return __rt::literal("A");
+    return fld;
 }
 }
 }

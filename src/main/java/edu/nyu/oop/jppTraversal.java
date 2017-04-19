@@ -295,6 +295,15 @@ public class jppTraversal extends Visitor {
     //================================================================================
     // Generic Visit Methods
     //================================================================================
+    public void visitFieldDeclaration(GNode n) {
+        System.out.println(n);
+        GNode classFieldDeclarationNode = GNode.create("ClassFieldDeclaration");
+
+        classFieldDeclarationNode.add(n.getNode(1).getNode(0).get(0).toString());
+        classFieldDeclarationNode.add(n.getNode(2).getNode(0).get(0).toString());
+        classNode.getNode(2).addNode(classFieldDeclarationNode);
+    }
+
 
     public void visitMethodDeclaration(GNode n) {
         // Creating the MethodDeclaraitonNode
@@ -320,6 +329,10 @@ public class jppTraversal extends Visitor {
         // MethodDeclarations node -- 1
         GNode methodDeclarationsNode = GNode.create("MethodDeclarations");
         classNode.addNode(methodDeclarationsNode);
+
+        // ClassFieldDeclarationNode -- 2
+        GNode classFieldDeclarationsNode = GNode.create("ClassFieldDeclarations");
+        classNode.addNode(classFieldDeclarationsNode);
 
         // Don't visit anything else but the ClassBody directly
         visit(n.getNode(5));
