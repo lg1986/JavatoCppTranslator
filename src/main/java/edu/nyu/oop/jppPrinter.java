@@ -314,16 +314,16 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        System.out.println("\n \n CONSTRUCTOR"+n.toString());
+        System.out.println("CONST: " +n.toString());
+        System.out.println("**********************\n"+n.getNode(3).getNode(0).get(1).toString());
 
 
         //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();
-        // static __A __init( __A __this, String f);
-        //String constructor = "static __"+className+" __init";
-        //printer.p(constructor+"( __"+className+" __this");
-        String constructor = className + "::__init(new__" + className + "()"; // need to add variable name
+        String constructor = className + "::__init(new__" + className + "(),";// need to add variable name
         printer.p(constructor);
+        printFormalParameter(n,from);
+        printer.p(")\n");
 
     }
 

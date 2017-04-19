@@ -10,23 +10,21 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A()A::__init(new__A() __A::setFld(A __this , String f) { 
-; 
-} 
- __A::almostSetFld(A __this , String f) { 
-String fld = ; 
-; 
-} 
+A::__init(new__A(), null)
 String __A::getFld(A __this ) { 
 return fld; 
 } 
-__B::__B() : __vptr(&__vtable) {}
-Class __B::__class() {
+__Test003::__Test003() : __vptr(&__vtable) {}
+Class __Test003::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.Test003"), __Object::__class());
   return k;
 }
-__B_VT __B::__vtable;
-B::__init(new__B()}
+__Test003_VT __Test003::__vtable;
+int main(){ 
+A a = new __A(__rt::literal("A")); 
+cout <<(a->__vptr->getFld(a)); 
+} 
+}
 }
 }
