@@ -319,6 +319,11 @@ public class jppTraversal extends Visitor {
         classNode.getNode(1).addNode(methodNode);
     }
 
+
+    public void visitConstructorDeclaration(GNode n) {
+        classNode.getNode(3).addNode(n);
+    }
+
     public void visitClassDeclaration(GNode n) {
         // Creating the GNode
         classNode = GNode.create("ClassDeclaration");
@@ -335,24 +340,14 @@ public class jppTraversal extends Visitor {
         GNode classFieldDeclarationsNode = GNode.create("ClassFieldDeclarations");
         classNode.addNode(classFieldDeclarationsNode);
 
+        GNode constructorDeclarationsNode = GNode.create("ConstructorDeclarations");
+        classNode.addNode(constructorDeclarationsNode);
         // Don't visit anything else but the ClassBody directly
         visit(n.getNode(5));
         cpp.addAST(classNode);
 
     }
 
-    public void visitConstructorDeclaration(GNode n){
-
-        GNode constructorNode = GNode.create("ConstructorDeclaration");
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                getCheckStatementNode(n.getNode(i), constructorNode);
-            } else {
-                constructorNode.add(n.get(i));
-            }
-        }
-        classNode.getNode(1).addNode(constructorNode);
-    }
 
     public void visit(Node n) {
         for (Object o : n) {

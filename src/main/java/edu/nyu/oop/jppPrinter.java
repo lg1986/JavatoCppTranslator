@@ -164,6 +164,8 @@ public class jppPrinter extends Visitor {
             printQualifiedIdentifier(n, from);
         } else if(n.hasName("PrimaryIdentifier")) {
             printPrimaryIdentifier(n, from);
+        } else if(n.hasName("ConstructorDeclaration")) {
+            printConstructorDeclaration(n, from);
         }
 
     }
@@ -311,8 +313,10 @@ public class jppPrinter extends Visitor {
     }
 
 
-    public void visitConstructorDeclaration(GNode n){
-        System.out.println(n);
+    public void printConstructorDeclaration(Node n, String from) {
+        System.out.println("\n \n CONSTRUCTOR"+n.toString());
+
+
         //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();
         // static __A __init( __A __this, String f);
@@ -320,8 +324,6 @@ public class jppPrinter extends Visitor {
         //printer.p(constructor+"( __"+className+" __this");
         String constructor = className + "::__init(new__" + className + "()"; // need to add variable name
         printer.p(constructor);
-        visit(n);
-
 
     }
 
@@ -348,12 +350,20 @@ public class jppPrinter extends Visitor {
 
         currentC = n.get(0).toString();
 
-        if(currentClassName.equals("Test003")) {
+        if(currentClassName.equals("Test006")) {
             printer = mainPrinter;
         } else {
             printer = classPrinter;
             printClassGenerics(n.getNode(2));
         }
+
+        Node constructorDeclarations = n.getNode(3);
+        for(int i = 0; i< constructorDeclarations.size(); i++){
+            if(constructorDeclarations.get(i) != null && checkIfNode(constructorDeclarations.get(i))) {
+                printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
+            }
+        }
+
         visit(n.getNode(1));
     }
 
