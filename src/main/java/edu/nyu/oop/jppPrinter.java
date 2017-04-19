@@ -311,7 +311,19 @@ public class jppPrinter extends Visitor {
     }
 
 
+    public void visitConstructorDeclaration(GNode n){
+        System.out.println(n);
+        //  A a = __A::__init(new __A(), 'z');
+        String className = n.get(2).toString().replace("()", "").toString();
+        // static __A __init( __A __this, String f);
+        //String constructor = "static __"+className+" __init";
+        //printer.p(constructor+"( __"+className+" __this");
+        String constructor = className + "::__init(new__" + className + "()"; // need to add variable name
+        printer.p(constructor);
+        visit(n);
 
+
+    }
 
     public void visitMethodDeclaration(GNode n) {
         if(!n.get(2).toString().equals("main")) {
@@ -333,6 +345,7 @@ public class jppPrinter extends Visitor {
     public void visitClassDeclaration(GNode n) {
 
         currentClassName = n.get(0).toString();
+
         currentC = n.get(0).toString();
 
         if(currentClassName.equals("Test003")) {
@@ -351,7 +364,6 @@ public class jppPrinter extends Visitor {
 
         }
     }
-
 
 
     public void visit(Node n) {

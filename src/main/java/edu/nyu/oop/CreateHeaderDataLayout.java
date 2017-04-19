@@ -145,7 +145,6 @@ public class CreateHeaderDataLayout extends Visitor {
 
     public void visitConstructorDeclaration(GNode n) {
         String className = n.get(2).toString().replace("()", "").toString();
-
         String constructor = "static __"+className+" __init";
         printer.p(constructor+"( __"+className+" __this");
         visit(n);
