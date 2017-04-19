@@ -181,7 +181,10 @@ public class jppPrinter extends Visitor {
 
     public void printQualifiedIdentifier(Node n, String from) {
         if(from.equals("NewClassExpression")) {
-            printer.p("new __");
+            //B b = __B::__init(new __B(), 'z');
+            //A a = A__::init(new __A(),A(__rt::literal("A"));
+            String classname = n.get(0).toString().replace("()", "").toString();
+            printer.p(classname+"__::init(new __"+classname + "(),");
         }
         printer.p(n.get(0).toString().replace("\"", ""));
 
@@ -322,7 +325,8 @@ public class jppPrinter extends Visitor {
         String className = n.get(2).toString().replace("()", "").toString();
         String constructor = className + "::__init(new__" + className + "(),";// need to add variable name
         printer.p(constructor);
-        printFormalParameter(n,from);
+       // printFormalParameter(n,from);
+        printFieldDeclaration(n,from);
         printer.p(")\n");
 
     }

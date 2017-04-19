@@ -10,7 +10,10 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(), null)
+A::__init(new__A(),(A __this ,  Type(QualifiedIdentifier("String"), null)) { 
+; 
+} 
+)
 String __A::getFld(A __this ) { 
 return fld; 
 } 
@@ -22,7 +25,7 @@ Class __Test003::__class() {
 }
 __Test003_VT __Test003::__vtable;
 int main(){ 
-A a = new __A(__rt::literal("A")); 
+A a = A__::init(new __A(),A(__rt::literal("A")); 
 cout <<(a->__vptr->getFld(a)); 
 } 
 }
