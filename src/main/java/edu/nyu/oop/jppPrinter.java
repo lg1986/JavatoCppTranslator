@@ -184,7 +184,7 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
-        printer.p(n.get(0).toString().replace("\"", ""));
+       // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 

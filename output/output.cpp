@@ -24,7 +24,7 @@ Class __Test003::__class() {
 }
 __Test003_VT __Test003::__vtable;
 int main(){ 
-A a = A__::init(new __A(),A"A"); 
+ a = A__::init(new __A(),"A"); 
 cout <<(a->__vptr->getFld(a)); 
 } 
 }
