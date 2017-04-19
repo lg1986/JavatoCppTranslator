@@ -285,7 +285,7 @@ public class jppPrinter extends Visitor {
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
-        printer.p(" "+n.get(1));
+        printer.p(n.getNode(1).getNode(0).get(0).toString());
     }
 
     public void printType(Node n, String from) {
@@ -323,9 +323,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        System.out.println("CONST: " +n.toString());
-        System.out.println("**********************\n"+n.getNode(3).getNode(0).get(1).toString());
-
 
         //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();

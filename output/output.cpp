@@ -10,7 +10,7 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),(A __this ,  Type(QualifiedIdentifier("String"), null)) { 
+A::__init(new__A(),(A __this , String) { 
 ; 
 } 
 )
