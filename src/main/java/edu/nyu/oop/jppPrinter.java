@@ -184,34 +184,33 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
-       // printer.p(n.get(0).toString().replace("\"", ""));
+        // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
     public void printArguments(Node n, String from) {
-            if(!from.equals("NewClassExpression")){
-                printer.p("(");
-                if(from.equals("CallExpression")) {
-                    printer.p(callExpIdentifier);
-                }
-                for(int i = 0; i<n.size(); i++) {
-                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                        printCheckStatementNode(n.getNode(i), from);
-                    }
-                }
-                printer.p(")");
-        }
-        else{
-                if(from.equals("CallExpression")) {
-                    printer.p(callExpIdentifier);
-                }
-                for(int i = 0; i<n.size(); i++) {
-                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                        printCheckStatementNode(n.getNode(i), from);
-                    }
-                }
-                printer.p(")");
+        if(!from.equals("NewClassExpression")) {
+            printer.p("(");
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
             }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
+        } else {
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
+            }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
+        }
     }
 
     public void printNewClassExpression(Node n, String from) {
@@ -311,10 +310,9 @@ public class jppPrinter extends Visitor {
     }
 
     public void printStringLiteral(Node n, String from) {
-        if(from.equals("NewClassExpression")){
+        if(from.equals("NewClassExpression")) {
             printer.p(n.get(0).toString());
-        }
-        else{
+        } else {
             printer.p("__rt::literal("+n.get(0).toString()+")");
         }
 
@@ -374,7 +372,7 @@ public class jppPrinter extends Visitor {
         }
 
         Node constructorDeclarations = n.getNode(3);
-        for(int i = 0; i< constructorDeclarations.size(); i++){
+        for(int i = 0; i< constructorDeclarations.size(); i++) {
             if(constructorDeclarations.get(i) != null && checkIfNode(constructorDeclarations.get(i))) {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
