@@ -190,16 +190,16 @@ public class jppPrinter extends Visitor {
 
     public void printArguments(Node n, String from) {
             if(!from.equals("NewClassExpression")){
-            printer.p("(");
-            if(from.equals("CallExpression")) {
-                printer.p(callExpIdentifier);
-            }
-            for(int i = 0; i<n.size(); i++) {
-                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                    printCheckStatementNode(n.getNode(i), from);
+                printer.p("(");
+                if(from.equals("CallExpression")) {
+                    printer.p(callExpIdentifier);
                 }
-            }
-            printer.p(")");
+                for(int i = 0; i<n.size(); i++) {
+                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                        printCheckStatementNode(n.getNode(i), from);
+                    }
+                }
+                printer.p(")");
         }
         else{
                 if(from.equals("CallExpression")) {
@@ -291,13 +291,13 @@ public class jppPrinter extends Visitor {
             printCheckStatementNode(n.getNode(i), "FormalParameters");
             if(i != n.size()-1) printer.p(" ,");
         }
-        printer.p(")) { \n");
+        printer.p(") { \n");
     }
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
         printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
-        printer.p(n.get(3).toString());
+        printer.p(n.get(3).toString() + ")");
     }
 
     public void printType(Node n, String from) {
@@ -339,7 +339,7 @@ public class jppPrinter extends Visitor {
         String constructor = className + "::__init(new__" + className + "(),";
         printer.p(constructor);
         printFieldDeclaration(n,from);
-        printer.p(")\n");
+        //printer.p(")\n");
 
     }
 

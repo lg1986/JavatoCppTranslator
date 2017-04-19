@@ -13,8 +13,7 @@ __A_VT __A::__vtable;
 A::__init(new__A(),(A __this , String f)) { 
 ; 
 } 
-)
-String __A::getFld########(A __this )) { 
+String __A::getFld(A __this ) { 
 return fld; 
 } 
 __Test003::__Test003() : __vptr(&__vtable) {}
