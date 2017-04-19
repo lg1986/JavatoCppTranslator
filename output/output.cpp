@@ -14,7 +14,7 @@ A::__init(new__A(),(A __this , String f)) {
 ; 
 } 
 )
-String __A::getFld(A __this )) { 
+String __A::getFld########(A __this )) { 
 return fld; 
 } 
 __Test003::__Test003() : __vptr(&__vtable) {}
@@ -25,7 +25,7 @@ Class __Test003::__class() {
 }
 __Test003_VT __Test003::__vtable;
 int main(){ 
-A a = A__::init(new __A(),A("A"); 
+A a = A__::init(new __A(),A"A"); 
 cout <<(a->__vptr->getFld(a)); 
 } 
 }

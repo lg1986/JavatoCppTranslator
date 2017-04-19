@@ -181,8 +181,6 @@ public class jppPrinter extends Visitor {
 
     public void printQualifiedIdentifier(Node n, String from) {
         if(from.equals("NewClassExpression")) {
-            //B b = __B::__init(new __B(), 'z');
-            //A a = A__::init(new __A(),A(__rt::literal("A"));
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
@@ -191,16 +189,29 @@ public class jppPrinter extends Visitor {
     }
 
     public void printArguments(Node n, String from) {
-        printer.p("(");
-        if(from.equals("CallExpression")) {
-            printer.p(callExpIdentifier);
-        }
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                printCheckStatementNode(n.getNode(i), from);
+            if(!from.equals("NewClassExpression")){
+            printer.p("(");
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
             }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
         }
-        printer.p(")");
+        else{
+                if(from.equals("CallExpression")) {
+                    printer.p(callExpIdentifier);
+                }
+                for(int i = 0; i<n.size(); i++) {
+                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                        printCheckStatementNode(n.getNode(i), from);
+                    }
+                }
+                printer.p(")");
+            }
     }
 
     public void printNewClassExpression(Node n, String from) {
@@ -324,12 +335,9 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
-
-        //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();
-        String constructor = className + "::__init(new__" + className + "(),";// need to add variable name
+        String constructor = className + "::__init(new__" + className + "(),";
         printer.p(constructor);
-       // printFormalParameter(n,from);
         printFieldDeclaration(n,from);
         printer.p(")\n");
 
