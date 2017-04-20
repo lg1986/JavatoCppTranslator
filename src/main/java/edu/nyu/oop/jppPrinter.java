@@ -327,7 +327,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
-        if(constructorCounter == 0){
+        if(constructorCounter == 1){
             printer.p("__Object::__init((Object)__this);\n");
         }
         for(int i = 0; i<n.size(); i++) {

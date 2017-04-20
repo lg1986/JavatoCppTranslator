@@ -6,6 +6,9 @@ class A {
     public A(String f) {
         fld = f;
     }
+    public A(){
+        System.out.println("hi");
+    }
 
     public String getFld() {
         return fld;
