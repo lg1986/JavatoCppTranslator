@@ -180,11 +180,12 @@ public class jppPrinter extends Visitor {
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
+        System.out.println("qualified ****************** " + from + "\n");
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
-        printer.p(n.get(0).toString().replace("\"", ""));
+        //printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
@@ -232,6 +233,7 @@ public class jppPrinter extends Visitor {
 
     public void printFieldDeclaration(Node n, String from) {
         for(int i = 0; i < n.size(); i++) {
+            System.out.println("field ****************** " + n.get(i) + "\n");
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "FieldDeclaration");
             }
