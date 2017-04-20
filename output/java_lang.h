@@ -49,6 +49,11 @@ java::lang::Object null();
 
 java::lang::String literal(const char*);
 
+template <typename T>
+ +  void __delete(T* addr) {
+ +    delete addr;
+ +  }
+
 }
 
 
@@ -99,6 +104,7 @@ struct __Object_VT
     // ex:   int32_t     (*sum)          (int32_t, int32_t);
     //       return_type (*function_name)(arg_type_list);
     // See http://www.learncpp.com/cpp-tutorial/78-function-pointers/
+    void (*__delete)(__Object*);
     int32_t (*hashCode)(Object);
     bool (*equals)(Object, Object);
     Class (*getClass)(Object);
@@ -110,6 +116,7 @@ struct __Object_VT
     // This is how "subclasses" will "inherit" from "superclasses"
     __Object_VT()
         : __is_a(__Object::__class()),
+          __delete(&__rt::__delete<__Object>),
           hashCode(&__Object::hashCode),
           equals(&__Object::equals),
           getClass(&__Object::getClass),
@@ -182,6 +189,7 @@ struct __String_VT
     // The dynamic type.
     Class __is_a;
 
+    void (*__delete)(__Class*);
     int32_t (*hashCode)(String);
     bool (*equals)(String, Object);
     Class (*getClass)(String);
@@ -191,6 +199,7 @@ struct __String_VT
 
     __String_VT()
         : __is_a(__String::__class()),
+          __delete(&__rt::__delete<__String>),
           hashCode(&__String::hashCode),
           equals(&__String::equals),
           getClass((Class(*)(String)) &__Object::getClass), // "inheriting" getClass from Object
@@ -219,7 +228,7 @@ struct __Class
     // The constructor.
     __Class(String name,
             Class parent,
-            Class component = (Class)__rt::null(),
+            Class component = __rt::null(),
             bool primitive = false);
 
     // The init method for the constructor Class()
@@ -250,6 +259,7 @@ struct __Class_VT
     // The dynamic type.
     Class __is_a;
 
+    void (*__delete)(__Class*);
     int32_t (*hashCode)(Class);
     bool (*equals)(Class, Object);
     Class (*getClass)(Class);
@@ -263,6 +273,7 @@ struct __Class_VT
 
     __Class_VT()
         : __is_a(__Class::__class()),
+          __delete(&__rt::__delete<__Class>),
           hashCode((int32_t(*)(Class)) &__Object::hashCode),
           equals((bool(*)(Class,Object)) &__Object::equals),
           getClass((Class(*)(Class)) &__Object::getClass),
@@ -337,6 +348,11 @@ inline java::lang::String literal(const char * s)
 
 // ========================================================================
 
+   static void __delete(__Array<T>* addr) {
+ +      delete[] addr->__data;
+ +      delete addr;
+ +    }
+
 // Forward declarations of data layout and vtable.
 template <typename T>
 struct __Array;
@@ -391,7 +407,7 @@ struct __Array
 template <typename T>
 struct __Array_VT
 {
-    typedef Array<T> Reference;
+    typedef Ptr<Array<T> > Reference;
 
     java::lang::Class __is_a;
     int32_t (*hashCode)(Reference);
@@ -401,6 +417,8 @@ struct __Array_VT
 
     __Array_VT()
         : __is_a(__Array<T>::__class()),
+
+          __delete(&Array<T>::__delete),
           hashCode((int32_t(*)(Reference))
                    &java::lang::__Object::hashCode),
           equals((bool(*)(Reference,java::lang::Object))
@@ -445,19 +463,31 @@ void checkIndex(Array<T> array, int32_t index)
 
 // Template function to check array stores.
 template <typename T, typename U>
-void checkStore(Array<T> array, U object)
+void checkStore(Ptr<Array<T> > array, U object)
 {
     if (null() != (java::lang::Object) object)
     {
         java::lang::Class t1 = array->__vptr->getClass(array);
         java::lang::Class t2 = t1->__vptr->getComponentType(t1);
 
-        if (! t2->__vptr->isInstance(t2, (java::lang::Object) object))
+        if (! t2->__vptr->isInstance(t2, object))
         {
             throw java::lang::ArrayStoreException();
         }
     }
 }
+
+ template <typename T, typename U>
+ +  T java_cast(U object) {
+ +    java::lang::Class k = T::value_t::__class();
+ +
+ +    if (! k->__vptr->isInstance(k, object)) {
+ +      throw java::lang::ClassCastException();
+ +    }
+ +
+ +    return T(object);
+ +  }
+ +
 
 
 }
