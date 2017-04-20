@@ -10,8 +10,12 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),(A __this , String fld)) { 
-__Object::__init((Object)__this);; 
+A::__init(A __this ) { 
+__Object::__init((Object)__this);
+cout <<(__rt::literal("hello")); 
+} 
+A::__init(A __this , String fld)) { 
+; ex
 } 
 String __A::getFld(A __this ) { 
 return fld; 

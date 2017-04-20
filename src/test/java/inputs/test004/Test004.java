@@ -3,6 +3,10 @@ package inputs.test004;
 class A {
     private String fld;
 
+    public A(){
+        System.out.println("hello");
+    }
+
     public A(String fld) {
         this.fld = fld;
     }
