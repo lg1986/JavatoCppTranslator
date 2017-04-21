@@ -20,7 +20,7 @@ int32_t __Object::hashCode(Object __this)
 // java.lang.Object.equals(Object)
 bool __Object::equals(Object __this, Object other)
 {
-    return __this == other;
+    return __this.raw() == other.raw();
 }
 
 // java.lang.Object.getClass()
@@ -45,7 +45,7 @@ String __Object::toString(Object __this)
 Class __Object::__class()
 {
     static Class k =
-        new __Class(__rt::literal("java.lang.Object"), (Class) __rt::null());
+        new __Class(__rt::literal("java.lang.Object"), __rt::null());
     return k;
 }
 
@@ -76,6 +76,11 @@ int32_t __String::hashCode(String __this)
     }
 
     return hash;
+}
+
+// java.lang.Class.isArray()
+bool __Class::isArray(Class __this) {
+     return __rt::null() != __this->component;
 }
 
 // java.lang.String.equals()

@@ -171,33 +171,52 @@ public class jppPrinter extends Visitor {
     }
 
     public void printPrimaryIdentifier(Node n, String from) {
-        printer.p(n.get(0).toString().replace("\"", ""));
+        String varName = n.get(0).toString();
+        //printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
             printer.p("->__vptr->");
+            //printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
-
+        if(from.equals("ReturnStatement")){
+            printer.p("->__vptr->");
+            printer.p(varName);
+        }
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
         if(from.equals("NewClassExpression")) {
-            printer.p("new __");
+            String classname = n.get(0).toString().replace("()", "").toString();
+            printer.p(classname+"__::init(new __"+classname + "(),");
         }
-        printer.p(n.get(0).toString().replace("\"", ""));
+        //printer.p(n.get(0).toString().replace("\"", ""));
+        // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
     public void printArguments(Node n, String from) {
-        printer.p("(");
-        if(from.equals("CallExpression")) {
-            printer.p(callExpIdentifier);
-        }
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                printCheckStatementNode(n.getNode(i), from);
+        if(!from.equals("NewClassExpression")) {
+            printer.p("(");
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
             }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
+        } else {
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
+            }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
         }
-        printer.p(")");
     }
 
     public void printNewClassExpression(Node n, String from) {
@@ -264,7 +283,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printReturnStatement(Node n, String from) {
-
         printer.p("return ");
         printCheckStatementNode(n.getNode(0), "ReturnStatement");
     }
@@ -282,7 +300,8 @@ public class jppPrinter extends Visitor {
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
-        printer.p(" "+n.get(1));
+        printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
+        printer.p(n.get(3).toString() + ")");
     }
 
     public void printType(Node n, String from) {
@@ -296,11 +315,23 @@ public class jppPrinter extends Visitor {
     }
 
     public void printStringLiteral(Node n, String from) {
-        printer.p("__rt::literal("+n.get(0).toString()+")");
+        if(from.equals("NewClassExpression")) {
+            printer.p(n.get(0).toString());
+        } else {
+            printer.p("__rt::literal("+n.get(0).toString()+")");
+        }
+
     }
 
 
     public void printBlock(Node n, String from) {
+        if (from.equals("FieldDeclaration")){
+            try {
+                printer.p(n.getNode(0).getNode(0).getNode(0).get(0).toString() + " ");
+                printer.p(n.getNode(0).getNode(0).get(1).toString() + " ");
+                printer.p(n.getNode(0).getNode(0).getNode(2).get(0).toString());
+            } catch (IndexOutOfBoundsException e){}
+        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -310,20 +341,16 @@ public class jppPrinter extends Visitor {
             printer.p("; \n");
         }
         if(printer != mainPrinter) printer.p("} \n");
+
     }
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        System.out.println("\n \n CONSTRUCTOR"+n.toString());
-
-
-        //  A a = __A::__init(new __A(), 'z');
         String className = n.get(2).toString().replace("()", "").toString();
-        // static __A __init( __A __this, String f);
-        //String constructor = "static __"+className+" __init";
-        //printer.p(constructor+"( __"+className+" __this");
-        String constructor = className + "::__init(new__" + className + "()"; // need to add variable name
+        String constructor = className + "::__init(new__" + className + "(),";
         printer.p(constructor);
+        printFieldDeclaration(n,from);
+        printer.p(")\n");
 
     }
 
@@ -358,7 +385,7 @@ public class jppPrinter extends Visitor {
         }
 
         Node constructorDeclarations = n.getNode(3);
-        for(int i = 0; i< constructorDeclarations.size(); i++){
+        for(int i = 0; i< constructorDeclarations.size(); i++) {
             if(constructorDeclarations.get(i) != null && checkIfNode(constructorDeclarations.get(i))) {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
