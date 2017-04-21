@@ -9,6 +9,7 @@ import xtc.util.SymbolTable.Scope;
 import xtc.type.*;
 import xtc.type.Type.Tag;
 import xtc.tree.Node;
+import xtc.tree.Attribute;
 
 import java.util.List;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public class SymbolTableUtil {
         String name = n.getStringProperty(Constants.SCOPE);
         if (name == null) {
             try {
-                logger.warn("Node " + n.getName() + " not marked by SymbolTableBuilderXtc");
+                logger.warn("Node " + n.getName() + " not marked");
                 table.enter(n);
             } catch (Exception e) {
                 throw new RuntimeException("Unable to enter scope for node " + n.getName());

@@ -1,4 +1,6 @@
 package inputs.test003;
+import inputs.test004.Test004;
+import inputs.test002.Test002;
 
 class A {
     private String fld;

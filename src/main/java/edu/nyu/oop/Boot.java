@@ -82,66 +82,19 @@ public class Boot extends Tool {
             runtime.console().format(n).pln().flush();
         }
 
+        /**
+         * Phase 1 - Parse all dependency classes
+         * Command - "runxtc -createAllAST <path-to-file>"
+         */
         if(runtime.test("createAllAST")) {
-            AstVisitor.completeAST x = new AstVisitor().getAllASTs(n);
-            for(Node k: x.asts) {
-                runtime.console().format(k).pln().flush();
-            }
-
-
-        }
-
-        if(runtime.test("dependencyTraversal")) {
-            DependencyDataLayoutTraversal visitor = new DependencyDataLayoutTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> dependencyList = depe.getDependency();
-            ArrayList<GNode> dataLayout = visitor.getSummary(dependencyList).dependencyAsts;
-            for(GNode data:dataLayout) {
-                runtime.console().format(data).pln().flush();
-            }
-        }
-
-        if(runtime.test("createHeaderFile")) {
-            try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-            } catch (IOException e) {
-
-            }
-
-        }
-
-        if(runtime.test("jppPrinter")) {
-            try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-                jppPrinter jpp = new jppPrinter(n);
-            } catch (IOException e) {
-
+            DependencyAstVisitor visitor = new DependencyAstVisitor();
+            List<GNode> astVisit = visitor.getVisitor(n);
+            for(GNode ast: astVisit){
+                runtime.console().format(ast).pln().flush();
             }
         }
 
 
-        if(runtime.test("dependencyVTableTraversal")) {
-            DependencyVTableTraversal visitor = new DependencyVTableTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> dependencyList = depe.getDependency();
-            ArrayList<GNode> vtable = visitor.getSummary(dependencyList).vtableAsts;
-        }
-
-
-
-        if(runtime.test("jppTraversal")) {
-            jppTraversal jppTraversal = new jppTraversal();
-            AstVisitor astVisitor = new AstVisitor();
-            AstVisitor.completeAST depe = astVisitor.getAllASTs(n);
-            List<Node> astList = depe.getDependency();
-            List<Node> jppList = jppTraversal.getSummary(astList);
-            for(Node element:jppList) {
-                runtime.console().format(element).pln().flush();
-            }
-
-        }
 
     }
 

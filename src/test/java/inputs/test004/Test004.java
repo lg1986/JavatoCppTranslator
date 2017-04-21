@@ -1,5 +1,6 @@
 package inputs.test004;
 
+
 class A {
     private String fld;
 
