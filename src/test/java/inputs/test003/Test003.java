@@ -3,12 +3,11 @@ package inputs.test003;
 class A {
     private String fld;
 
-    public A(String f) {
-        fld = f;
+
+    public A() {
+
     }
-    public A(){
-        System.out.println("hi");
-    }
+
 
     public String getFld() {
         return fld;
@@ -17,7 +16,7 @@ class A {
 
 public class Test003 {
     public static void main(String[] args) {
-        A a = new A("A");
+        A a = new A();
         System.out.println(a.getFld());
     }
 }

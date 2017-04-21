@@ -14,7 +14,6 @@ static Class __class();
 __A();
 static __A_VT __vtable;
 String fld;
-static __A __init( __A __this, String f);
 static __A __init( __A __this);
 static String getFld(A );
 };

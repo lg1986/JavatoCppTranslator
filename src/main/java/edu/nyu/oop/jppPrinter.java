@@ -26,6 +26,7 @@ public class jppPrinter extends Visitor {
     private String callExpIdentifier;
 
     private int constructorCounter;
+    private boolean nullconstructorCheck = false;
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
@@ -102,6 +103,7 @@ public class jppPrinter extends Visitor {
             if (typ.equals("String")) {
                 printer.p("__rt::literal(\"\"))");
             }
+            nullconstructorCheck = true;
         }
 
     }
@@ -167,6 +169,7 @@ public class jppPrinter extends Visitor {
         } else if(n.hasName("PrimaryIdentifier")) {
             printPrimaryIdentifier(n, from);
         } else if(n.hasName("ConstructorDeclaration")) {
+            nullconstructorCheck = true;
             printConstructorDeclaration(n, from);
         }
 
@@ -186,7 +189,6 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
-       // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
@@ -327,7 +329,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
-        if(constructorCounter == 1){
+        if(constructorCounter == 0 ){
             printer.p("__Object::__init((Object)__this);\n");
         }
         for(int i = 0; i<n.size(); i++) {
@@ -351,9 +353,9 @@ public class jppPrinter extends Visitor {
         else{
             constructor = className + "::__init";
         }
+            printer.p(constructor);
+            printFieldDeclaration(n,from);
 
-        printer.p(constructor);
-        printFieldDeclaration(n,from);
         constructorCounter++;
 
 
