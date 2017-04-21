@@ -171,12 +171,17 @@ public class jppPrinter extends Visitor {
     }
 
     public void printPrimaryIdentifier(Node n, String from) {
-        printer.p(n.get(0).toString().replace("\"", ""));
+        String varName = n.get(0).toString();
+        //printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
             printer.p("->__vptr->");
+            //printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
-
+        if(from.equals("ReturnStatement")){
+            printer.p("->__vptr->");
+            printer.p(varName);
+        }
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
@@ -184,6 +189,7 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
+        //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
@@ -277,7 +283,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printReturnStatement(Node n, String from) {
-
         printer.p("return ");
         printCheckStatementNode(n.getNode(0), "ReturnStatement");
     }
@@ -320,6 +325,13 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
+        if (from.equals("FieldDeclaration")){
+            try {
+                printer.p(n.getNode(0).getNode(0).getNode(0).get(0).toString() + " ");
+                printer.p(n.getNode(0).getNode(0).get(1).toString() + " ");
+                printer.p(n.getNode(0).getNode(0).getNode(2).get(0).toString());
+            } catch (IndexOutOfBoundsException e){}
+        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -329,6 +341,7 @@ public class jppPrinter extends Visitor {
             printer.p("; \n");
         }
         if(printer != mainPrinter) printer.p("} \n");
+
     }
 
 
@@ -337,7 +350,7 @@ public class jppPrinter extends Visitor {
         String constructor = className + "::__init(new__" + className + "(),";
         printer.p(constructor);
         printFieldDeclaration(n,from);
-        //printer.p(")\n");
+        printer.p(")\n");
 
     }
 
