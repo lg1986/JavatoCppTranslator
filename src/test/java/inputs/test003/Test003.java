@@ -1,15 +1,13 @@
 package inputs.test003;
 import inputs.test004.Test004;
 
-
-
-class B{
+class B extends A{
     public B(){
 
     }
 
 }
-class A {
+class A extends Test004{
     private String fld;
 
     public A(){
