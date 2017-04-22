@@ -3,13 +3,13 @@ import inputs.test004.Test004;
 
 
 
-class B extends A{
+class B{
     public B(){
 
     }
 
 }
-class A extends Test004{
+class A {
     private String fld;
 
     public A(){
@@ -24,7 +24,7 @@ class A extends Test004{
     }
 }
 
-public class Test003 extends Test004{
+public class Test003{
     public static void main(String[] args) {
         A a = new A("A");
         System.out.println(a.getFld());

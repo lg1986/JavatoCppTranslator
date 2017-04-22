@@ -15,7 +15,7 @@ class A {
     }
 }
 
-public class Test004 extends A{
+public class Test004 {
     public static void main(String[] args) {
         A a = new A("A");
         System.out.println(a.getFld());

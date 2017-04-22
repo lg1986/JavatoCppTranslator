@@ -3,7 +3,6 @@ package edu.nyu.oop;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.List;
 
 import edu.nyu.oop.util.NodeUtil;
@@ -91,7 +90,7 @@ public class Boot extends Tool {
             }
         }
         if(runtime.test("createDependencyTree")){
-            DependencyInheritance headerAST = new DependencyInheritance();
+            CreateDependencyTree headerAST = new CreateDependencyTree();
             headerAST.getDependencyInheritance(n);
 //            for(GNode ast: tree){
 //                runtime.console().format(ast).pln().flush();
