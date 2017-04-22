@@ -15,6 +15,7 @@ public class CreateHeaderAST extends Visitor {
 
     protected GNode dataLayoutNode;
     protected String packageName;
+    protected String className;
 
     public List<GNode> getHeaderAsts(Node n){
         DependencyAstVisitor visitor = new DependencyAstVisitor();
@@ -75,6 +76,7 @@ public class CreateHeaderAST extends Visitor {
         methodDeclaration.add(getType(n.getNode(2)));
         methodDeclaration.add(n.getString(3));
         methodDeclaration.addNode(getFormalParameters(n.getNode(4)));
+        methodDeclaration.add(className);
         dataLayoutNode.getNode(2).addNode(methodDeclaration);
     }
 
@@ -106,6 +108,8 @@ public class CreateHeaderAST extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n){
+        className = n.getString(1);
+
         GNode classNode =GNode.create("ClassDeclaration");
 
         classNode.add(packageName); // 0

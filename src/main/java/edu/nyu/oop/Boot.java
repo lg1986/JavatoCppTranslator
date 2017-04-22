@@ -91,10 +91,10 @@ public class Boot extends Tool {
         }
         if(runtime.test("createDependencyTree")){
             CreateDependencyTree headerAST = new CreateDependencyTree();
-            headerAST.testing(n);
-//            for(GNode ast: tree){
-//                runtime.console().format(ast).pln().flush();
-//            }
+            List<GNode> tree = headerAST.testing(n);
+            for(GNode ast: tree){
+                runtime.console().format(ast).pln().flush();
+            }
         }
 
 

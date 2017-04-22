@@ -1,13 +1,16 @@
 package inputs.test003;
-import inputs.test004.Test004;
 
 class B extends A{
     public B(){
 
     }
 
+    public String getFld(){
+        return "A";
+    }
+
 }
-class A extends Test004{
+class A {
     private String fld;
 
     public A(){

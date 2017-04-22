@@ -175,36 +175,105 @@ public class CreateDependencyTree extends Visitor {
     }
 
 
-    public void stackItUp(Node stack, GNode currNode, GNode orignal){
-        Node methNode = stack.getNode(2).getNode(2);
-        Node fieldNode = stack.getNode(2).getNode(1);
-        Node constrNode = stack.getNode(2).getNode(0);
 
 
+    public ArrayList<String> getParamsList(Node paramNodes){
+        ArrayList<String> paramsList = new ArrayList<>();
+        for(int i = 0; i<paramNodes.size(); i++) {
+
+            Node paramNode = paramNodes.getNode(i);
+            String paramString  = paramNode.getString(0)+
+                    " "+paramNode.get(1);
+            paramsList.add(paramString);
+        }
+        return paramsList;
+    }
+
+    public int checkAllParams(ArrayList<String> stackParams,
+                                     ArrayList<String> currParams){
+
+        if(stackParams.size() != currParams.size()) return 1;
+        if(stackParams.size() == 0) return 0;
+        for(int i = 0; i < stackParams.size(); i++){
+            if(!currParams.contains(stackParams.get(i))) return 1;
+        }
+        return 0;
+    }
+
+    public int checkParams(Node stackParams, Node currParams){
+        ArrayList<String> stackParamsList = getParamsList(stackParams);
+        ArrayList<String> currParamsList = getParamsList(currParams);
+        return checkAllParams(stackParamsList, currParamsList);
+    }
+
+    public Node checkMethName(String stackMethName, Node currNode){
+        for(int i = 0; i<currNode.size(); i++){
+            String methName = currNode.getNode(i).getString(1);
+            if(methName.equals(stackMethName)) return currNode.getNode(i);
+        }
+        return null;
+    }
+
+
+    public void stackMethods(Node stackMeths, Node currNode){
+        Node currMeths = currNode.getNode(3).getNode(2);
+        if(currMeths.size() == 0) {
+            currMeths = GNode.ensureVariable((GNode)stackMeths);
+        } else {
+            for (int i = 0; i < stackMeths.size(); i++) {
+                Node stackMeth = stackMeths.getNode(i);
+                Node toAddMeth = checkMethName(stackMeth.getString(1), currMeths);
+
+                if (toAddMeth != null) {
+                    if (checkParams(stackMeth.getNode(2), toAddMeth.getNode(2)) == 1) {
+                        currMeths.addNode(stackMeth);
+                    } else {
+                        toAddMeth.set(3, currNode.getString(1));
+                    }
+                }
+            }
+        }
+        currNode.getNode(3).set(2, currMeths);
+    }
+
+    public void stackItUp(Node stack, Node currNode){
+        Node stackMeths = stack.getNode(3).getNode(2);
+        stackMethods(stackMeths, currNode);
     }
 
     public GNode getInheritedStructure(TreeNode n){
         Node orignal = n.ast;
         List<TreeNode> inherit = reOrderChain(n);
-        System.out.println(inherit);
         if(inherit.size() == 1) return (GNode)inherit.get(0).ast;
         else{
             GNode inheritSim = GNode.create("ClassDeclaration");
             inheritSim.add(orignal.getString(0));
             inheritSim.add(orignal.getString(1));
+            inheritSim.addNode(orignal.getNode(2));
 
+            GNode dataLayoutNode = GNode.create("DataLayout");
+            dataLayoutNode.add(GNode.create("FieldDeclaration"));
+            dataLayoutNode.add(GNode.create("ConstructorDeclaration"));
+            dataLayoutNode.add(GNode.create("MethodDeclaration"));
+
+            inheritSim.addNode(dataLayoutNode);
+
+            for(int i = 0; i<inherit.size(); i++){
+                stackItUp(inherit.get(i).ast, inheritSim);
+            }
+            return inheritSim;
         }
-        return null;
-
     }
-    public void testing(Node n){
+    public List<GNode> testing(Node n){
         CreateDependencyTree headerAST = new CreateDependencyTree();
         List<TreeNode> inheritanceTree = headerAST.getDependencyInheritance(n);
+        inheritanceSimAsts = new ArrayList<>();
         for(TreeNode eachClassNode: inheritanceTree){
             GNode correctRep =  getInheritedStructure(eachClassNode);
-//            inheritanceSimAsts.add(correctRep);
+            inheritanceSimAsts.add(correctRep);
         }
 
+        return inheritanceSimAsts;
     }
 
 
