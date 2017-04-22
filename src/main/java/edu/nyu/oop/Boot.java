@@ -91,13 +91,11 @@ public class Boot extends Tool {
             }
         }
         if(runtime.test("createDependencyTree")){
-            CreateHeaderAST headerAST = new CreateHeaderAST();
-            List<GNode> tree = headerAST.getHeaderAsts(n);
-            for(GNode ast: tree){
-                runtime.console().format(ast).pln().flush();
-            }
-
-
+            DependencyInheritance headerAST = new DependencyInheritance();
+            headerAST.getDependencyInheritance(n);
+//            for(GNode ast: tree){
+//                runtime.console().format(ast).pln().flush();
+//            }
         }
 
 

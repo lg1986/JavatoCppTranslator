@@ -35,8 +35,8 @@ public class CreateDependencyTree extends Visitor {
      * displays the dependency heirarchy.
      */
     public TreeNode getDependencyTree(Node n){
-        DependencyAstVisitor visitor = new DependencyAstVisitor();
-        List<GNode> dependencyAsts = visitor.getDependencyAsts(n);
+        CreateHeaderAST visitor = new CreateHeaderAST();
+        List<GNode> dependencyAsts = visitor.getHeaderAsts(n);
 
         for(GNode dependencyAstNode: dependencyAsts){
             super.dispatch(dependencyAstNode);

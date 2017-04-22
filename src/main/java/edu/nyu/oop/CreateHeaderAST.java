@@ -95,12 +95,26 @@ public class CreateHeaderAST extends Visitor {
 
     }
 
+    public GNode getExtenderNode(Node n){
+
+        String typ = n.getNode(0).getNode(0).getString(0);
+        GNode extenderNode = GNode.create("Extension");
+        extenderNode.add(typ);
+        return extenderNode;
+
+
+    }
+
     public void visitClassDeclaration(GNode n){
         GNode classNode =GNode.create("ClassDeclaration");
 
         classNode.add(packageName); // 0
         classNode.add(n.getString(1)); // 1
 
+        Node extendExpression = n.getNode(3);
+        if(extendExpression != null)
+            classNode.addNode(getExtenderNode(extendExpression));
+        else classNode.add(null);
 
         dataLayoutNode = GNode.create("DataLayout");
         GNode methodDeclarations = GNode.create("MethodDeclarations");
@@ -113,7 +127,6 @@ public class CreateHeaderAST extends Visitor {
 
         visit(n);
 
-        classNode.addNode(dataLayoutNode);
         GNode vtableNode = GNode.create("VTableNode");
         vtableNode.addNode(dataLayoutNode.getNode(2));
 

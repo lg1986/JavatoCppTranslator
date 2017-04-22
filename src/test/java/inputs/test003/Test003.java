@@ -2,6 +2,7 @@ package inputs.test003;
 import inputs.test004.Test004;
 
 
+
 class B extends A{
     public B(){
 
