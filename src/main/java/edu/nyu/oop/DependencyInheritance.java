@@ -26,7 +26,11 @@ class TreeNode{
     }
 
     public String toString(){
-        return this.className+" "+this.packageName+" ";
+        if(this.extendsNodes != null){
+            return this.className+" "+this.packageName+" "+this.extendsNodes.toString();
+        } else{
+            return "";
+        }
     }
 }
 public class DependencyInheritance extends Visitor {

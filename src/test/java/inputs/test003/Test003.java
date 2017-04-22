@@ -24,7 +24,7 @@ class A extends Test004{
     }
 }
 
-public class Test003 {
+public class Test003 extends Test004{
     public static void main(String[] args) {
         A a = new A("A");
         System.out.println(a.getFld());

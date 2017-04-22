@@ -2,6 +2,9 @@ package inputs.test004;
 
 class A {
     private String fld;
+    public A(){
+
+    }
 
     public A(String fld) {
         this.fld = fld;
@@ -12,7 +15,7 @@ class A {
     }
 }
 
-public class Test004 {
+public class Test004 extends A{
     public static void main(String[] args) {
         A a = new A("A");
         System.out.println(a.getFld());
