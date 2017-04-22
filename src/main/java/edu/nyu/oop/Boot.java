@@ -41,13 +41,9 @@ public class Boot extends Tool {
         // Declare command line arguments.
 
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
-        bool("printJavaAST", "printJavaAST", false, "Print Java AST.").
-        bool("createHeaderFile", "createHeaderFile", false, "Create Header File").
-        bool("createVTableHeader", "createVTableHeader", false, "Create VTable Header").
-        bool("dependencyVTableTraversal", "dependencyVTableTraversal", false, "Gets VTable AST").
-        bool("jppPrinter", "jppPrinter", false, "jpp Printer").
-        bool("jppTraversal", "jppTraversal", false, "Traverse jpp").
-        bool("dependencyTraversal", "dependencyTraversal", false, "Gets Dependency Travel");
+                bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
+                bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
+
     }
 
     @Override
@@ -88,10 +84,20 @@ public class Boot extends Tool {
          */
         if(runtime.test("createAllAST")) {
             DependencyAstVisitor visitor = new DependencyAstVisitor();
-            List<GNode> astVisit = visitor.getVisitor(n);
+            List<GNode> astVisit = visitor.getDependencyAsts(n);
             for(GNode ast: astVisit){
                 runtime.console().format(ast).pln().flush();
+
             }
+        }
+        if(runtime.test("createDependencyTree")){
+            CreateHeaderAST headerAST = new CreateHeaderAST();
+            List<GNode> tree = headerAST.getHeaderAsts(n);
+            for(GNode ast: tree){
+                runtime.console().format(ast).pln().flush();
+            }
+
+
         }
 
 

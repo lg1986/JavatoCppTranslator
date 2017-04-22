@@ -15,9 +15,10 @@ package edu.nyu.oop;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
+import edu.nyu.oop.util.JavaFiveImportParser;
 
 import java.util.*;
-import edu.nyu.oop.util.JavaFiveImportParser;
+
 
 /**
  * Class DependencyAstVisitor - Extends the Visitor
@@ -34,7 +35,7 @@ public class DependencyAstVisitor extends Visitor {
      * @return List<GNode> that contains all
      * the parsed dependency nodes.
      */
-    public List<GNode> getVisitor(Node n){
+    public List<GNode> getDependencyAsts(Node n){
         this.dependencyAsts.add((GNode)n);
         super.dispatch(n);
         return new ArrayList<>(this.dependencyAsts);

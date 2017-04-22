@@ -1,0 +1,10 @@
+//        String extendClassName = "";
+//        try {
+//            Node extendExpression = n.getNode(3);
+//            extendClassName = extendExpression.getNode(0).
+//                    getNode(0).get(0).toString();
+//        } catch (Exception e){
+//            extendClassName = "";
+//        }
+//
+//        System.out.println(varTreeNode.className+" extends "+extendClassName);

@@ -1,10 +1,19 @@
 package inputs.test003;
 import inputs.test004.Test004;
-import inputs.test002.Test002;
 
-class A {
+
+class B extends A{
+    public B(){
+
+    }
+
+}
+class A extends Test004{
     private String fld;
 
+    public A(){
+
+    }
     public A(String f) {
         fld = f;
     }
