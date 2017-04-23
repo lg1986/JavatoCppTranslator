@@ -45,10 +45,12 @@ public class CreateHeaderVTable extends Visitor {
     public void printStarterVTable(String name) {
         currentOuterVTableString = ("struct __"+name+"_VT{ \n");
         currentOuterVTableString +=("Class __is_a; \n");
+        currentOuterVTableString +=("void (*__delete)(__" +name+"*); \n");
 
         currentInnerVTableString = ("__"+name+"_VT() \n");
         currentInnerVTableString += "\t";
         currentInnerVTableString += (": __is_a(__"+name+"::__class())");
+        currentInnerVTableString += ("__delete(&__rt::__delete<__"+name+ ">),");
 
     }
 
