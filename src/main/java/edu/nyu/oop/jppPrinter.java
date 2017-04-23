@@ -11,6 +11,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.lang.IndexOutOfBoundsException;
 
 public class jppPrinter extends Visitor {
 
@@ -138,8 +139,6 @@ public class jppPrinter extends Visitor {
             printType(n, from);
         } else if(n.hasName("Type")) {
             printType(n, from);
-        } else if(n.hasName("FormalParameter")) {
-            printFormalParameter(n, from);
         } else if(n.hasName("FormalParameters")) {
             printFormalParameters(n, from);
         } else if(n.hasName("ReturnStatement")) {
@@ -230,7 +229,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        System.out.println("\n expression n: " + n + "\n");
         //System.out.println("need this: " + n.getNode(0).getNode(0).get(0).toString());
         for(int i = 0; i<n.size(); i++) {
             if (n.toString().contains("ThisExpression")){
@@ -272,7 +270,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        System.out.println(n);
         callExpIdentifier = "";
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i)!=null && checkIfNode(n.get(i))) {
@@ -302,6 +299,14 @@ public class jppPrinter extends Visitor {
     public void printFormalParameters(Node n, String from) {
         printer.p("("+currentC+" __this ");
         if(n.size() > 0) printer.p(", ");
+        if (n.size() >= 1) {
+            try {
+                String paramType =  n.getNode(0).getNode(1).getNode(0).get(0).toString();
+                String varName =  n.getNode(0).get(3).toString();
+                printer.p(paramType + " " + varName);
+            } catch (ClassCastException e) {}
+        }
+
 
         for(int i =0; i<n.size(); i++) {
             printCheckStatementNode(n.getNode(i), "FormalParameters");
