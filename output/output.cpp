@@ -10,11 +10,12 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(A __this ) { 
+A::__init(new__A(),(A __this ) { 
 __Object::__init((Object)__this);
 } 
+)
 String __A::getFld(A __this ) { 
-return fld; 
+return ->__vptr->fld; 
 } 
 __Test003::__Test003() : __vptr(&__vtable) {}
 Class __Test003::__class() {
@@ -25,7 +26,7 @@ Class __Test003::__class() {
 __Test003_VT __Test003::__vtable;
 int main(){ 
  a = A__::init(new __A(),); 
-cout <<(a->__vptr->getFld(a)); 
+cout <<(agetFld(a)); 
 } 
 }
 }

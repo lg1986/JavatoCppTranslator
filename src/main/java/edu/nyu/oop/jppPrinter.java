@@ -11,6 +11,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.lang.IndexOutOfBoundsException;
 
 public class jppPrinter extends Visitor {
 
@@ -24,9 +25,8 @@ public class jppPrinter extends Visitor {
     private String currentC;
 
     private String callExpIdentifier;
+    int constructorCounter = 0;
 
-    private int constructorCounter;
-    private boolean nullconstructorCheck = false;
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
@@ -103,7 +103,6 @@ public class jppPrinter extends Visitor {
             if (typ.equals("String")) {
                 printer.p("__rt::literal(\"\"))");
             }
-            nullconstructorCheck = true;
         }
 
     }
@@ -142,8 +141,6 @@ public class jppPrinter extends Visitor {
             printType(n, from);
         } else if(n.hasName("Type")) {
             printType(n, from);
-        } else if(n.hasName("FormalParameter")) {
-            printFormalParameter(n, from);
         } else if(n.hasName("FormalParameters")) {
             printFormalParameters(n, from);
         } else if(n.hasName("ReturnStatement")) {
@@ -169,19 +166,25 @@ public class jppPrinter extends Visitor {
         } else if(n.hasName("PrimaryIdentifier")) {
             printPrimaryIdentifier(n, from);
         } else if(n.hasName("ConstructorDeclaration")) {
-            nullconstructorCheck = true;
             printConstructorDeclaration(n, from);
+        } else if(n.hasName("ThisExpression")) {
+            printThisExpression(n, from);
         }
 
     }
 
     public void printPrimaryIdentifier(Node n, String from) {
-        printer.p(n.get(0).toString().replace("\"", ""));
+        String varName = n.get(0).toString();
+        //printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
-            printer.p("->__vptr->");
+            //printer.p("->__vptr->");
+            printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
-
+        if(from.equals("ReturnStatement")){
+            printer.p("->__vptr->");
+            printer.p(varName);
+        }
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
@@ -189,33 +192,34 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             printer.p(classname+"__::init(new __"+classname + "(),");
         }
+        //printer.p(n.get(0).toString().replace("\"", ""));
+        // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
     public void printArguments(Node n, String from) {
-            if(!from.equals("NewClassExpression")){
-                printer.p("(");
-                if(from.equals("CallExpression")) {
-                    printer.p(callExpIdentifier);
-                }
-                for(int i = 0; i<n.size(); i++) {
-                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                        printCheckStatementNode(n.getNode(i), from);
-                    }
-                }
-                printer.p(")");
-        }
-        else{
-                if(from.equals("CallExpression")) {
-                    printer.p(callExpIdentifier);
-                }
-                for(int i = 0; i<n.size(); i++) {
-                    if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                        printCheckStatementNode(n.getNode(i), from);
-                    }
-                }
-                printer.p(")");
+        if(!from.equals("NewClassExpression")) {
+            printer.p("(");
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
             }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
+        } else {
+            if(from.equals("CallExpression")) {
+                printer.p(callExpIdentifier);
+            }
+            for(int i = 0; i<n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), from);
+                }
+            }
+            printer.p(")");
+        }
     }
 
     public void printNewClassExpression(Node n, String from) {
@@ -227,7 +231,23 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
+        System.out.println("\n expression n: " + n + "\n");
         for(int i = 0; i<n.size(); i++) {
+            try {
+                String one = n.getNode(0).getNode(0).get(0).toString();;
+                if (one.equals("ThisExpression(null)")){
+                    String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
+                    one = n.getNode(0).getNode(0).get(1).toString();
+                    printer.p(thisKeyword + ".");
+                }
+
+                printer.p(one + " ");
+                String two = n.getNode(0).get(1).toString();
+                printer.p(two + " ");
+                String three = n.getNode(0).getNode(2).get(0).toString();
+                printer.p(three);
+            } catch (NullPointerException e){}
+
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "ExpressionStatement");
             }
@@ -262,7 +282,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        System.out.println(n);
         callExpIdentifier = "";
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i)!=null && checkIfNode(n.get(i))) {
@@ -279,10 +298,12 @@ public class jppPrinter extends Visitor {
         }
     }
 
-
+    public void printThisExpression(Node n, String from){
+        printer.p("\nIN THIS\n");
+        printCheckStatementNode(n.getNode(0), "ThisExpression");
+    }
 
     public void printReturnStatement(Node n, String from) {
-
         printer.p("return ");
         printCheckStatementNode(n.getNode(0), "ReturnStatement");
     }
@@ -290,6 +311,14 @@ public class jppPrinter extends Visitor {
     public void printFormalParameters(Node n, String from) {
         printer.p("("+currentC+" __this ");
         if(n.size() > 0) printer.p(", ");
+        if (n.size() >= 1) {
+            try {
+                String paramType =  n.getNode(0).getNode(1).getNode(0).get(0).toString();
+                String varName =  n.getNode(0).get(3).toString();
+                printer.p(paramType + " " + varName);
+            } catch (ClassCastException e) {}
+        }
+
 
         for(int i =0; i<n.size(); i++) {
             printCheckStatementNode(n.getNode(i), "FormalParameters");
@@ -300,10 +329,7 @@ public class jppPrinter extends Visitor {
 
     public void printFormalParameter(Node n, String from) {
         printCheckStatementNode(n.getNode(0), "FormalParameter");
-        if(n != null){
-            printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
-        }
-
+        printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
         printer.p(n.get(3).toString() + ")");
     }
 
@@ -318,10 +344,9 @@ public class jppPrinter extends Visitor {
     }
 
     public void printStringLiteral(Node n, String from) {
-        if(from.equals("NewClassExpression")){
+        if(from.equals("NewClassExpression")) {
             printer.p(n.get(0).toString());
-        }
-        else{
+        } else {
             printer.p("__rt::literal("+n.get(0).toString()+")");
         }
 
@@ -329,9 +354,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
-        if(constructorCounter == 0 ){
-            printer.p("__Object::__init((Object)__this);\n");
-        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -340,24 +362,22 @@ public class jppPrinter extends Visitor {
             }
             printer.p("; \n");
         }
+        if(constructorCounter == 0){
+            printer.p("__Object::__init((Object)__this);\n");
+        }
         if(printer != mainPrinter) printer.p("} \n");
+
     }
 
 
     public void printConstructorDeclaration(Node n, String from) {
+        System.out.println("\nconstrutor n: " + n + "\n");
         String className = n.get(2).toString().replace("()", "").toString();
-        String constructor;
-        if(from.equals("NewClassExpression")){
-            constructor = className + "::__init(new__" + className + "(),";
-        }
-        else{
-            constructor = className + "::__init";
-        }
-            printer.p(constructor);
-            printFieldDeclaration(n,from);
-
+        String constructor = className + "::__init(new__" + className + "(),";
+        printer.p(constructor);
+        printFieldDeclaration(n,from);
+        printer.p(")\n");
         constructorCounter++;
-
 
     }
 
@@ -368,7 +388,7 @@ public class jppPrinter extends Visitor {
                     printCheckStatementNode(n.getNode(i), "MethodDeclaration");
                 } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
                     printer.p(" " + currentClassName + "::" +
-                              n.get(i).toString());
+                            n.get(i).toString());
                 }
             }
         } else {
@@ -392,7 +412,7 @@ public class jppPrinter extends Visitor {
         }
 
         Node constructorDeclarations = n.getNode(3);
-        for(int i = 0; i< constructorDeclarations.size(); i++){
+        for(int i = 0; i< constructorDeclarations.size(); i++) {
             if(constructorDeclarations.get(i) != null && checkIfNode(constructorDeclarations.get(i))) {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
