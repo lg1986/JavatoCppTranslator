@@ -166,6 +166,8 @@ public class jppPrinter extends Visitor {
             printPrimaryIdentifier(n, from);
         } else if(n.hasName("ConstructorDeclaration")) {
             printConstructorDeclaration(n, from);
+        } else if(n.hasName("ThisExpression")) {
+            printThisExpression(n, from);
         }
 
     }
@@ -228,7 +230,14 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
+        System.out.println("\n expression n: " + n + "\n");
+        //System.out.println("need this: " + n.getNode(0).getNode(0).get(0).toString());
         for(int i = 0; i<n.size(); i++) {
+            if (n.toString().contains("ThisExpression")){
+                printer.p("__this");
+
+                //printer.p(n.toString().replace("ThisExpression(null)", "__this"));
+            }
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "ExpressionStatement");
             }
@@ -280,7 +289,10 @@ public class jppPrinter extends Visitor {
         }
     }
 
-
+    public void printThisExpression(Node n, String from){
+        printer.p("\nIN THIS\n");
+        printCheckStatementNode(n.getNode(0), "ThisExpression");
+    }
 
     public void printReturnStatement(Node n, String from) {
         printer.p("return ");
@@ -327,6 +339,10 @@ public class jppPrinter extends Visitor {
     public void printBlock(Node n, String from) {
         if (from.equals("FieldDeclaration")){
             try {
+                if (n.toString().contains("ThisExpression")){
+                    n.toString().replace("ThisExpression(null)", "__this");
+                    printer.p("************"); // ***** CHANGE THIS PROBLEM *****
+                }
                 printer.p(n.getNode(0).getNode(0).getNode(0).get(0).toString() + " ");
                 printer.p(n.getNode(0).getNode(0).get(1).toString() + " ");
                 printer.p(n.getNode(0).getNode(0).getNode(2).get(0).toString());
