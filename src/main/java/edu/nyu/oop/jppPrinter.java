@@ -314,7 +314,15 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameters(Node n, String from) {
-        printer.p("("+currentC+" __this ");
+            if(from.equals("FieldDeclaration")){
+                printer.p(currentC+" __this ");
+            }
+            else{
+                printer.p("("+currentC+" __this ");
+            }
+
+
+
         if(n.size() > 0) printer.p(", ");
         if (n.size() >= 1) {
             try {
@@ -432,9 +440,7 @@ public class jppPrinter extends Visitor {
         if(constructorCounter == 0){
             nullConstructor = true;
         }
-        System.out.println("Const count"+ constructorCounter);
-        System.out.println("NULL CONSTRUCTOR"+ nullConstructor);
-        if (nullConstructor){
+        if (nullConstructor && !currentClassName.contains("Test")){
             printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
             printer.p("__Object::__init((Object)__this);\n");
             printer.p("}\n");
