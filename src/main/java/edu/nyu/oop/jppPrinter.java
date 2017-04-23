@@ -25,7 +25,9 @@ public class jppPrinter extends Visitor {
     private String currentC;
 
     private String callExpIdentifier;
-    int constructorCounter = 0;
+
+    int constructorCounter;
+    boolean nullConstructor = true;
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -362,7 +364,7 @@ public class jppPrinter extends Visitor {
             }
             printer.p("; \n");
         }
-        if(constructorCounter == 0){
+        if(constructorCounter == 1 && nullConstructor == false){
             printer.p("__Object::__init((Object)__this);\n");
         }
         if(printer != mainPrinter) printer.p("} \n");
@@ -371,13 +373,15 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        System.out.println("\nconstrutor n: " + n + "\n");
-        String className = n.get(2).toString().replace("()", "").toString();
-        String constructor = className + "::__init(new__" + className + "(),";
-        printer.p(constructor);
-        printFieldDeclaration(n,from);
-        printer.p(")\n");
         constructorCounter++;
+
+
+            String className = n.get(2).toString().replace("()", "").toString();
+            String constructor = className + "::__init(new__" + className + "(),";
+            printer.p(constructor);
+            printFieldDeclaration(n,from);
+            printer.p(")\n");
+
 
     }
 
@@ -394,6 +398,15 @@ public class jppPrinter extends Visitor {
         } else {
             printer.pln("int main(){ ");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
+        }
+        if(n.get(2).equals(currentClassName.replace("__",""))){
+            nullConstructor = false;
+        }
+
+        if ((jppTraversal.totalConstructorCounter == constructorCounter) && nullConstructor){
+            printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
+            printer.p("__Object::__init((Object)__this);\n");
+            printer.p("}\n");
         }
 
     }

@@ -4,10 +4,9 @@ class A {
     private String fld;
 
 
-    public A() {
+   // public A() {
 
-    }
-
+    //}
 
     public String getFld() {
         return fld;
@@ -16,7 +15,7 @@ class A {
 
 public class Test003 {
     public static void main(String[] args) {
-        A a = new A();
-        System.out.println(a.getFld());
+        //A a = new A();
+        //System.out.println(a.getFld());
     }
 }
