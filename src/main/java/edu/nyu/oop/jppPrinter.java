@@ -25,6 +25,8 @@ public class jppPrinter extends Visitor {
     private String currentC;
 
     private String callExpIdentifier;
+    int constructorCounter = 0;
+
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
@@ -363,6 +365,9 @@ public class jppPrinter extends Visitor {
             }
             printer.p("; \n");
         }
+        if(constructorCounter == 0){
+            printer.p("__Object::__init((Object)__this);\n");
+        }
         if(printer != mainPrinter) printer.p("} \n");
 
     }
@@ -375,6 +380,7 @@ public class jppPrinter extends Visitor {
         printer.p(constructor);
         printFieldDeclaration(n,from);
         printer.p(")\n");
+        constructorCounter++;
 
     }
 
@@ -385,7 +391,7 @@ public class jppPrinter extends Visitor {
                     printCheckStatementNode(n.getNode(i), "MethodDeclaration");
                 } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
                     printer.p(" " + currentClassName + "::" +
-                              n.get(i).toString());
+                            n.get(i).toString());
                 }
             }
         } else {
