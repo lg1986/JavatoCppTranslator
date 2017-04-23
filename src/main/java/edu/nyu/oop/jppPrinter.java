@@ -233,17 +233,20 @@ public class jppPrinter extends Visitor {
         for(int i = 0; i<n.size(); i++) {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();;
+                System.out.println("\n ***** one: " + one);
                 if (one.equals("ThisExpression(null)")){
                     String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
                     one = n.getNode(0).getNode(0).get(1).toString();
                     printer.p(thisKeyword + ".");
+                    printer.p(one);
+                } else if ("PrimaryIdentifier(\"System\")".equals(one)) {
+                } else {
+                    printer.p(one + " ");
+                    String two = n.getNode(0).get(1).toString();
+                    printer.p(two + " ");
+                    String three = n.getNode(0).getNode(2).get(0).toString();
+                    printer.p(three);
                 }
-
-                printer.p(one + " ");
-                String two = n.getNode(0).get(1).toString();
-                printer.p(two + " ");
-                String three = n.getNode(0).getNode(2).get(0).toString();
-                printer.p(three);
             } catch (NullPointerException e){}
 
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
