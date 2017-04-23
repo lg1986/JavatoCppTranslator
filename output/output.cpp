@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #include "output.h"
 using namespace java::lang;
 namespace nyu{
@@ -11,7 +12,7 @@ Class __A::__class() {
 }
 __A_VT __A::__vtable;
 A::__init(new__A(),(A __this , String fld)) { 
-************ThisExpression(null) = fld__this; 
+ThisExpression(null) = fld__this;
 } 
 )
 String __A::getFld(A __this ) { 
@@ -31,3 +32,4 @@ cout <<(->__vptr->getFld(a));
 }
 }
 }
+

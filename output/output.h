@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #pragma once
 #include "java_lang.h"
 using namespace java::lang;
@@ -40,3 +41,5 @@ getClass((Class(*)( A ))&__Object::getClass)
 };
 };
 };
+=======
+>>>>>>> 6f53a0b24ecb11ad5a41bbb2ef16a2b0d85c20c5
