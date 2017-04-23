@@ -232,7 +232,13 @@ public class jppPrinter extends Visitor {
         System.out.println("\n expression n: " + n + "\n");
         for(int i = 0; i<n.size(); i++) {
             try {
-                String one = n.getNode(0).getNode(0).get(0).toString();
+                String one = n.getNode(0).getNode(0).get(0).toString();;
+                if (one.equals("ThisExpression(null)")){
+                    String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
+                    one = n.getNode(0).getNode(0).get(1).toString();
+                    printer.p(thisKeyword + ".");
+                }
+
                 printer.p(one + " ");
                 String two = n.getNode(0).get(1).toString();
                 printer.p(two + " ");
