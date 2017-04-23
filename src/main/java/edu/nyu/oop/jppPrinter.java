@@ -27,7 +27,7 @@ public class jppPrinter extends Visitor {
     private String callExpIdentifier;
 
     int constructorCounter;
-    boolean nullConstructor = true;
+    boolean nullConstructor = false;
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -376,7 +376,7 @@ public class jppPrinter extends Visitor {
     public void printConstructorDeclaration(Node n, String from) {
         constructorCounter++;
 
-        if(nullConstructor){
+        if(nullConstructor == false){
             String className = n.get(2).toString().replace("()", "").toString();
             String constructor = className + "::__init(new__" + className + "(),";
             printer.p(constructor);
@@ -429,19 +429,17 @@ public class jppPrinter extends Visitor {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
         }
-
-        if(currentC.equals(currentClassName.replace("__",""))){
-
-            System.out.println(currentC);
-            nullConstructor = false;
+        if(constructorCounter == 0){
+            nullConstructor = true;
         }
-
-        if ((jppTraversal.totalConstructorCounter == constructorCounter) && nullConstructor){
-            printer.p("*****************");
+        System.out.println("Const count"+ constructorCounter);
+        System.out.println("NULL CONSTRUCTOR"+ nullConstructor);
+        if (nullConstructor){
             printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
             printer.p("__Object::__init((Object)__this);\n");
             printer.p("}\n");
         }
+
 
         visit(n.getNode(1));
     }

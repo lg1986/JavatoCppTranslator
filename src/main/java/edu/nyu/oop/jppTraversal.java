@@ -17,6 +17,7 @@ public class jppTraversal extends Visitor {
     protected cppAST cpp = new cppAST();
     private GNode classNode;
     static int totalConstructorCounter;
+    static String currentC;
 
     //================================================================================
     // Utils
