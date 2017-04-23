@@ -3,8 +3,18 @@
  *
  * Author: Team j++
  *
- * This module creates a tree that
- * displays the inheritance heirarchy.
+ * This module is the core of phase-2.
+ * It performs the following two functions:
+ *
+ *
+ * 1. It creates a tree for every class with its inheritance
+ * herirachy.
+ *
+ * 2. It creates the stacked data layout VTable structure that
+ * was discussed in class.
+ *
+ * 3. It maintains the structure of the DataLayout VTable AST design.
+ *
  *
  */
 
@@ -15,7 +25,6 @@ import xtc.tree.Node;
 import xtc.tree.Visitor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -132,6 +141,12 @@ public class CreateDependencyTree extends Visitor {
         }
     }
 
+    /**
+     * This is just a simple linked list traversal
+     * that constructs the heirarchy.
+     * @param headerAst
+     * @param classTreeNode
+     */
     public void appendInheritance(GNode headerAst, TreeNode classTreeNode){
         classTreeNode.extendsNodes = null;
         while(headerAst.get(2) != null){
@@ -162,6 +177,12 @@ public class CreateDependencyTree extends Visitor {
     }
 
 
+    /**
+     * Util class -- this is to flip the inheritance chain and
+     * then perform the stacking.
+     * @param n
+     * @return
+     */
     public List<TreeNode> reOrderChain(TreeNode n){
         List<TreeNode> correctOrder = new ArrayList<>();
         TreeNode head = n;
@@ -174,7 +195,13 @@ public class CreateDependencyTree extends Visitor {
         return correctOrder;
     }
 
-
+    /**
+     * Helper method for StackMethods
+     * This method is for easier comparison of the params
+     * of the methods that are being compared.
+     * @param paramNodes
+     * @return ArrayList<String>
+     */
     public ArrayList<String> getParamsList(Node paramNodes){
         ArrayList<String> paramsList = new ArrayList<>();
         for(int i = 0; i<paramNodes.size(); i++) {
@@ -186,6 +213,13 @@ public class CreateDependencyTree extends Visitor {
         return paramsList;
     }
 
+    /**
+     * Helper method for StackMethods
+     * @param stackParams
+     * @param currParams
+     * @return int --> 1 new method
+     * it is. int --> 1 overriden method
+     */
     public int checkAllParams(ArrayList<String> stackParams,
                                      ArrayList<String> currParams){
         if(stackParams.size() != currParams.size()) return 1;
@@ -196,17 +230,27 @@ public class CreateDependencyTree extends Visitor {
         return 0;
     }
 
+    /**
+     * Helper method for StackMethods
+     * @param stackParams
+     * @param currParams
+     * @return int --> from checkAllParams
+     */
+
     public int checkParams(Node stackParams, Node currParams){
         ArrayList<String> stackParamsList = getParamsList(stackParams);
         ArrayList<String> currParamsList = getParamsList(currParams);
         return checkAllParams(stackParamsList, currParamsList);
     }
 
-    public Node checkMethName(Node stackMeth, Node currMethsNode, String className){
-
-
-        // Checks if any of the methods have the same name. If yes, then
-        // check if it is overloaded/overriden
+    /**
+     * Helper method for StackMethods
+     * @param stackMeth
+     * @param currMethsNode
+     * @param className
+     * @return returns the Node if any that needs to be added.
+     */
+    public Node checkMeth(Node stackMeth, Node currMethsNode, String className){
         for(int i = 0; i<currMethsNode.size(); i++){
             Node currMethNode = currMethsNode.getNode(i);
             String methName = currMethNode.getString(1);
@@ -226,14 +270,32 @@ public class CreateDependencyTree extends Visitor {
         return stackMeth;
     }
 
+    /**
+     * Main stackMethods function
+     * @param stackMeths
+     * @param currMeths
+     * @param className
+     *
+     * The StackMeths need to be stacked below the currMeths.
+     */
+
     public void stackMethods(Node stackMeths, Node currMeths, String className){
         for(int i = 0; i<stackMeths.size(); i++){
             Node stackMeth = stackMeths.getNode(i);
-            Node toAdd = checkMethName(stackMeth, currMeths, className);
+            Node toAdd = checkMeth(stackMeth, currMeths, className);
             if(toAdd != null) currMeths.addNode(toAdd);
         }
     }
 
+
+    /**
+     * Helper method for stackFields
+     * @param fields
+     * @return
+     *
+     * Just returns a list of fields. This is for easier
+     * comparison.
+     */
     public ArrayList<String> getFieldsList(Node fields){
         ArrayList<String> fieldsList = new ArrayList<>();
         for(int i = 0; i < fieldsList.size(); i++){
@@ -242,6 +304,15 @@ public class CreateDependencyTree extends Visitor {
         }
         return fieldsList;
     }
+
+    /**
+     * Main method for stackingFields up.
+     * @param stackFields
+     * @param currNode
+     *
+     * This is the main method for stacking fields according
+     * to the data layout convention.
+     */
 
     public void stackFields(Node stackFields, Node currNode){
         ArrayList<String> currFields = getFieldsList(currNode);
@@ -256,6 +327,12 @@ public class CreateDependencyTree extends Visitor {
 
     }
 
+    /**
+     * Control unit for stacking methods.
+     * @param stack
+     * @param currNode
+     */
+
     public void stackItUp(Node stack, Node currNode){
         Node stackMeths = stack.getNode(3).getNode(2);
         Node stackFields = stack.getNode(3).getNode(0);
@@ -263,6 +340,12 @@ public class CreateDependencyTree extends Visitor {
         stackMethods(stackMeths, currNode.getNode(3).getNode(2), currNode.getString(1));
     }
 
+    /**
+     * Control Unit for constructing the stacked
+     * AST for any class.
+     * @param n
+     * @return A GNode with the correct dataLayout.
+     */
     public GNode getInheritedStructure(TreeNode n){
         Node orignal = n.ast;
         List<TreeNode> inherit = reOrderChain(n);
@@ -283,10 +366,21 @@ public class CreateDependencyTree extends Visitor {
             for(int i = 0; i<inherit.size(); i++){
                 stackItUp(inherit.get(i).ast, inheritSim);
             }
+
+            GNode vtableNode = GNode.create("VTableNode");
+            vtableNode.addNode(dataLayoutNode.getNode(2));
+            inheritSim.addNode(vtableNode);
             return inheritSim;
         }
     }
-    public List<GNode> testing(Node n){
+
+    /**
+     * To interface with the visitor/creator.
+     * @param n
+     * @return List<GNode> with all the correct AST representations
+     * of the classes.
+     */
+    public List<GNode> getStackedHeader(Node n){
         CreateDependencyTree headerAST = new CreateDependencyTree();
         List<TreeNode> inheritanceTree = headerAST.getDependencyInheritance(n);
         inheritanceSimAsts = new ArrayList<>();
@@ -294,7 +388,6 @@ public class CreateDependencyTree extends Visitor {
             GNode correctRep =  getInheritedStructure(eachClassNode);
             inheritanceSimAsts.add(correctRep);
         }
-
         return inheritanceSimAsts;
     }
 
