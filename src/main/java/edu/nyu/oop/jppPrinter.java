@@ -175,8 +175,8 @@ public class jppPrinter extends Visitor {
         String varName = n.get(0).toString();
         //printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
-            printer.p("->__vptr->");
-            //printer.p(varName);
+            //printer.p("->__vptr->");
+            printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
         if(from.equals("ReturnStatement")){
@@ -229,13 +229,14 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        //System.out.println("need this: " + n.getNode(0).getNode(0).get(0).toString());
         for(int i = 0; i<n.size(); i++) {
-            if (n.toString().contains("ThisExpression")){
-                printer.p("__this");
+            try {
+                String one = n.getNode(0).getNode(0).get(0).toString();
+                String two = n.getNode(0).get(1).toString();
+                String three = n.getNode(0).getNode(2).get(0).toString();
+                printer.p(one + " " + two + " " + three);
+            } catch (NullPointerException e){}
 
-                //printer.p(n.toString().replace("ThisExpression(null)", "__this"));
-            }
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "ExpressionStatement");
             }
@@ -342,17 +343,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
-        if (from.equals("FieldDeclaration")){
-            try {
-                if (n.toString().contains("ThisExpression")){
-                    n.toString().replace("ThisExpression(null)", "__this");
-                    printer.p("************"); // ***** CHANGE THIS PROBLEM *****
-                }
-                printer.p(n.getNode(0).getNode(0).getNode(0).get(0).toString() + " ");
-                printer.p(n.getNode(0).getNode(0).get(1).toString() + " ");
-                printer.p(n.getNode(0).getNode(0).getNode(2).get(0).toString());
-            } catch (IndexOutOfBoundsException e){}
-        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
