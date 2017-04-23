@@ -1,8 +1,13 @@
 package inputs.test003;
 
 class B extends A{
+    String x;
     public B(){
 
+    }
+
+    public int meth(int x){
+        return 0;
     }
 
     public String getFld(){

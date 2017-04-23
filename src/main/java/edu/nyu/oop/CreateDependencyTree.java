@@ -175,12 +175,9 @@ public class CreateDependencyTree extends Visitor {
     }
 
 
-
-
     public ArrayList<String> getParamsList(Node paramNodes){
         ArrayList<String> paramsList = new ArrayList<>();
         for(int i = 0; i<paramNodes.size(); i++) {
-
             Node paramNode = paramNodes.getNode(i);
             String paramString  = paramNode.getString(0)+
                     " "+paramNode.get(1);
@@ -191,7 +188,6 @@ public class CreateDependencyTree extends Visitor {
 
     public int checkAllParams(ArrayList<String> stackParams,
                                      ArrayList<String> currParams){
-
         if(stackParams.size() != currParams.size()) return 1;
         if(stackParams.size() == 0) return 0;
         for(int i = 0; i < stackParams.size(); i++){
@@ -206,39 +202,65 @@ public class CreateDependencyTree extends Visitor {
         return checkAllParams(stackParamsList, currParamsList);
     }
 
-    public Node checkMethName(String stackMethName, Node currNode){
-        for(int i = 0; i<currNode.size(); i++){
-            String methName = currNode.getNode(i).getString(1);
-            if(methName.equals(stackMethName)) return currNode.getNode(i);
-        }
-        return null;
-    }
+    public Node checkMethName(Node stackMeth, Node currMethsNode, String className){
 
 
-    public void stackMethods(Node stackMeths, Node currNode){
-        Node currMeths = currNode.getNode(3).getNode(2);
-        if(currMeths.size() == 0) {
-            currMeths = GNode.ensureVariable((GNode)stackMeths);
-        } else {
-            for (int i = 0; i < stackMeths.size(); i++) {
-                Node stackMeth = stackMeths.getNode(i);
-                Node toAddMeth = checkMethName(stackMeth.getString(1), currMeths);
-
-                if (toAddMeth != null) {
-                    if (checkParams(stackMeth.getNode(2), toAddMeth.getNode(2)) == 1) {
-                        currMeths.addNode(stackMeth);
-                    } else {
-                        toAddMeth.set(3, currNode.getString(1));
-                    }
+        // Checks if any of the methods have the same name. If yes, then
+        // check if it is overloaded/overriden
+        for(int i = 0; i<currMethsNode.size(); i++){
+            Node currMethNode = currMethsNode.getNode(i);
+            String methName = currMethNode.getString(1);
+            if(methName.equals(stackMeth.getString(1))) {
+                int loadrid = checkParams(stackMeth.getNode(2), currMethNode.getNode(2));
+                if(loadrid == 1){
+                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
+                    return retNode;
+                } else{
+                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
+                    retNode.set(3, className);
+                    currMethsNode.set(i, retNode);
+                    return null;
                 }
             }
         }
-        currNode.getNode(3).set(2, currMeths);
+        return stackMeth;
+    }
+
+    public void stackMethods(Node stackMeths, Node currMeths, String className){
+        for(int i = 0; i<stackMeths.size(); i++){
+            Node stackMeth = stackMeths.getNode(i);
+            Node toAdd = checkMethName(stackMeth, currMeths, className);
+            if(toAdd != null) currMeths.addNode(toAdd);
+        }
+    }
+
+    public ArrayList<String> getFieldsList(Node fields){
+        ArrayList<String> fieldsList = new ArrayList<>();
+        for(int i = 0; i < fieldsList.size(); i++){
+            Node fieldNode = fields.getNode(i);
+            String field = fieldNode.getString(0)+" "+fieldNode.getString(1);
+        }
+        return fieldsList;
+    }
+
+    public void stackFields(Node stackFields, Node currNode){
+        ArrayList<String> currFields = getFieldsList(currNode);
+        for(int i = 0; i < stackFields.size(); i++){
+            Node stackFieldNode = stackFields.getNode(i);
+            String stackFieldString  = stackFieldNode.getString(0)+" "+
+                    stackFieldNode.getString(1);
+            if(!currFields.contains(stackFieldString)){
+                currNode.getNode(3).getNode(0).addNode(stackFieldNode);
+            }
+        }
+
     }
 
     public void stackItUp(Node stack, Node currNode){
         Node stackMeths = stack.getNode(3).getNode(2);
-        stackMethods(stackMeths, currNode);
+        Node stackFields = stack.getNode(3).getNode(0);
+        stackFields(stackFields, currNode);
+        stackMethods(stackMeths, currNode.getNode(3).getNode(2), currNode.getString(1));
     }
 
     public GNode getInheritedStructure(TreeNode n){
