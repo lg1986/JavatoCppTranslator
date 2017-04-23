@@ -229,12 +229,15 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
+        System.out.println("\n expression n: " + n + "\n");
         for(int i = 0; i<n.size(); i++) {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();
+                printer.p(one + " ");
                 String two = n.getNode(0).get(1).toString();
+                printer.p(two + " ");
                 String three = n.getNode(0).getNode(2).get(0).toString();
-                printer.p(one + " " + two + " " + three);
+                printer.p(three);
             } catch (NullPointerException e){}
 
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
@@ -357,6 +360,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
+        System.out.println("\nconstrutor n: " + n + "\n");
         String className = n.get(2).toString().replace("()", "").toString();
         String constructor = className + "::__init(new__" + className + "(),";
         printer.p(constructor);
