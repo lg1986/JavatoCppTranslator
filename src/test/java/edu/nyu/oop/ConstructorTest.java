@@ -60,7 +60,7 @@ public class ConstructorTest {
             // asserts
             // lines are line + 1
             assertEquals("A::__init(new__A(),A __this , String s) { ", lines.get(1 - 1));    // vtable implementation for A(String s)
-            assertEquals("A::__init(new__A(),A __this ) { ", lines.get(5 - 1));    // vtable implementation for A()
+            assertEquals("A::__init(new__A(),A __this ) { ", lines.get(3 - 1));    // vtable implementation for A()
             s.close();
         } catch (FileNotFoundException e) {
 

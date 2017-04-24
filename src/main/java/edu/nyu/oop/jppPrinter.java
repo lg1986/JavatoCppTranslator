@@ -408,7 +408,7 @@ public class jppPrinter extends Visitor {
             String constructor = className + "::__init(new__" + className + "(),";
             printer.p(constructor);
             printFieldDeclaration(n,from);
-            if(constructorCounter == 1)
+            if(constructorCounter == 1 && (!test))
                 printer.p("__Object::__init((Object)__this);\n");
 
             if(!test)
