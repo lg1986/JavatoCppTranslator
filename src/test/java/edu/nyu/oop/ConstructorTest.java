@@ -68,8 +68,8 @@ public class ConstructorTest {
             assertEquals("a1 = A__::init(new __A(),\"test\");", lines.get(21 - 1));     // use of A(String s)
             assertEquals("a = A__::init(new __A());", lines.get(22 - 1));   // use of A()
             assertEquals("b = B__::init(new __B());", lines.get(23 - 1));  // use of B()
-            assertEquals("c = C__::init(new __C());", lines.get(24 - 1));  // use of C(3)
-            assertEquals("c2 = C__::init(new __C());", lines.get(25 - 1));  // use of C(5.4)
+            assertEquals("c = C__::init(new __C(),3);", lines.get(24 - 1));  // use of C(3)
+            assertEquals("c2 = C__::init(new __C(),5.4);", lines.get(25 - 1));  // use of C(5.4)
             assertEquals("c3 = C__::init(new __C());", lines.get(26 - 1));  // use of C()
 
 
