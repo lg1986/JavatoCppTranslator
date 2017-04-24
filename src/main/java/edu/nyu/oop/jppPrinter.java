@@ -18,6 +18,7 @@ public class jppPrinter extends Visitor {
     private Printer classPrinter;
     private Printer printer;
     private Printer mainPrinter;
+    private Printer constructPrinter;
     private List<Node> jppList;
     private String packageName;
 
@@ -37,6 +38,7 @@ public class jppPrinter extends Visitor {
     public jppPrinter(Node n) throws IOException {
         Writer w;
         Writer wMain;
+        Writer wConstruct;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.cpp");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
@@ -48,6 +50,12 @@ public class jppPrinter extends Visitor {
             wMain = new BufferedWriter(owsMain);
             this.mainPrinter = new Printer(wMain);
 
+            FileOutputStream fosconstruct = new FileOutputStream("output/constructors.cpp");
+            OutputStreamWriter owsConstruct = new OutputStreamWriter(fosconstruct, "utf-8");
+            wConstruct = new BufferedWriter(owsConstruct);
+            this.mainPrinter = new Printer(wConstruct);
+
+
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
@@ -58,6 +66,7 @@ public class jppPrinter extends Visitor {
         writeEndBaseLayout();
         classPrinter.flush();
         mainPrinter.flush();
+        constructPrinter.flush();
     }
 
     public void getOutputImplementations(Node n) {
@@ -382,6 +391,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
+        printer = constructPrinter;
         constructorCounter++;
 
         if(nullConstructor == false){
@@ -419,7 +429,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-
+        printer = constructPrinter;
         currentClassName = n.get(0).toString();
 
         currentC = n.get(0).toString();

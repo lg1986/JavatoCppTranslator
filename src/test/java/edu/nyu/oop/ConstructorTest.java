@@ -47,7 +47,7 @@ public class ConstructorTest {
     public void testConstructor() {
         try {
             // setup
-            File f = new File("output/output.cpp");
+            File f = new File("output/constructors.cpp");
             ArrayList<String> lines = new ArrayList<String>();
             Scanner s = new Scanner(f);
 
