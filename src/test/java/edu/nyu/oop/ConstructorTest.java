@@ -35,11 +35,11 @@ public class ConstructorTest {
     public void beforeTest() {
         System.out.println("Executing ConstructorTest");
         try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-                jppPrinter jpp = new jppPrinter(n);
-            } catch (IOException e) {
+            CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
+            jppPrinter jpp = new jppPrinter(n, true);
+        } catch (IOException e) {
 
-            }
+        }
     }
 
 
@@ -47,7 +47,7 @@ public class ConstructorTest {
     public void testConstructor() {
         try {
             // setup
-            File f = new File("output/output.cpp");
+            File f = new File("output/constructors.cpp");
             ArrayList<String> lines = new ArrayList<String>();
             Scanner s = new Scanner(f);
 
@@ -58,13 +58,24 @@ public class ConstructorTest {
             }
 
             // asserts
-            // lines are line + 1
-            // TODO: Add dummy, change line numbers
-            assertEquals("A::__init(new__A(), (A __this , String s)) {", lines.get(12));    // vtable implementation for A(String s)
-            assertEquals("A::__init(new__A(), (A __this ) {", lines.get(14));    // vtable implementation for A()
+            // lines are line - 1
+            assertEquals("A::__init(new__A(),A __this , String s)", lines.get(1 - 1));    // vtable implementation for A(String s)
+            assertEquals("A::__init(new__A(),A __this )", lines.get(4 - 1));    // vtable implementation for A()
+            assertEquals("B::__init(new__B(),B __this )", lines.get(7 - 1));    // vtable implementation for B()
+            assertEquals("C::__init(new__C(),C __this )", lines.get(10 - 1));    // vtable implementation for C()
+            assertEquals("C::__init(new__C(),C __this , int i)", lines.get(13 - 1));    // vtable implementation for C(int i)
+            assertEquals("C::__init(new__C(),C __this , double d)", lines.get(16 - 1)); // vtable implementation for C(double d)
+            assertEquals("a1 = A__::init(new __A(),\"test\");", lines.get(21 - 1));     // use of A(String s)
+            assertEquals("a = A__::init(new __A());", lines.get(22 - 1));   // use of A()
+            assertEquals("b = B__::init(new __B());", lines.get(23 - 1));  // use of B()
+            assertEquals("c = C__::init(new __C(),3);", lines.get(24 - 1));  // use of C(3)
+            assertEquals("c2 = C__::init(new __C(),5.4);", lines.get(25 - 1));  // use of C(5.4)
+            assertEquals("c3 = C__::init(new __C());", lines.get(26 - 1));  // use of C()
+
+
             s.close();
         } catch (FileNotFoundException e) {
 
         }
-   }
+    }
 }

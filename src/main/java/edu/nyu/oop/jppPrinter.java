@@ -18,6 +18,7 @@ public class jppPrinter extends Visitor {
     private Printer classPrinter;
     private Printer printer;
     private Printer mainPrinter;
+    private Printer constructPrinter;
     private List<Node> jppList;
     private String packageName;
 
@@ -25,16 +26,22 @@ public class jppPrinter extends Visitor {
     private String currentC;
 
     private String callExpIdentifier;
-    int constructorCounter = 0;
+
+    private boolean test;
+
+    int constructorCounter;
+    boolean nullConstructor = false;
 
     /**
      * Constructor - This initiates the creation of the header file
      * @param n
      * @throws IOException
      */
-    public jppPrinter(Node n) throws IOException {
+    public jppPrinter(Node n, boolean test) throws IOException {
+        this.test = test;
         Writer w;
         Writer wMain;
+        Writer wConstruct;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.cpp");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
@@ -46,6 +53,14 @@ public class jppPrinter extends Visitor {
             wMain = new BufferedWriter(owsMain);
             this.mainPrinter = new Printer(wMain);
 
+            if(test) {
+                FileOutputStream fosconstruct = new FileOutputStream("output/constructors.cpp");
+                OutputStreamWriter owsConstruct = new OutputStreamWriter(fosconstruct, "utf-8");
+                wConstruct = new BufferedWriter(owsConstruct);
+                this.constructPrinter = new Printer(wConstruct);
+            }
+
+
         } catch (Exception e) {
             throw new RuntimeException("Output location not found. Create the /output directory.");
         }
@@ -56,6 +71,11 @@ public class jppPrinter extends Visitor {
         writeEndBaseLayout();
         classPrinter.flush();
         mainPrinter.flush();
+        if(test) constructPrinter.flush();
+    }
+
+    public jppPrinter(Node n) throws IOException {
+        this(n, false);
     }
 
     public void getOutputImplementations(Node n) {
@@ -181,7 +201,7 @@ public class jppPrinter extends Visitor {
             printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
-        if(from.equals("ReturnStatement")){
+        if(from.equals("ReturnStatement")) {
             printer.p("->__vptr->");
             printer.p(varName);
         }
@@ -236,7 +256,7 @@ public class jppPrinter extends Visitor {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();
                 //System.out.println("\n one: " + one);
-                if (one.equals("ThisExpression(null)")){
+                if (one.equals("ThisExpression(null)")) {
                     String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
                     one = n.getNode(0).getNode(0).get(1).toString();
                     printer.p(thisKeyword + ".");
@@ -249,7 +269,7 @@ public class jppPrinter extends Visitor {
                     String three = n.getNode(0).getNode(2).get(0).toString();
                     printer.p(three);
                 }
-            } catch (NullPointerException e){}
+            } catch (NullPointerException e) {}
 
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "ExpressionStatement");
@@ -301,7 +321,7 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printThisExpression(Node n, String from){
+    public void printThisExpression(Node n, String from) {
         printer.p("\nIN THIS\n");
         printCheckStatementNode(n.getNode(0), "ThisExpression");
     }
@@ -312,7 +332,14 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameters(Node n, String from) {
-        printer.p("("+currentC+" __this ");
+        if(from.equals("FieldDeclaration")) {
+            printer.p(currentC+" __this ");
+        } else {
+            printer.p("("+currentC+" __this ");
+        }
+
+
+
         if(n.size() > 0) printer.p(", ");
         if (n.size() >= 1) {
             try {
@@ -365,22 +392,31 @@ public class jppPrinter extends Visitor {
             }
             printer.p("; \n");
         }
-        if(constructorCounter == 0){
-            printer.p("__Object::__init((Object)__this);\n");
-        }
+
         if(printer != mainPrinter) printer.p("} \n");
 
     }
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        System.out.println("\nconstrutor n: " + n + "\n");
-        String className = n.get(2).toString().replace("()", "").toString();
-        String constructor = className + "::__init(new__" + className + "(),";
-        printer.p(constructor);
-        printFieldDeclaration(n,from);
-        printer.p(")\n");
+        if(test)
+            printer = constructPrinter;
         constructorCounter++;
+
+        if(nullConstructor == false) {
+            String className = n.get(2).toString().replace("()", "").toString();
+            String constructor = className + "::__init(new__" + className + "(),";
+            printer.p(constructor);
+            printFieldDeclaration(n,from);
+            if(constructorCounter == 1 && (!test))
+                printer.p("__Object::__init((Object)__this);\n");
+
+            if(!test)
+                printer.p(")\n");
+
+        }
+
+
 
     }
 
@@ -391,18 +427,22 @@ public class jppPrinter extends Visitor {
                     printCheckStatementNode(n.getNode(i), "MethodDeclaration");
                 } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
                     printer.p(" " + currentClassName + "::" +
-                            n.get(i).toString());
+                              n.get(i).toString());
                 }
             }
         } else {
+            if(test)
+                printer = constructPrinter;
             printer.pln("int main(){ ");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
 
+
     }
 
     public void visitClassDeclaration(GNode n) {
-
+        if(test)
+            printer = constructPrinter;
         currentClassName = n.get(0).toString();
 
         currentC = n.get(0).toString();
@@ -420,6 +460,15 @@ public class jppPrinter extends Visitor {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
         }
+        if(constructorCounter == 0) {
+            nullConstructor = true;
+        }
+        if (nullConstructor && !currentClassName.contains("Test")) {
+            printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
+            printer.p("__Object::__init((Object)__this);\n");
+            printer.p("}\n");
+        }
+
 
         visit(n.getNode(1));
     }

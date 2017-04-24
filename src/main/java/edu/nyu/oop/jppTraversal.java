@@ -16,6 +16,8 @@ public class jppTraversal extends Visitor {
      */
     protected cppAST cpp = new cppAST();
     private GNode classNode;
+    static int totalConstructorCounter;
+    static String currentC;
 
     //================================================================================
     // Utils
@@ -321,6 +323,7 @@ public class jppTraversal extends Visitor {
 
 
     public void visitConstructorDeclaration(GNode n) {
+        totalConstructorCounter++;
         classNode.getNode(3).addNode(n);
     }
 
@@ -342,6 +345,7 @@ public class jppTraversal extends Visitor {
 
         GNode constructorDeclarationsNode = GNode.create("ConstructorDeclarations");
         classNode.addNode(constructorDeclarationsNode);
+
         // Don't visit anything else but the ClassBody directly
         visit(n.getNode(5));
         cpp.addAST(classNode);

@@ -8,7 +8,6 @@ class A {
 
     }
 
-
     public String getFld() {
         return fld;
     }
