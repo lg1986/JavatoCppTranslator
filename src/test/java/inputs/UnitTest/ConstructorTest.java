@@ -25,14 +25,14 @@ class C {
 
 public class ConstructorTest {
     public static void main(String[] args) {
-    A a1 = new A("test");
-    A a = new A();
+        A a1 = new A("test");
+        A a = new A();
 
-    B b = new B();
+        B b = new B();
 
-    C c = new C(3);
-    C c2 = new C(5.4);
-    C c3 = new C();
+        C c = new C(3);
+        C c2 = new C(5.4);
+        C c3 = new C();
 
     }
 }

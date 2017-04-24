@@ -35,11 +35,11 @@ public class ConstructorTest {
     public void beforeTest() {
         System.out.println("Executing ConstructorTest");
         try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-                jppPrinter jpp = new jppPrinter(n);
-            } catch (IOException e) {
+            CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
+            jppPrinter jpp = new jppPrinter(n, true);
+        } catch (IOException e) {
 
-            }
+        }
     }
 
 
@@ -59,12 +59,11 @@ public class ConstructorTest {
 
             // asserts
             // lines are line + 1
-            // TODO: Add dummy, change line numbers
-            assertEquals("A::__init(new__A(), (A __this , String s)) {", lines.get(12));    // vtable implementation for A(String s)
-            assertEquals("A::__init(new__A(), (A __this ) {", lines.get(14));    // vtable implementation for A()
+            assertEquals("A::__init(new__A(),A __this , String s) { ", lines.get(1 - 1));    // vtable implementation for A(String s)
+            assertEquals("A::__init(new__A(),A __this ) { ", lines.get(5 - 1));    // vtable implementation for A()
             s.close();
         } catch (FileNotFoundException e) {
 
         }
-   }
+    }
 }

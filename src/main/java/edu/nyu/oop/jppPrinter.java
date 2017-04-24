@@ -27,6 +27,8 @@ public class jppPrinter extends Visitor {
 
     private String callExpIdentifier;
 
+    private boolean test;
+
     int constructorCounter;
     boolean nullConstructor = false;
 
@@ -35,7 +37,8 @@ public class jppPrinter extends Visitor {
      * @param n
      * @throws IOException
      */
-    public jppPrinter(Node n) throws IOException {
+    public jppPrinter(Node n, boolean test) throws IOException {
+        this.test = test;
         Writer w;
         Writer wMain;
         Writer wConstruct;
@@ -50,10 +53,12 @@ public class jppPrinter extends Visitor {
             wMain = new BufferedWriter(owsMain);
             this.mainPrinter = new Printer(wMain);
 
-            FileOutputStream fosconstruct = new FileOutputStream("output/constructors.cpp");
-            OutputStreamWriter owsConstruct = new OutputStreamWriter(fosconstruct, "utf-8");
-            wConstruct = new BufferedWriter(owsConstruct);
-            this.mainPrinter = new Printer(wConstruct);
+            if(test) {
+                FileOutputStream fosconstruct = new FileOutputStream("output/constructors.cpp");
+                OutputStreamWriter owsConstruct = new OutputStreamWriter(fosconstruct, "utf-8");
+                wConstruct = new BufferedWriter(owsConstruct);
+                this.constructPrinter = new Printer(wConstruct);
+            }
 
 
         } catch (Exception e) {
@@ -66,7 +71,11 @@ public class jppPrinter extends Visitor {
         writeEndBaseLayout();
         classPrinter.flush();
         mainPrinter.flush();
-        constructPrinter.flush();
+        if(test) constructPrinter.flush();
+    }
+
+    public jppPrinter(Node n) throws IOException {
+        this(n, false);
     }
 
     public void getOutputImplementations(Node n) {
@@ -192,7 +201,7 @@ public class jppPrinter extends Visitor {
             printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
         }
-        if(from.equals("ReturnStatement")){
+        if(from.equals("ReturnStatement")) {
             printer.p("->__vptr->");
             printer.p(varName);
         }
@@ -247,7 +256,7 @@ public class jppPrinter extends Visitor {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();
                 //System.out.println("\n one: " + one);
-                if (one.equals("ThisExpression(null)")){
+                if (one.equals("ThisExpression(null)")) {
                     String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
                     one = n.getNode(0).getNode(0).get(1).toString();
                     printer.p(thisKeyword + ".");
@@ -260,7 +269,7 @@ public class jppPrinter extends Visitor {
                     String three = n.getNode(0).getNode(2).get(0).toString();
                     printer.p(three);
                 }
-            } catch (NullPointerException e){}
+            } catch (NullPointerException e) {}
 
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "ExpressionStatement");
@@ -312,7 +321,7 @@ public class jppPrinter extends Visitor {
         }
     }
 
-    public void printThisExpression(Node n, String from){
+    public void printThisExpression(Node n, String from) {
         printer.p("\nIN THIS\n");
         printCheckStatementNode(n.getNode(0), "ThisExpression");
     }
@@ -323,12 +332,11 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameters(Node n, String from) {
-            if(from.equals("FieldDeclaration")){
-                printer.p(currentC+" __this ");
-            }
-            else{
-                printer.p("("+currentC+" __this ");
-            }
+        if(from.equals("FieldDeclaration")) {
+            printer.p(currentC+" __this ");
+        } else {
+            printer.p("("+currentC+" __this ");
+        }
 
 
 
@@ -391,18 +399,20 @@ public class jppPrinter extends Visitor {
 
 
     public void printConstructorDeclaration(Node n, String from) {
-        printer = constructPrinter;
+        if(test)
+            printer = constructPrinter;
         constructorCounter++;
 
-        if(nullConstructor == false){
+        if(nullConstructor == false) {
             String className = n.get(2).toString().replace("()", "").toString();
             String constructor = className + "::__init(new__" + className + "(),";
             printer.p(constructor);
             printFieldDeclaration(n,from);
-           if(constructorCounter == 1)
+            if(constructorCounter == 1)
                 printer.p("__Object::__init((Object)__this);\n");
 
-            printer.p(")\n");
+            if(!test)
+                printer.p(")\n");
 
         }
 
@@ -417,10 +427,12 @@ public class jppPrinter extends Visitor {
                     printCheckStatementNode(n.getNode(i), "MethodDeclaration");
                 } else if (n.get(i) != null && !checkIfNode(n.get(i))) {
                     printer.p(" " + currentClassName + "::" +
-                            n.get(i).toString());
+                              n.get(i).toString());
                 }
             }
         } else {
+            if(test)
+                printer = constructPrinter;
             printer.pln("int main(){ ");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
@@ -429,7 +441,8 @@ public class jppPrinter extends Visitor {
     }
 
     public void visitClassDeclaration(GNode n) {
-        printer = constructPrinter;
+        if(test)
+            printer = constructPrinter;
         currentClassName = n.get(0).toString();
 
         currentC = n.get(0).toString();
@@ -447,10 +460,10 @@ public class jppPrinter extends Visitor {
                 printCheckStatementNode(constructorDeclarations.getNode(i), "Class");
             }
         }
-        if(constructorCounter == 0){
+        if(constructorCounter == 0) {
             nullConstructor = true;
         }
-        if (nullConstructor && !currentClassName.contains("Test")){
+        if (nullConstructor && !currentClassName.contains("Test")) {
             printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
             printer.p("__Object::__init((Object)__this);\n");
             printer.p("}\n");
