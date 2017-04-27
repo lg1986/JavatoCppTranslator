@@ -1,6 +1,5 @@
 package edu.nyu.oop;
 
-
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Printer;
@@ -26,11 +25,29 @@ public class jppPrinter extends Visitor {
     private String currentC;
 
     private String callExpIdentifier;
+    private boolean fieldInitializer = false;
+    private ArrayList<fieldObj> classFields = new ArrayList<fieldObj>();
+
 
     private boolean test;
 
     int constructorCounter;
     boolean nullConstructor = false;
+
+    // Nested class to make fieldObjs for classFields arraylist
+    public class fieldObj {
+        String visibility;
+        String type;
+        String varName;
+        String value;
+
+        public void set(String a, String b, String c, String d){
+            this.visibility = a;
+            this.type = b;
+            this.varName = c;
+            this.value = d;
+        }
+    }
 
     /**
      * Constructor - This initiates the creation of the header file
@@ -116,14 +133,38 @@ public class jppPrinter extends Visitor {
     }
 
     public void printClassFieldInitializers(Node n) {
-        for(int i = 0; i<n.size(); i++) {
-            Node k = n.getNode(i);
-            printer.p("," + k.get(1).toString() + "(");
-            String typ = k.get(0).toString();
-            if (typ.equals("String")) {
-                printer.p("__rt::literal(\"\"))");
+        try {
+            if (n.getNode(0).size() == 4){
+                fieldInitializer = true;
+                String visibility = n.getNode(0).get(0).toString();
+                String type = n.getNode(0).get(1).toString();
+                String varName = n.getNode(0).get(2).toString();
+                String value = n.getNode(0).get(3).toString();
+                printer.p("\n" + visibility + " " + type + " " + varName + " = " + value + ";\n");
+
+                fieldObj field = new fieldObj();
+                field.set(visibility, type, varName, value);
+                classFields.add(field);
             }
-        }
+            if (n.getNode(0).size() == 2) { // if the variable doesn't have a modifier && isn't initialized
+                String type = n.getNode(0).get(0).toString();
+                String varName = n.getNode(0).get(1).toString();
+                printer.p("\n" + type + " " + varName + ";\n");
+
+                fieldObj field = new fieldObj();
+                field.set(null, type, varName, null);
+            }
+        } catch (NullPointerException e){} catch(IndexOutOfBoundsException e) {}
+
+
+//        for(int i = 0; i<n.size(); i++) {
+//            Node k = n.getNode(i);
+//            printer.p(k.get(1).toString() + "(");
+//            String typ = k.get(0).toString();
+//            if (typ.equals("String")) {
+//                printer.p("__rt::literal(\"\"))");
+//            }
+//        }
 
     }
 
@@ -131,7 +172,6 @@ public class jppPrinter extends Visitor {
         currentClassName = "__"+currentClassName;
         classPrinter.p(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) ");
         printClassFieldInitializers(n);
-        printer.pln("{}");
 
         classPrinter.pln("Class "+currentClassName+"::__class() {");
         classPrinter.indentMore();
@@ -278,6 +318,18 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFieldDeclaration(Node n, String from) {
+//        System.out.println("\n field n: " + n + " \n");
+//
+//        try {
+//            System.out.println("finding fields: " + n.getNode(2).getNode(0).get(0).toString() + " \n");
+//            String fieldType = n.getNode(1).getNode(0).get(0).toString();
+//            String varName = n.getNode(2).getNode(0).get(0).toString();
+//
+//            System.out.println("done: " + fieldType + " " + varName + " \n");
+//        } catch (IndexOutOfBoundsException e) {
+//        } catch (NullPointerException e) {
+//        } catch (ClassCastException e) {}
+
         for(int i = 0; i < n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "FieldDeclaration");
@@ -337,8 +389,6 @@ public class jppPrinter extends Visitor {
         } else {
             printer.p("("+currentC+" __this ");
         }
-
-
 
         if(n.size() > 0) printer.p(", ");
         if (n.size() >= 1) {
@@ -408,16 +458,23 @@ public class jppPrinter extends Visitor {
             String constructor = className + "::__init(new__" + className + "(),";
             printer.p(constructor);
             printFieldDeclaration(n,from);
-            if(constructorCounter == 1 && (!test))
+
+            if (fieldInitializer){
+                int counter = 0;
+                while (counter < classFields.size()){
+                    printer.p(classFields.get(counter).visibility + " ");
+                    printer.p(classFields.get(counter).type + " ");
+                    printer.p(classFields.get(counter).varName);
+                    printer.p(" = " + classFields.get(counter).value + ";\n");
+                    counter++;
+                }
+            }
+            if(constructorCounter == 1 && (!test)) {
                 printer.p("__Object::__init((Object)__this);\n");
-
+            }
             if(!test)
-                printer.p(")\n");
-
+                printer.p("}\n");
         }
-
-
-
     }
 
     public void visitMethodDeclaration(GNode n) {
