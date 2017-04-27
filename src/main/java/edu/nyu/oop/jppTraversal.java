@@ -301,8 +301,10 @@ public class jppTraversal extends Visitor {
         System.out.println(n);
         GNode classFieldDeclarationNode = GNode.create("ClassFieldDeclaration");
 
-        classFieldDeclarationNode.add(n.getNode(1).getNode(0).get(0).toString());
-        classFieldDeclarationNode.add(n.getNode(2).getNode(0).get(0).toString());
+        classFieldDeclarationNode.add(n.getNode(0).getNode(0).get(0).toString()); // visibility
+        classFieldDeclarationNode.add(n.getNode(1).getNode(0).get(0).toString()); // type
+        classFieldDeclarationNode.add(n.getNode(2).getNode(0).get(0).toString()); // varName
+        classFieldDeclarationNode.add(n.getNode(2).getNode(0).getNode(2).get(0).toString()); // value
         classNode.getNode(2).addNode(classFieldDeclarationNode);
     }
 
