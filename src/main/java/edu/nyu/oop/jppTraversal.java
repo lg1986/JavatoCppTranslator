@@ -329,16 +329,15 @@ public class jppTraversal extends Visitor {
     }
 
     public void visitForStatement(GNode n){
-        visit(n);
         System.out.println(n);
         System.out.println("***************************");
         classNode.getNode(0).addNode(n);
-
+        visit(n);
     }
 
     public void visitWhileStatement(GNode n){
-        visit(n);
         classNode.getNode(0).addNode(n);
+        visit(n);
 
     }
 

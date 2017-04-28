@@ -265,7 +265,7 @@ public class jppPrinter extends Visitor {
             else {printer.p(classname+"__::init(new __"+classname + "()");}
         }
         if(from.equals("printType")){
-            printer.p(n.get(0).toString());
+            printer.p("__rt::Array<"+n.get(0).toString()+">");
         }
         //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
@@ -510,7 +510,7 @@ public class jppPrinter extends Visitor {
     public void printNewArrayExpression(Node n,String from){
         String arrayType = n.getNode(0).get(0).toString();
         String arraySize = n.getNode(1).getNode(0).get(0).toString();
-        printer.p(arrayType+"[" +  arraySize +"]");
+        printer.p("new __rt::_Array<"+arrayType+">(" +  arraySize +")");
 
 
     }
