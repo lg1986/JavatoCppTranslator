@@ -49,8 +49,8 @@ public class CreateHeaderVTable extends Visitor {
 
         currentInnerVTableString = ("__"+name+"_VT() \n");
         currentInnerVTableString += "\t";
-        currentInnerVTableString += (": __is_a(__"+name+"::__class())");
-        currentInnerVTableString += ("__delete(&__rt::__delete<__"+name+ ">),");
+        currentInnerVTableString += (": __is_a(__"+name+"::__class()) \n");
+        currentInnerVTableString += ("__delete(&__rt::__delete<__"+name+ ">)");
 
     }
 
