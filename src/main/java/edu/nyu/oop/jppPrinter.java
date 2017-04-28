@@ -473,7 +473,8 @@ public class jppPrinter extends Visitor {
             printer.p("; \n");
         }
 
-        if(printer != mainPrinter) printer.p("} \n");
+        //Charlie: commented this out to fix object init call in constructor
+        //if(printer != mainPrinter) printer.p("} \n");
 
     }
 
@@ -562,7 +563,7 @@ public class jppPrinter extends Visitor {
         if (nullConstructor && !currentClassName.contains("Test")) {
             printer.p(currentClassName.replace("__","")+"::__init(new__"+currentClassName.replace("__","")+"()){\n");
             printer.p("__Object::__init((Object)__this);\n");
-            printer.p("}\n");
+            //printer.p("}\n");
         }
 
 
