@@ -250,7 +250,10 @@ public class jppPrinter extends Visitor {
     public void printQualifiedIdentifier(Node n, String from) {
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
-            printer.p(classname+"__::init(new __"+classname + "(),");
+            // CHANGED HERE CHARLIE -- deleted comma right here ---
+            // printer.p(classname+"__::init(new __"+classname + "(),");
+            if(n.size() > 1) printer.p(classname+"__::init(new __"+classname + "(),");
+            else {printer.p(classname+"__::init(new __"+classname + "()");}
         }
         //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
