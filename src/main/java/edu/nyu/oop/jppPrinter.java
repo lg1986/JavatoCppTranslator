@@ -253,13 +253,16 @@ public class jppPrinter extends Visitor {
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
-
+        System.out.println("NNNNNN: "+ n + "FROMMMM : " + from);
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
             // CHANGED HERE CHARLIE -- deleted comma right here ---
             // printer.p(classname+"__::init(new __"+classname + "(),");
             if(n.size() > 1) printer.p(classname+"__::init(new __"+classname + "(),");
             else {printer.p(classname+"__::init(new __"+classname + "()");}
+        }
+        if(from.equals("printType")){
+            printer.p(n.get(0).toString());
         }
         //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
@@ -430,8 +433,10 @@ public class jppPrinter extends Visitor {
     }
 
     public void printType(Node n, String from) {
+        System.out.println("TYPE: " + n);
         for(int i =0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
+                System.out.println(n.getNode(i).toString());
                 printCheckStatementNode(n.getNode(i), "printType");
             } else if(n.get(i) != null) {
                 printer.p(n.get(i).toString());
@@ -495,10 +500,8 @@ public class jppPrinter extends Visitor {
 
     public void printNewArrayExpression(Node n,String from){
         System.out.println("ARRAY:"+n);
-        System.out.println("ARRAY:"+n.get(0));
         String arrayType = n.getNode(0).get(0).toString();
         String arraySize = n.getNode(1).getNode(0).get(0).toString();
-        System.out.println("type: " + arrayType + " size: " + arraySize);
         printer.p(arrayType+"[" +  arraySize +"]");
 
 
