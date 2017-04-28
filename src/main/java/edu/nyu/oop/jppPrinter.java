@@ -230,6 +230,8 @@ public class jppPrinter extends Visitor {
             printConstructorDeclaration(n, from);
         } else if(n.hasName("ThisExpression")) {
             printThisExpression(n, from);
+        }else if(n.hasName("NewArrayExpression")){
+            printNewArrayExpression(n,from);
         }
 
     }
@@ -490,6 +492,18 @@ public class jppPrinter extends Visitor {
                 printer.p("}\n");
         }
     }
+
+    public void printNewArrayExpression(Node n,String from){
+        System.out.println("ARRAY:"+n);
+        System.out.println("ARRAY:"+n.get(0));
+        String arrayType = n.getNode(0).get(0).toString();
+        String arraySize = n.getNode(1).getNode(0).get(0).toString();
+        System.out.println("type: " + arrayType + " size: " + arraySize);
+        printer.p(arrayType+"[" +  arraySize +"]");
+
+
+    }
+
 
     public void visitMethodDeclaration(GNode n) {
         if(!n.get(2).toString().equals("main")) {

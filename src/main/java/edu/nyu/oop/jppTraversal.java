@@ -329,6 +329,10 @@ public class jppTraversal extends Visitor {
     }
 
 
+    public void visitNewArrayExpression(GNode n){
+        classNode.getNode(0).addNode(n);
+    }
+
     public void visitConstructorDeclaration(GNode n) {
         totalConstructorCounter++;
         classNode.getNode(3).addNode(n);
