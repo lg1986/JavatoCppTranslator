@@ -9,22 +9,23 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),A __this ) { 
+A::__init(new__A(),A __this , String fld) { 
+ThisExpression(null).fld; 
 } 
 __Object::__init((Object)__this);
 }
 String __A::getFld(A __this ) { 
-return ->__vptr->fld; 
+return fld->__vptr->fld; 
 } 
-__Test003::__Test003() : __vptr(&__vtable) Class __Test003::__class() {
+__Test004::__Test004() : __vptr(&__vtable) Class __Test004::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test003"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.Test004"), __Object::__class());
   return k;
 }
-__Test003_VT __Test003::__vtable;
+__Test004_VT __Test004::__vtable;
 int main(){ 
- a = A__::init(new __A()); 
-cout <<(agetFld(a)); 
+ a = A__::init(new __A()"A"); 
+cout <<(a->__vptr->getFld(a)); 
 } 
 }
 }

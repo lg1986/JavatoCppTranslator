@@ -23,6 +23,7 @@ public class jppPrinter extends Visitor {
 
     private String currentClassName;
     private String currentC;
+    private boolean fieldMethod = false;
 
     private String callExpIdentifier;
     private boolean fieldInitializer = false;
@@ -235,11 +236,13 @@ public class jppPrinter extends Visitor {
 
     public void printPrimaryIdentifier(Node n, String from) {
         String varName = n.get(0).toString();
-        //printer.p(n.get(0).toString().replace("\"", ""));
+        printer.p(n.get(0).toString().replace("\"", ""));
         if(from.equals("CallExpression")) {
-            //printer.p("->__vptr->");
-            printer.p(varName);
+            if(fieldMethod) printer.p("->__vptr->");
+
+            //printer.p(varName);
             callExpIdentifier = n.get(0).toString().replace("\"", "");
+
         }
         if(from.equals("ReturnStatement")) {
             printer.p("->__vptr->");
@@ -248,6 +251,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
+
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
             // CHANGED HERE CHARLIE -- deleted comma right here ---
@@ -295,6 +299,11 @@ public class jppPrinter extends Visitor {
 
     public void printExpressionStatement(Node n, String from) {
         //System.out.println("\n expression n: " + n + "\n");
+
+        if(n.get(0).toString().contains("Arguments(CallExpression")){
+            fieldMethod = true;
+        }
+
         for(int i = 0; i<n.size(); i++) {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();
@@ -351,7 +360,6 @@ public class jppPrinter extends Visitor {
 
 
     public void printDeclarators(Node n, String from) {
-
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printDeclarator(n.getNode(i), from);
@@ -361,6 +369,7 @@ public class jppPrinter extends Visitor {
 
     public void printCallExpression(Node n, String from) {
         callExpIdentifier = "";
+
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i)!=null && checkIfNode(n.get(i))) {
 
