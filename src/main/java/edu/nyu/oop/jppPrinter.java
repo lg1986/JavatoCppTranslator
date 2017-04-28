@@ -232,6 +232,10 @@ public class jppPrinter extends Visitor {
             printThisExpression(n, from);
         }else if(n.hasName("NewArrayExpression")){
             printNewArrayExpression(n,from);
+        }else if(n.hasName("ForStatement")){
+            printForStatement(n,from);
+        }else if(n.hasName("WhileStatement")){
+            printWhileStatement(n,from);
         }
 
     }
@@ -253,7 +257,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
-        System.out.println("NNNNNN: "+ n + "FROMMMM : " + from);
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
             // CHANGED HERE CHARLIE -- deleted comma right here ---
@@ -432,11 +435,17 @@ public class jppPrinter extends Visitor {
         printer.p(n.get(3).toString() + ")");
     }
 
+    public void printForStatement(Node n, String from){
+            System.out.println("FOR SUCCESS");
+    }
+
+    public void printWhileStatement(Node n, String from){
+        System.out.println("WHILE SUCCESS");
+    }
+
     public void printType(Node n, String from) {
-        System.out.println("TYPE: " + n);
         for(int i =0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
-                System.out.println(n.getNode(i).toString());
                 printCheckStatementNode(n.getNode(i), "printType");
             } else if(n.get(i) != null) {
                 printer.p(n.get(i).toString());
@@ -499,7 +508,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printNewArrayExpression(Node n,String from){
-        System.out.println("ARRAY:"+n);
         String arrayType = n.getNode(0).get(0).toString();
         String arraySize = n.getNode(1).getNode(0).get(0).toString();
         printer.p(arrayType+"[" +  arraySize +"]");
