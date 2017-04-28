@@ -391,8 +391,10 @@ public class jppPrinter extends Visitor {
     }
 
     public void printReturnStatement(Node n, String from) {
-        printer.p("return ");
-        printCheckStatementNode(n.getNode(0), "ReturnStatement");
+        if(n.size() > 0) {
+            printer.p("return ");
+            printCheckStatementNode(n.getNode(0), "ReturnStatement");
+        }
     }
 
     public void printFormalParameters(Node n, String from) {
