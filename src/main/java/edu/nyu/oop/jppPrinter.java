@@ -315,6 +315,8 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
+        System.out.println(from);
+        System.out.println("EXP ST : "+ n);
         if(n.size() > 0) {
             if (n.get(0).toString().contains("Arguments(CallExpression")) {
                 fieldMethod = true;
@@ -487,6 +489,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
+        System.out.println(n.toString()+" "+from);
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -555,7 +558,8 @@ public class jppPrinter extends Visitor {
             if(test)
                 printer = constructPrinter;
             printer.pln("int main(){ ");
-            printCheckStatementNode(n.getNode(6), "MethodDeclaration");
+            if(n.size() > 6)printCheckStatementNode(n.getNode(6), "MethodDeclaration");
+
         }
 
 
@@ -594,6 +598,8 @@ public class jppPrinter extends Visitor {
         visit(n.getNode(1));
     }
 
+
+
     public void visitPackageDeclaration(GNode n) {
         try {
             this.packageName = n.getNode(1).get(1).toString();
@@ -610,6 +616,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void collect() {
+
         for(Node n:jppList) {
             super.dispatch(n);
         }
