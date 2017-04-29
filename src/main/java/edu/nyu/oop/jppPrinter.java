@@ -341,8 +341,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        //System.out.println("\n exp st n = " + n + "\n");
-        //System.out.println("\n exp st n2 = " + n.getNode(0).get(0).toString() + "\n");
         if (n.toString().contains("SubscriptExpression")) arrayInitialization = true;
         if (n.size() > 0) {
             // this checks if the arugments has a call expression and if it does sets it to true
@@ -446,7 +444,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printForStatement(Node n, String from){
-        System.out.println("\n for n = " + n + "\n");
         String varType = n.getNode(0).getNode(1).getNode(0).get(0).toString();
         String varName = n.getNode(0).getNode(2).getNode(0).get(0).toString();
         String varValue = n.getNode(0).getNode(2).getNode(0).getNode(2).get(0).toString();
@@ -461,20 +458,21 @@ public class jppPrinter extends Visitor {
         }
 
         String increment = n.getNode(0).getNode(4).getNode(0).get(1).toString();
-        printer.p(varName + increment + ") {");
+        printer.p(varName + increment + ") {\n");
 
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), from);
             }
         }
+        printer.p("\n}");
     }
 
     public void printWhileStatement(Node n, String from){
         String varName = n.getNode(0).getNode(0).get(0).toString();
         String operator = n.getNode(0).get(1).toString();
         String num = n.getNode(0).getNode(2).get(0).toString();
-        printer.p("\nwhile(" + varName + operator + " " + num + ") {\n");
+        printer.p("\nwhile(" + varName + " " + operator + " " + num + ") {\n");
 
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
