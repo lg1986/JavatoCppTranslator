@@ -1,12 +1,12 @@
-A::__init(new__A(),A __this , String s) { 
+A A::__init(new__A(),A __this , String s) { 
 } 
-A::__init(new__A(),A __this ) { 
+A A::__init(new__A(),A __this ) { 
 } 
-C::__init(new__C(),C __this ) { 
+C C::__init(new__C(),C __this ) { 
 } 
-C::__init(new__C(),C __this , int i) { 
+C C::__init(new__C(),C __this , int i) { 
 } 
-C::__init(new__C(),C __this , double d) { 
+C C::__init(new__C(),C __this , double d) { 
 } 
 int main(){ 
  a1 = A__::init(new __A(),"test"); 
