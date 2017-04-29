@@ -9,35 +9,37 @@ namespace edu
 namespace oop
 {
 struct __A;
-struct A_VT;
+struct __A_VT;
 typedef __rt::Ptr<__A> A;
 struct __A
 {
-    __AVT* __vptr
+    __A_VT* __vptr
+    __A();
     A self
-    A __init(A)
+    A __init(A);
 };
 struct __A_VT
 {
-    Class __is a;
+    Class __is_a;
     void (*__delete)(__A*);
     __A_VT()
         : __is_a(__A::__class()),
           __delete(&__rt::__delete<__A>),
     };
     struct __Test017;
-    struct Test017_VT;
+    struct __Test017_VT;
     typedef __rt::Ptr<__Test017> Test017;
     struct __Test017
 {
-    __Test017VT* __vptr
+    __Test017_VT* __vptr
+    __Test017();
     void main
-    void __init(Test017)
+    void __init(Test017);
 };
 struct __Test017_VT
 {
-    Class __is a;
-    void (*__delete)(__A*);
+    Class __is_a;
+    void (*__delete)(__Test017*);
     __Test017_VT()
         : __is_a(__Test017::__class()),
           __delete(&__rt::__delete<__Test017>),
