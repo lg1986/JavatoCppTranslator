@@ -44,6 +44,7 @@ public class Boot extends Tool {
 
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
                 bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
+                bool("createHeaderFile", "createHeaderFile", false, "createHeaderFile").
                 bool("completeMemberAccesses", "completeMemberAccesses", false, "Make all receivers of member accesses explicit.").
                 bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
 
@@ -102,12 +103,27 @@ public class Boot extends Tool {
             }
         }
 
+        if(runtime.test("createHeaderFile")){
+            CreateDependencyTree headerAST = new CreateDependencyTree();
+            List<GNode> tree = headerAST.getStackedHeader(n);
+
+            try {
+                HeaderFilePrinter headerFile = new HeaderFilePrinter(tree);
+
+            } catch (IOException e){
+                System.out.println("here!");
+            }
+
+        }
+
         if (runtime.test("completeMemberAccesses")) {
             SymbolTable table = new SymbolTableBuilder(runtime).getTable(n);
             new MemberAccessCompleter(runtime, table).dispatch(n);
             new JavaPrinter(runtime.console()).dispatch(n);
 //            runtime.console().flush();
         }
+
+
 
 
     }
