@@ -30,7 +30,7 @@ public class CreateHeaderAST extends Visitor{
             super.dispatch(dependencyNode);
         }
         GNode javaObj = createJavaObject();
-//        this.headerASTs.add(javaObj);
+        this.headerASTs.add(javaObj);
         return this.headerASTs;
     }
 
@@ -175,14 +175,24 @@ public class CreateHeaderAST extends Visitor{
         methodDecl.addNode(
                 createMethNode("equals",
                         "bool", "Object"));
+
+        GNode dataLayout = GNode.create("DataLayoutNode");
+        GNode vtable = GNode.create("VTableNode");
+
+        vtable.addNode(methodDecl);
+
         javaClass.add("Java");
         javaClass.add("Object");
-        javaClass.addNode(methodDecl);
+        javaClass.add(null);
 
-        System.out.println(javaClass.toString());
+        dataLayout.addNode(fieldDeclaration);
+        dataLayout.addNode(constDecl);
+        dataLayout.addNode(methodDecl);
+
+        javaClass.addNode(dataLayout);
+        javaClass.addNode(vtable);
+
         return javaClass;
-
-
     }
 
     public GNode createMethNode(String methName, String ret, String params){

@@ -273,17 +273,17 @@ public class CreateDependencyTree extends Visitor {
     /**
      * Main stackMethods function
      * @param stackMeths
-     * @param currMeths
+     * @param currNode
      * @param className
      *
      * The StackMeths need to be stacked below the currMeths.
      */
 
-    public void stackMethods(Node stackMeths, Node currMeths, String className){
+    public void stackMethods(Node stackMeths, Node currNode, String className){
         for(int i = 0; i<stackMeths.size(); i++){
             Node stackMeth = stackMeths.getNode(i);
-            Node toAdd = checkMeth(stackMeth, currMeths, className);
-            if(toAdd != null) currMeths.addNode(toAdd);
+            Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
+            if(toAdd != null) currNode.getNode(3).getNode(2).addNode(toAdd);
         }
     }
 
@@ -337,7 +337,7 @@ public class CreateDependencyTree extends Visitor {
         Node stackMeths = stack.getNode(3).getNode(2);
         Node stackFields = stack.getNode(3).getNode(0);
         stackFields(stackFields, currNode);
-        stackMethods(stackMeths, currNode.getNode(3).getNode(2), currNode.getString(1));
+        stackMethods(stackMeths, currNode, currNode.getString(1));
     }
 
     /**
@@ -348,6 +348,7 @@ public class CreateDependencyTree extends Visitor {
      */
     public GNode getInheritedStructure(TreeNode n){
         Node orignal = n.ast;
+        GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
         if(inherit.size() == 1) return (GNode)inherit.get(0).ast;
         else{
@@ -370,6 +371,8 @@ public class CreateDependencyTree extends Visitor {
             GNode vtableNode = GNode.create("VTableNode");
             vtableNode.addNode(dataLayoutNode.getNode(2));
             inheritSim.addNode(vtableNode);
+
+            inheritSim.getNode(3).set(2, originalMeths);
             return inheritSim;
         }
     }

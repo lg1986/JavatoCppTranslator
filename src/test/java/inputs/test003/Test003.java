@@ -9,12 +9,8 @@ class B extends A{
     public int meth(int x){
         return 0;
     }
-
-    public String getFld(){
-        return "A";
-    }
-
 }
+
 class A {
     private String fld;
 
