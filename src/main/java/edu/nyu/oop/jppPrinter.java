@@ -542,7 +542,7 @@ public class jppPrinter extends Visitor {
     public void printNewArrayExpression(Node n,String from){
         String arrayType = n.getNode(0).get(0).toString();
         String arraySize = n.getNode(1).getNode(0).get(0).toString();
-        printer.p("new __rt::_Array<"+arrayType+">(" +  arraySize +")");
+        printer.p("new __rt::__Array<"+arrayType+">(" +  arraySize +")");
     }
 
     public void printSubscriptExpression(Node n,String from){
