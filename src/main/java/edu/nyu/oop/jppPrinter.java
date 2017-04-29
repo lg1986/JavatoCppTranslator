@@ -21,8 +21,10 @@ public class jppPrinter extends Visitor {
     private List<Node> jppList;
     private String packageName;
 
+
     private String currentClassName;
     private String currentC;
+    private boolean arrayConstructor = false;
     private boolean fieldMethod = false;
 
     private String callExpIdentifier;
@@ -158,15 +160,6 @@ public class jppPrinter extends Visitor {
         } catch (NullPointerException e){} catch(IndexOutOfBoundsException e) {}
 
 
-//        for(int i = 0; i<n.size(); i++) {
-//            Node k = n.getNode(i);
-//            printer.p(k.get(1).toString() + "(");
-//            String typ = k.get(0).toString();
-//            if (typ.equals("String")) {
-//                printer.p("__rt::literal(\"\"))");
-//            }
-//        }
-
     }
 
     public void printClassGenerics(Node n) {
@@ -243,7 +236,6 @@ public class jppPrinter extends Visitor {
         }else if(n.hasName("SubscriptExpression")){
             printSubscriptExpression(n,from);
         } else if(n.hasName("Expression")){
-            System.out.println("\nhere! \n");
             printExpression(n,from);
         }
 
@@ -252,22 +244,10 @@ public class jppPrinter extends Visitor {
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-/*        String varName = n.get(0).toString();
-        //printer.p(n.get(0).toString().replace("\"", "") + "HELLO");
-        if(from.equals("CallExpression")) {
-            if(fieldMethod) printer.p("->__vptr->");
 
-            //printer.p(varName);
-            callExpIdentifier = n.get(0).toString().replace("\"", "");
-
-        }
-        if(from.equals("ReturnStatement")) {
-            printer.p("->__vptr->");
-            printer.p(varName);
-        }
         if(from.equals("SubscriptExpression")){
-            printer.p("(*"+varName+")");
-        }*/
+            printer.p("(*"+n.get(0).toString()+")");
+        }
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
@@ -275,19 +255,23 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             // CHANGED HERE CHARLIE -- deleted comma right here ---
             // printer.p(classname+"__::init(new __"+classname + "(),");
-            if(n.size() > 1) printer.p(classname+"__::init(new __"+classname + "(),");
-            else {printer.p(classname+"__::init(new __"+classname + "()");}
+            if(arrayConstructor == false){
+                if(n.size() > 1) printer.p(classname+"__::init(new __"+classname + "(),");
+                else {
+                    printer.p(classname+"__::init(new __"+classname + "()");
+                }
+            }
+
         }
         if(from.equals("printType")){
             printer.p("__rt::Array<"+n.get(0).toString()+">");
 
         }
-        //printer.p(n.get(0).toString().replace("\"", ""));
-        // printer.p(n.get(0).toString().replace("\"", ""));
 
     }
 
     public void printArguments(Node n, String from) {
+
         if(!from.equals("NewClassExpression")) {
             printer.p("(");
             if(from.equals("CallExpression")) {
@@ -309,10 +293,21 @@ public class jppPrinter extends Visitor {
                 }
             }
             printer.p(")");
+            if(arrayConstructor){
+                printer.p(")");
+            }
         }
     }
 
     public void printNewClassExpression(Node n, String from) {
+        if(arrayConstructor){
+            String constType = n.getNode(2).getString(0);
+            printer.p("__rt::literal("+constType+"__::init(new __"+constType+"()");
+            if(n.getNode(3).getNode(0).getString(0) != null){
+                printer.p(",");
+            }
+
+        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.getNode(i))) {
                 printCheckStatementNode(n.getNode(i), "NewClassExpression");
@@ -321,45 +316,50 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpression(Node n, String from){
+        if(n.toString().contains("SubscriptExpression") && n.toString().contains("NewClassExpression")){
+            arrayConstructor = true;
+        }
         for(int i = 0; i < n.size(); i++){
             if(checkIfNode(n.get(i)))
                 printCheckStatementNode(n.getNode(i),from);
             else{
-                System.out.println("Expression finally decided to cooperate");
+                if(n.get(i) != null){
+                    printer.p(" "+ n.get(i).toString() + " ");
+                }
+                else{
+                    printer.p(";");
+                }
+
             }
         }
+
 
     }
 
     public void printExpressionStatement(Node n, String from) {
-        System.out.println("EXP ST : "+ n);
         if(n.size() > 0) {
                 // this checks if the arugments has a call expression and if it does sets it to true
                 // so that we know when to print the ->__vptr->
                 if (n.get(0).toString().contains("Arguments(CallExpression")) {
                     fieldMethod = true;}
 
-
                 for (int i = 0; i < n.size(); i++) {
 
-                    try {
-                        String one = n.getNode(0).getNode(0).get(0).toString();
                         //System.out.println("\n one: " + one);
+/*
                         if (one.equals("ThisExpression(null)")) {
                             String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
                             one = n.getNode(0).getNode(0).get(1).toString();
                             printer.p(thisKeyword + ".");
                             printer.p(one);
                         }  else {
-                            printer.p(one + " ");
+                            printer.p(one + "lll ");
                             String two = n.getNode(0).get(1).toString();
-                            printer.p(two + " ");
+                            printer.p(two + " kkkk");
                             String three = n.getNode(0).getNode(2).get(0).toString();
                             printer.p(three);
-                        }
-                    } catch (NullPointerException e) {
-                        e.getMessage();
-                    }
+                        }*/
+
                     if (n.get(i) != null && checkIfNode(n.getNode(i))) {
 
                         printCheckStatementNode(n.getNode(i), "ExpressionStatement");
@@ -506,11 +506,18 @@ public class jppPrinter extends Visitor {
     }
 
     public void printIntegerLiteral(Node n, String from){
+        if(from.equals("SubscriptExpression")){
+            String indexNumber = n.get(0).toString();
+            printer.p("["+ indexNumber + "]");
+        }
+        else{
+            printer.p(n.get(0).toString());
+        }
 
-        printer.p(n.get(0).toString());
     }
 
     public void printBlock(Node n, String from) {
+
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -562,6 +569,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printSubscriptExpression(Node n,String from){
+
         for(int i = 0; i < n.size(); i++){
             if(checkIfNode(n.get(i))){
                 printCheckStatementNode(n.getNode(i),"SubscriptExpression");

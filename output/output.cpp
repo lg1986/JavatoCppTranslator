@@ -10,7 +10,7 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
 }
 __A_VT __A::__vtable;
 A::__init(new__A(),A __this , int i) { 
-ThisExpression(null).i; 
+ = ; 
 __Object::__init((Object)__this);
 }
 int32_t __A::get(A __this ) { 
@@ -34,7 +34,7 @@ __Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
 __Test025_VT __Test025::__vtable;
 int main(){ 
 __rt::Array<Object> as = new __rt::_Array<A>(10); 
-PrimaryIdentifier("as") = 0B__::init(new __B()3); 
+(*as)[0] = __rt::literal(B__::init(new __B(),3)); 
  k = 0; 
 ; 
 }
