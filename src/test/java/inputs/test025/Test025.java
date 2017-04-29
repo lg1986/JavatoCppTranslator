@@ -24,17 +24,14 @@ class B extends A {
 public class Test025 {
     public static void main(String[] args) {
         Object[] as = new A[10];
-<<<<<<< HEAD
         as[0] = 5;
         for(int i = 0; i < as.length; i++) {
             as[i] = new B(i);
         }
-=======
         as[0] = new B(3);
-       // for(int i = 0; i < as.length; i++) {
-        //    as[i] = new B(i);
-        //}
->>>>>>> array-testing
+        for(int i = 0; i < as.length; i++) {
+            as[i] = new B(i);
+        }
 
         int k = 0;
         while(k < 10) {
