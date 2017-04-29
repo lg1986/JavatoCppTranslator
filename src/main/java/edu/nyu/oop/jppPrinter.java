@@ -243,7 +243,6 @@ public class jppPrinter extends Visitor {
         }else if(n.hasName("SubscriptExpression")){
             printSubscriptExpression(n,from);
         } else if(n.hasName("Expression")){
-            System.out.println("\nhere! \n");
             printExpression(n,from);
         }
 
@@ -321,59 +320,37 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpression(Node n, String from){
+        String varName = n.getNode(0).get(0).toString();
+        String operator = n.get(1).toString();
+        printer.p("\n" + varName + " " + operator);
+
         for(int i = 0; i < n.size(); i++){
             if(checkIfNode(n.get(i)))
                 printCheckStatementNode(n.getNode(i),from);
             else{
-                System.out.println("Expression finally decided to cooperate");
+
             }
         }
 
     }
 
     public void printExpressionStatement(Node n, String from) {
-        System.out.println("\n exp st n = " + n + "\n");
-        //System.out.println("\n exp st n2 = " + n + "\n");
-        System.out.println("EXP ST : "+ n);
+        //System.out.println("\n exp st n = " + n + "\n");
+        //System.out.println("\n exp st n2 = " + n.getNode(0).get(0).toString() + "\n");
 
         if(n.size() > 0) {
-                // this checks if the arugments has a call expression and if it does sets it to true
-                // so that we know when to print the ->__vptr->
-                if (n.get(0).toString().contains("Arguments(CallExpression")) {
-                    fieldMethod = true;}
+            // this checks if the arugments has a call expression and if it does sets it to true
+            // so that we know when to print the ->__vptr->
+            if (n.get(0).toString().contains("Arguments(CallExpression")) { fieldMethod = true;}
 
-
-                for (int i = 0; i < n.size(); i++) {
-
-                    try {
-                        String one = n.getNode(0).getNode(0).get(0).toString();
-                        //System.out.println("\n one: " + one);
-                        if (one.equals("ThisExpression(null)")) {
-                            String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
-                            one = n.getNode(0).getNode(0).get(1).toString();
-                            printer.p(thisKeyword + ".");
-                            printer.p(one);
-                        }  else {
-                            printer.p(one + " ");
-                            String two = n.getNode(0).get(1).toString();
-                            printer.p(two + " ");
-                            String three = n.getNode(0).getNode(2).get(0).toString();
-                            printer.p(three);
-                        }
-                    } catch (NullPointerException e) {
-                        e.getMessage();
-                    }
-                    if (n.get(i) != null && checkIfNode(n.getNode(i))) {
-
-                        printCheckStatementNode(n.getNode(i), "ExpressionStatement");
-                    }
-
+            for (int i = 0; i < n.size(); i++) {
+                if (n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), "ExpressionStatement");
                 }
-
-                }
-
-
+            }
+        }
     }
+
 
     public void printFieldDeclaration(Node n, String from) {
 //        System.out.println("\n field n: " + n + " \n");
@@ -478,15 +455,30 @@ public class jppPrinter extends Visitor {
     }
 
     public void printForStatement(Node n, String from){
-        System.out.println("\nFOR SUCCESS\n");
+        System.out.println("\n for n = " + n + "\n");
+        String varType = n.getNode(0).getNode(1).getNode(0).get(0).toString();
+        String varName = n.getNode(0).getNode(2).getNode(0).get(0).toString();
+        String varValue = n.getNode(0).getNode(2).getNode(0).getNode(2).get(0).toString();
+        String comparisonOp = n.getNode(0).getNode(3).get(1).toString();
+        printer.p("for(" + varType + " " + varName + " = " + varValue + "; " +varName + " " + comparisonOp + " ");
+
+        // if the comparison has more than 1 node
+        if (n.getNode(0).getNode(3).getNode(2).get(1) != null){
+            String num1 = n.getNode(0).getNode(3).getNode(2).getNode(0).get(0).toString();
+            String num2 = n.getNode(0).getNode(3).getNode(2).get(1).toString();
+            printer.p(num1 + "." + num2 + "; ");
+        }
+
+        String increment = n.getNode(0).getNode(4).getNode(0).get(1).toString();
+        printer.p(varName + increment + ") {");
+
     }
 
     public void printWhileStatement(Node n, String from){
-        System.out.println("\n ****** while n = " + n + "\n");
         String varName = n.getNode(0).getNode(0).get(0).toString();
         String operator = n.getNode(0).get(1).toString();
         String num = n.getNode(0).getNode(2).get(0).toString();
-        printer.p("\nwhile(" + varName + " " + operator + " " + num + ") {\n");
+        printer.p("\nwhile(" + varName + operator + " " + num + ") {\n");
 
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
@@ -498,7 +490,11 @@ public class jppPrinter extends Visitor {
     }
 
     public void printAdditiveExpression(Node n,String from){
-        System.out.println("\n ********additive n = " + n + "\n");
+        //System.out.println("\n ********additive n = " + n + "\n");
+        String varName = n.getNode(0).get(0).toString();
+        String operator = n.get(1).toString();
+        String num = n.getNode(2).get(0).toString();
+        printer.p(" " + varName + " " + operator + " ");
 
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
