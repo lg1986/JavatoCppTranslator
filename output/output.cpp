@@ -9,23 +9,39 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),A __this , String fld) { 
-ThisExpression(null).fld; 
+A::__init(new__A(),A __this , int i) { 
+ThisExpression(null).i; 
 } 
 __Object::__init((Object)__this);
 }
-String __A::getFld(A __this ) { 
-return fld->__vptr->fld; 
+int32_t __A::get(A __this ) { 
+return i->__vptr->i; 
 } 
-__Test004::__Test004() : __vptr(&__vtable) Class __Test004::__class() {
+__B::__B() : __vptr(&__vtable) Class __B::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test004"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
   return k;
 }
-__Test004_VT __Test004::__vtable;
+__B_VT __B::__vtable;
+B::__init(new__B(),B __this , int i) { 
+super(i); 
+} 
+}
+int32_t __B::get(B __this ) { 
+return ; 
+} 
+__Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
+  static Class k = 
+    new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
+  return k;
+}
+__Test025_VT __Test025::__vtable;
 int main(){ 
- a = A__::init(new __A()"A"); 
-cout <<(a->__vptr->getFld(a)); 
+ as = ; 
+PrimaryIdentifier("as") = 1; 
+; 
+ k = ; 
+; 
 } 
 }
 }

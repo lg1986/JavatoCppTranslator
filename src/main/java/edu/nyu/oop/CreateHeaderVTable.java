@@ -66,7 +66,6 @@ public class CreateHeaderVTable extends Visitor {
         if(n.get(2).toString().equals("VoidType()")) ret = "void";
         else {
             ret = n.getNode(2).getNode(0).get(0).toString();
-            System.out.println(ret);
         }
         ret = convertIntBool(ret);
         return ret;
@@ -94,7 +93,6 @@ public class CreateHeaderVTable extends Visitor {
     }
 
     public void visitMethodDeclaration(GNode n) throws IOException {
-        System.out.println(n);
         String methodName = n.getNode(3).toString().replace("()", "");
         String ret = getMethodRet(n);
         String paramsList = getMethodParams(n);
@@ -146,7 +144,6 @@ public class CreateHeaderVTable extends Visitor {
     public void visitPackageDeclaration(GNode n) {
         try {
             this.packageName = n.getNode(0).getNode(1).get(1).toString();
-            System.out.println("PACKAGE NAME: "+packageName+"\n \n");
             visit(n);
         } catch (Exception ignored) {
 

@@ -158,7 +158,6 @@ public class CreateHeaderDataLayout extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
-        System.out.println(n);
         if(n.getNode(1).getNode(0).get(0).toString().compareTo("Integer")==0) {
             printer.p("int32_t ");
         } else if(n.getNode(1).getNode(0).get(0).toString().compareTo("int") == 0) {
@@ -191,7 +190,6 @@ public class CreateHeaderDataLayout extends Visitor {
     public void visitPackageDeclaration(GNode n) {
         try {
             this.packageName = n.getNode(0).getNode(1).get(1).toString();
-            System.out.println("PACKAGE NAME: "+packageName+"\n \n");
             visit(n);
         } catch (Exception ignored) {
 

@@ -298,7 +298,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        //System.out.println("\n expression n: " + n + "\n");
+        System.out.println(n);
 
         if(n.get(0).toString().contains("Arguments(CallExpression")){
             fieldMethod = true;
@@ -307,7 +307,6 @@ public class jppPrinter extends Visitor {
         for(int i = 0; i<n.size(); i++) {
             try {
                 String one = n.getNode(0).getNode(0).get(0).toString();
-                //System.out.println("\n one: " + one);
                 if (one.equals("ThisExpression(null)")) {
                     String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
                     one = n.getNode(0).getNode(0).get(1).toString();
@@ -330,18 +329,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFieldDeclaration(Node n, String from) {
-//        System.out.println("\n field n: " + n + " \n");
-//
-//        try {
-//            System.out.println("finding fields: " + n.getNode(2).getNode(0).get(0).toString() + " \n");
-//            String fieldType = n.getNode(1).getNode(0).get(0).toString();
-//            String varName = n.getNode(2).getNode(0).get(0).toString();
-//
-//            System.out.println("done: " + fieldType + " " + varName + " \n");
-//        } catch (IndexOutOfBoundsException e) {
-//        } catch (NullPointerException e) {
-//        } catch (ClassCastException e) {}
-
         for(int i = 0; i < n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "FieldDeclaration");
@@ -448,6 +435,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printBlock(Node n, String from) {
+
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -456,11 +444,9 @@ public class jppPrinter extends Visitor {
             }
             printer.p("; \n");
         }
-
         if(printer != mainPrinter) printer.p("} \n");
 
     }
-
 
     public void printConstructorDeclaration(Node n, String from) {
         if(test)
@@ -507,15 +493,12 @@ public class jppPrinter extends Visitor {
             printer.pln("int main(){ ");
             printCheckStatementNode(n.getNode(6), "MethodDeclaration");
         }
-
-
     }
 
     public void visitClassDeclaration(GNode n) {
         if(test)
             printer = constructPrinter;
         currentClassName = n.get(0).toString();
-
         currentC = n.get(0).toString();
 
         if(currentClassName.equals("Test006")) {
@@ -539,8 +522,6 @@ public class jppPrinter extends Visitor {
             printer.p("__Object::__init((Object)__this);\n");
             printer.p("}\n");
         }
-
-
         visit(n.getNode(1));
     }
 

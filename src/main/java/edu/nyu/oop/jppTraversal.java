@@ -102,15 +102,7 @@ public class jppTraversal extends Visitor {
     //================================================================================
 
     public void getExpressionStatement(Node n, GNode currNode) {
-        GNode expNode = GNode.create("ExpressionStatement");
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                getCheckStatementNode(n.getNode(i), expNode);
-            } else {
-                expNode.add(n.get(i));
-            }
-        }
-        currNode.addNode(expNode);
+        classNode.addNode(n);
     }
 
     public void getCallExpression(Node n, GNode currNode) {
@@ -166,12 +158,12 @@ public class jppTraversal extends Visitor {
      * @param currNode
      */
     public void getBlock(Node n, GNode currNode) {
-        GNode blockNode = GNode.create("Block");
-        int numStatements = n.size();
-        for(int i =0; i<numStatements; i+=1) {
-            getCheckStatementNode(n.getNode(i), blockNode);
-        }
-        currNode.addNode(blockNode);
+//        GNode blockNode = GNode.create("Block");
+//        int numStatements = n.size();
+//        for(int i =0; i<numStatements; i+=1) {
+//            getCheckStatementNode(n.getNode(i), blockNode);
+//        }
+        currNode.addNode(n);
     }
 
     /**
@@ -298,7 +290,6 @@ public class jppTraversal extends Visitor {
     // Generic Visit Methods
     //================================================================================
     public void visitFieldDeclaration(GNode n) {
-        System.out.println(n);
         GNode classFieldDeclarationNode = GNode.create("ClassFieldDeclaration");
         try
         {
