@@ -43,10 +43,10 @@ public class Boot extends Tool {
         // Declare command line arguments.
 
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
-                bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
-                bool("createHeaderFile", "createHeaderFile", false, "createHeaderFile").
-                bool("completeMemberAccesses", "completeMemberAccesses", false, "Make all receivers of member accesses explicit.").
-                bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
+        bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
+        bool("createHeaderFile", "createHeaderFile", false, "createHeaderFile").
+        bool("completeMemberAccesses", "completeMemberAccesses", false, "Make all receivers of member accesses explicit.").
+        bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
 
     }
 
@@ -90,27 +90,27 @@ public class Boot extends Tool {
 
             DependencyAstVisitor visitor = new DependencyAstVisitor();
             List<GNode> astVisit = visitor.getDependencyAsts(n);
-            for(GNode ast: astVisit){
+            for(GNode ast: astVisit) {
                 runtime.console().format(ast).pln().flush();
 
             }
         }
-        if(runtime.test("createDependencyTree")){
+        if(runtime.test("createDependencyTree")) {
             CreateDependencyTree headerAST = new CreateDependencyTree();
             List<GNode> tree = headerAST.getStackedHeader(n);
-            for(GNode ast: tree){
+            for(GNode ast: tree) {
                 runtime.console().format(ast).pln().flush();
             }
         }
 
-        if(runtime.test("createHeaderFile")){
+        if(runtime.test("createHeaderFile")) {
             CreateDependencyTree headerAST = new CreateDependencyTree();
             List<GNode> tree = headerAST.getStackedHeader(n);
 
             try {
                 HeaderFilePrinter headerFile = new HeaderFilePrinter(tree);
 
-            } catch (IOException e){
+            } catch (IOException e) {
                 System.out.println("here!");
             }
 

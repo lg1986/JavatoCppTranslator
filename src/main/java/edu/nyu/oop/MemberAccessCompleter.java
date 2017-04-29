@@ -40,11 +40,11 @@ public class MemberAccessCompleter extends ContextualVisitor {
 
             List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
             MethodT method =
-                    JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
+                JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
             if (method == null) return;
 
             // TODO: make 'this' access explicit
-            if(TypeUtil.isStaticType(method) == false){
+            if(TypeUtil.isStaticType(method) == false) {
                 n.set(0, makeThisExpression());
             }
 
@@ -54,8 +54,8 @@ public class MemberAccessCompleter extends ContextualVisitor {
             files.add(f);
             ClassOrInterfaceT classT = JavaEntities.currentType(table);
             List<MethodT> methods = (JavaEntities.allMethods(table, files,
-                    (ClassT) classT));
-            for (MethodT ml : methods){
+                                     (ClassT) classT));
+            for (MethodT ml : methods) {
                 System.out.println(ml.toMethod());
             }
         }
@@ -87,12 +87,12 @@ public class MemberAccessCompleter extends ContextualVisitor {
         try {
             // If the scope of the table does not match the field name's scope
             if(!oldScope.toString().equals(
-                    table.lookupScope(fieldName).toString())){
+                        table.lookupScope(fieldName).toString())) {
                 if(TypeUtil.isStaticType(field) == false) {
                     n = replaceWithThis(field, fieldName);
                 }
             }
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             if(TypeUtil.isStaticType(field) == false) {
                 n = replaceWithThis(field, fieldName);
             }
@@ -100,7 +100,7 @@ public class MemberAccessCompleter extends ContextualVisitor {
         return n;
     }
 
-    public GNode replaceWithThis(Type typ, String name){
+    public GNode replaceWithThis(Type typ, String name) {
         GNode makeThis = makeThisExpression();
         GNode c = GNode.create("SelectionExpression");
         c.addNode(makeThis);

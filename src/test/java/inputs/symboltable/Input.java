@@ -1,10 +1,10 @@
 package inputs.symboltable;
 
 class A {
-  static int x;
-  char y;
-  
-  static void s1() {}
+    static int x;
+    char y;
+
+    static void s1() {}
 }
 
 class B extends A {
@@ -17,13 +17,13 @@ class B extends A {
     public B(char _y) {
         y = _y;
     }
-  
+
     public static void s() {}
 
     static public void m(int i) {}
 
-    static public void m(double i){}
-  
+    static public void m(double i) {}
+
     public String m(Object o) {
         return fld;
     }

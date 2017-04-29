@@ -1,12 +1,12 @@
 package inputs.test003;
 
-class B extends A{
+class B extends A {
     String x;
-    public B(){
+    public B() {
 
     }
 
-    public int meth(int x){
+    public int meth(int x) {
         return 0;
     }
 }
@@ -14,7 +14,7 @@ class B extends A{
 class A {
     private String fld;
 
-    public A(){
+    public A() {
 
     }
     public A(String f) {
@@ -26,7 +26,7 @@ class A {
     }
 }
 
-public class Test003{
+public class Test003 {
     public static void main(String[] args) {
         A a = new A("A");
         System.out.println(a.getFld());

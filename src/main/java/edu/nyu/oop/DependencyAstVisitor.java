@@ -29,7 +29,7 @@ import java.util.*;
  * and provides the required
  * recursive parsing functionality.
  */
-public class DependencyAstVisitor  extends Visitor{
+public class DependencyAstVisitor  extends Visitor {
 
     public HashSet<GNode> dependencyAsts = new HashSet<>();
 
@@ -42,7 +42,7 @@ public class DependencyAstVisitor  extends Visitor{
      * @return List<GNode> that contains all
      * the parsed dependency nodes.
      */
-    public List<GNode> getDependencyAsts(Node n){
+    public List<GNode> getDependencyAsts(Node n) {
         this.dependencyAsts.add((GNode)n);
         super.dispatch(n);
         return new ArrayList<>(this.dependencyAsts);

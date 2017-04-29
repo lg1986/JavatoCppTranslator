@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by rishabh on 22/04/17.
  */
-public class CreateHeaderAST extends Visitor{
+public class CreateHeaderAST extends Visitor {
 
     public List<GNode> headerASTs = new ArrayList<GNode>();
 
@@ -22,11 +22,11 @@ public class CreateHeaderAST extends Visitor{
     protected String packageName;
     protected String className;
 
-    public List<GNode> getHeaderAsts(Node n){
+    public List<GNode> getHeaderAsts(Node n) {
         DependencyAstVisitor visitor = new DependencyAstVisitor();
         List<GNode> dependencyAsts = visitor.getDependencyAsts(n);
 
-        for(Node dependencyNode:dependencyAsts){
+        for(Node dependencyNode:dependencyAsts) {
             super.dispatch(dependencyNode);
         }
         return this.headerASTs;
@@ -45,7 +45,7 @@ public class CreateHeaderAST extends Visitor{
         return details;
     }
 
-    public GNode getFormalParameter(Node n){
+    public GNode getFormalParameter(Node n) {
         String typ = n.getNode(1).getNode(0).getString(0);
         String name = n.getString(3);
         GNode parameter = GNode.create("FormalParameter");
@@ -55,16 +55,16 @@ public class CreateHeaderAST extends Visitor{
 
     }
 
-    public GNode getFormalParameters(Node n){
+    public GNode getFormalParameters(Node n) {
         GNode parameters = GNode.create("FormalParameters");
-        for(int i = 0; i<n.size(); i++){
+        for(int i = 0; i<n.size(); i++) {
             parameters.addNode(getFormalParameter((Node)n.getNode(i)));
         }
         return parameters;
     }
 
-    public String getType(Node n){
-        if(n.toString().equals("VoidType()")){
+    public String getType(Node n) {
+        if(n.toString().equals("VoidType()")) {
             return "void";
         } else {
             String typ = n.getNode(0).getString(0);
@@ -78,7 +78,7 @@ public class CreateHeaderAST extends Visitor{
      *  Return Type, Name, FormalParams(), className
      * @param n
      */
-    public void visitMethodDeclaration(GNode n){
+    public void visitMethodDeclaration(GNode n) {
         GNode methodDeclaration = GNode.create("MethodDeclaration");
         methodDeclaration.add(getType(n.getNode(2)));
         methodDeclaration.add(n.getString(3));
@@ -87,7 +87,7 @@ public class CreateHeaderAST extends Visitor{
         dataLayoutNode.getNode(2).addNode(methodDeclaration);
     }
 
-    public void visitConstructorDeclaration(GNode n){
+    public void visitConstructorDeclaration(GNode n) {
         GNode constructorDeclaration = GNode.create("ConstructorDeclaration");
         constructorDeclaration.add(n.getString(2));
         constructorDeclaration.addNode(getFormalParameters(n.getNode(3)));
@@ -104,14 +104,14 @@ public class CreateHeaderAST extends Visitor{
 
     }
 
-    public GNode getExtenderNode(Node n){
+    public GNode getExtenderNode(Node n) {
         String typ = n.getNode(0).getNode(0).getString(0);
         GNode extenderNode = GNode.create("Extension");
         extenderNode.add(typ);
         return extenderNode;
     }
 
-    public void visitClassDeclaration(GNode n){
+    public void visitClassDeclaration(GNode n) {
         className = n.getString(1);
 
         GNode classNode =GNode.create("ClassDeclaration");
@@ -144,13 +144,13 @@ public class CreateHeaderAST extends Visitor{
         this.headerASTs.add(classNode);
     }
 
-    public void visitPackageDeclaration(GNode n){
+    public void visitPackageDeclaration(GNode n) {
         this.packageName = n.getNode(1).get(1).toString();
         visit(n);
     }
 
-    public void visit(Node n){
-        for(Object o: n){
+    public void visit(Node n) {
+        for(Object o: n) {
             if(o instanceof Node) dispatch((Node) o);
         }
     }

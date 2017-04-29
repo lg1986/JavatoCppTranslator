@@ -13,21 +13,20 @@ import java.util.List;
 /**
  * Created by rishabh on 23/04/17.
  */
-public class HeaderFilePrinter extends Visitor{
+public class HeaderFilePrinter extends Visitor {
 
     private Printer printer;
     private String packageName;
     private String currentClassName;
-    private boolean startwriting;
 
-    public HeaderFilePrinter(List<GNode> asts) throws IOException{
+    public HeaderFilePrinter(List<GNode> asts) throws IOException {
         Writer w;
         try {
             FileOutputStream fos = new FileOutputStream("output/output.h");
             OutputStreamWriter ows = new OutputStreamWriter(fos, "utf-8");
             w = new BufferedWriter(ows);
             printer = new Printer(w);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Output loc");
         }
         writeStartBaseLayout();
@@ -79,48 +78,116 @@ public class HeaderFilePrinter extends Visitor{
         printer.pln("struct __"+ currentClassName+";");
         printer.pln("struct "+ currentClassName+"_VT;");
         printer.pln("typedef __rt::Ptr<__"+currentClassName+"> "+ currentClassName+";");
-        startwriting = true;
+
     }
 
-    public void visitDataLayout(GNode n){
-        visit(n);
-    }
-    public void visitMethodDeclaration(GNode n){
+    public void visitDataLayout(GNode n) {
+        printer.pln("struct __"+currentClassName+" {");
+        printer.pln("__"+currentClassName+"VT*"+" __vptr");
         System.out.println(n);
-        printer.pln(n.get(0).toString() + " " +n.get(1).toString());
+//        for(int i = 0; i<n.size(); i++) {
+//            visit(n.getNode(i));
+//        }
+        visitMethodDeclarations(n.getNode(2));
+        printer.pln("};");
+    }
+
+    public void visitVTableNode(GNode n) {
+        printer.pln("struct __"+currentClassName+"_VT {");
+        printer.pln("Class __is a;");
+        printer.pln("void (*__delete)(__A*);");
+        visitMethodDeclarationsVTable(n);
+
+        printer.pln("__"+currentClassName+"_VT()");
+        printer.indent();
+        printer.indentMore();
+        printer.pln(": __is_a(__"+currentClassName+"::__class()),");
+        printer.pln("__delete(&__rt::__delete<__"+currentClassName+">),");
+        visitMethodDeclarationVTableMethods(n);
+        printer.indentLess();
+        printer.pln("};");
+
+    }
+
+    public void visitMethodDeclaration(Node n) {
+        String ret = getReturnType(n);
+        printer.pln(ret + " " +n.get(1).toString());
         printer.pln(n.get(0) +" " +"__init(" + currentClassName+ ")");
         visit(n);
 
     }
-    public void visitConstructorDeclaration(GNode n){
-        System.out.println("CONST"+n);
-        printer.pln("struct__"+n.get(0)+" {");
-        printer.pln("__"+n.get(0)+"_VT*__vprt;");
-        printer.pln("__"+n.get(0)+"();");
+
+    public void visitMethodDeclarations(Node  n) {
+        System.out.println(" HERE HERE! ");
+        for(int i = 0; i <n.size(); i++) {
+            visit(n.getNode(i));
+        }
+    }
+
+    public void visitMethodDeclarationVTableMethods(Node n) {
+        for(int i = 0; i < n.size(); i++) {
+            visitMethodDeclarationVTableMethod((GNode) n.getNode(i));
+        }
+    }
+
+    public void visitMethodDeclarationVTableMethod(Node n) {
+
+    }
+
+    public void visitMethodDeclarationsVTable(Node n) {
+        for(int i = 0; i<n.size(); i++) {
+            visitMethodDeclarationVTable(n.getNode(i));
+        }
+    }
+
+
+    public void visitMethodDeclarationVTable(Node n) {
+
+    }
+
+    public void visitConstructorDeclaration(Node n) {
         visit(n);
-        printer.pln("}");
     }
 
-    public void visitFieldDeclaration(GNode n){
+    public void visitConstructorDeclarations(Node n) {
+        for(int i = 0; i <n.size(); i++) {
+            visit(n.getNode(i));
+        }
+    }
 
+    public void visitFieldDeclaration(GNode n) {
 
     }
-    public void visitClassDeclaration(GNode n) throws  IOException{
+
+    public void visitFieldDeclarations(GNode n) {
+        for(int i = 0; i <n.size(); i++) {
+            visit(n.getNode(i));
+        }
+    }
+
+    public String getReturnType(Node n) {
+        String ret = n.getNode(2).getNode(0).getString(0);
+        return ret;
+    }
+
+
+
+    public void visitClassDeclaration(GNode n) throws  IOException {
         currentClassName = n.get(1).toString();
         writeClassPreBase();
         visit(n);
-
     }
 
 
-    public void visit(Node n){
-        for(Object o: n){
+    public void visit(Node n) {
+        for(Object o: n) {
             if(o instanceof Node) dispatch((Node) o);
         }
     }
 
-    public void collect(List<GNode> asts){
-        for(Node ast: asts){
+    public void collect(List<GNode> asts) {
+
+        for(Node ast: asts) {
             super.dispatch(ast);
         }
     }

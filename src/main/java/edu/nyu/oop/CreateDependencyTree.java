@@ -32,23 +32,23 @@ import java.util.List;
  * TreeNode class that creates the inheritance
  * heirarchy for all the ASTs that have been provided.
  */
-class TreeNode{
+class TreeNode {
     String className;
     String packageName;
     TreeNode extendsNodes = null;
     Node ast;
 
-    public TreeNode(String packageName, String className, Node ast){
+    public TreeNode(String packageName, String className, Node ast) {
         this.className = className;
         this.packageName = packageName;
         this.ast = ast;
     }
 
-    public String toString(){
-        if(this.extendsNodes != null){
+    public String toString() {
+        if(this.extendsNodes != null) {
             return this.className+" "+this.packageName+
-                    " extends "+this.extendsNodes.toString();
-        } else{
+                   " extends "+this.extendsNodes.toString();
+        } else {
             return this.className+" "+this.packageName;
         }
     }
@@ -71,7 +71,7 @@ public class CreateDependencyTree extends Visitor {
      * @param n
      * @return
      */
-    public List<TreeNode> getDependencyInheritance(Node n){
+    public List<TreeNode> getDependencyInheritance(Node n) {
         CreateHeaderAST visitor = new CreateHeaderAST();
         this.headerAsts = visitor.getHeaderAsts(n);
         javaObjTreeNode = new TreeNode("Java", "Object", createJavaObject());
@@ -85,7 +85,7 @@ public class CreateDependencyTree extends Visitor {
      * @param n
      * @return
      */
-    public TreeNode createTreeNode(GNode n){
+    public TreeNode createTreeNode(GNode n) {
         String packageName = n.getString(0);
         String className =  n.getString(1);
         return new TreeNode(packageName, className, n);
@@ -99,10 +99,10 @@ public class CreateDependencyTree extends Visitor {
      * @return If it is, it returns the correct AST.
      * If not, returns null.
      */
-    public Node inCurrPackage(String extender, String currPackage){
-        for(GNode headerAst: headerAsts){
+    public Node inCurrPackage(String extender, String currPackage) {
+        for(GNode headerAst: headerAsts) {
             if(currPackage.equals(headerAst.getString(0)) &&
-                    extender.equals(headerAst.getString(1))){
+                    extender.equals(headerAst.getString(1))) {
                 return headerAst;
             }
         }
@@ -115,10 +115,10 @@ public class CreateDependencyTree extends Visitor {
      * @param currPackage
      * @return
      */
-    public Node notCurrPackage(String extender, String currPackage){
-        for(GNode headerAst: headerAsts){
+    public Node notCurrPackage(String extender, String currPackage) {
+        for(GNode headerAst: headerAsts) {
             if(!currPackage.equals(headerAst.getString(0))
-                    && extender.equals((headerAst.getString(1)))){
+                    && extender.equals((headerAst.getString(1)))) {
                 return headerAst;
             }
         }
@@ -132,12 +132,11 @@ public class CreateDependencyTree extends Visitor {
      * @return
      */
 
-    public Node getExtenderClass(String extender, String currPackage){
+    public Node getExtenderClass(String extender, String currPackage) {
         Node currPackExtender = inCurrPackage(extender, currPackage);
-        if(currPackExtender != null){
+        if(currPackExtender != null) {
             return currPackExtender;
-        }
-        else{
+        } else {
             Node notCurrPackExtender = notCurrPackage(extender, currPackage);
             return notCurrPackExtender;
         }
@@ -149,27 +148,27 @@ public class CreateDependencyTree extends Visitor {
      * @param headerAst
      * @param classTreeNode
      */
-    public void appendInheritance(GNode headerAst, TreeNode classTreeNode){
+    public void appendInheritance(GNode headerAst, TreeNode classTreeNode) {
         classTreeNode.extendsNodes = null;
-        while(headerAst.get(2) != null){
-             Node extenderNode = getExtenderClass(
-                    headerAst.getNode(2).getString(0),
-                    headerAst.getString(0));
+        while(headerAst.get(2) != null) {
+            Node extenderNode = getExtenderClass(
+                                    headerAst.getNode(2).getString(0),
+                                    headerAst.getString(0));
 
-             TreeNode extenderClassTree = createTreeNode((GNode)extenderNode);
-             classTreeNode.extendsNodes = extenderClassTree;
-             classTreeNode = extenderClassTree;
-             headerAst = (GNode) extenderNode;
+            TreeNode extenderClassTree = createTreeNode((GNode)extenderNode);
+            classTreeNode.extendsNodes = extenderClassTree;
+            classTreeNode = extenderClassTree;
+            headerAst = (GNode) extenderNode;
         }
     }
     /**
      * This method essentially constructs the tree by calling the
      * methods above in logical order.
      */
-    public void simulateInheritance(){
-        for(GNode headerAst:headerAsts){
+    public void simulateInheritance() {
+        for(GNode headerAst:headerAsts) {
             TreeNode classTreeNode = createTreeNode(headerAst);
-            if(headerAst.get(2) != null){
+            if(headerAst.get(2) != null) {
                 appendInheritance(headerAst, classTreeNode);
             } else {
                 classTreeNode.extendsNodes = null;
@@ -185,21 +184,20 @@ public class CreateDependencyTree extends Visitor {
      * @param n
      * @return
      */
-    public List<TreeNode> reOrderChain(TreeNode n){
+    public List<TreeNode> reOrderChain(TreeNode n) {
         List<TreeNode> correctOrder = new ArrayList<>();
         TreeNode head = n;
 
         correctOrder.add(head);
-        while(head.extendsNodes != null){
+        while(head.extendsNodes != null) {
             correctOrder.add(head.extendsNodes);
             head = head.extendsNodes;
         }
 
         TreeNode javaObj = new TreeNode("Java",
-                "Object", createJavaObject());
+                                        "Object", createJavaObject());
         correctOrder.add(javaObj);
         Collections.reverse(correctOrder);
-        System.out.println(correctOrder);
         return correctOrder;
     }
 
@@ -210,12 +208,13 @@ public class CreateDependencyTree extends Visitor {
      * @param paramNodes
      * @return ArrayList<String>
      */
-    public ArrayList<String> getParamsList(Node paramNodes){
+    public ArrayList<String> getParamsList(Node paramNodes) {
+
         ArrayList<String> paramsList = new ArrayList<>();
         for(int i = 0; i<paramNodes.size(); i++) {
             Node paramNode = paramNodes.getNode(i);
             String paramString  = paramNode.getString(0)+
-                    " "+paramNode.get(1);
+                                  " "+paramNode.get(1);
             paramsList.add(paramString);
         }
         return paramsList;
@@ -229,10 +228,10 @@ public class CreateDependencyTree extends Visitor {
      * it is. int --> 1 overriden method
      */
     public int checkAllParams(ArrayList<String> stackParams,
-                                     ArrayList<String> currParams){
+                              ArrayList<String> currParams) {
         if(stackParams.size() != currParams.size()) return 1;
         if(stackParams.size() == 0) return 0;
-        for(int i = 0; i < stackParams.size(); i++){
+        for(int i = 0; i < stackParams.size(); i++) {
             if(!currParams.contains(stackParams.get(i))) return 1;
         }
         return 0;
@@ -245,7 +244,7 @@ public class CreateDependencyTree extends Visitor {
      * @return int --> from checkAllParams
      */
 
-    public int checkParams(Node stackParams, Node currParams){
+    public int checkParams(Node stackParams, Node currParams) {
         ArrayList<String> stackParamsList = getParamsList(stackParams);
         ArrayList<String> currParamsList = getParamsList(currParams);
         return checkAllParams(stackParamsList, currParamsList);
@@ -258,17 +257,18 @@ public class CreateDependencyTree extends Visitor {
      * @param className
      * @return returns the Node if any that needs to be added.
      */
-    public Node checkMeth(Node stackMeth, Node currMethsNode, String className){
-        for(int i = 0; i<currMethsNode.size(); i++){
+    public Node checkMeth(Node stackMeth, Node currMethsNode, String className) {
+        for(int i = 0; i<currMethsNode.size(); i++) {
             Node currMethNode = currMethsNode.getNode(i);
-            System.out.println(currMethNode);
             String methName = currMethNode.getString(1);
             if(methName.equals(stackMeth.getString(1))) {
+
                 int loadrid = checkParams(stackMeth.getNode(2), currMethNode.getNode(2));
-                if(loadrid == 1){
+
+                if(loadrid == 1) {
                     GNode retNode = GNode.ensureVariable((GNode) stackMeth);
                     return retNode;
-                } else{
+                } else {
                     GNode retNode = GNode.ensureVariable((GNode) stackMeth);
                     retNode.set(3, className);
                     currMethsNode.set(i, retNode);
@@ -288,9 +288,8 @@ public class CreateDependencyTree extends Visitor {
      * The StackMeths need to be stacked below the currMeths.
      */
 
-    public void stackMethods(Node stackMeths, Node currNode, String className){
-        System.out.println(stackMeths);
-        for(int i = 0; i<stackMeths.size(); i++){
+    public void stackMethods(Node stackMeths, Node currNode, String className) {
+        for(int i = 0; i<stackMeths.size(); i++) {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
             if(toAdd != null) currNode.getNode(3).getNode(2).addNode(toAdd);
@@ -306,9 +305,9 @@ public class CreateDependencyTree extends Visitor {
      * Just returns a list of fields. This is for easier
      * comparison.
      */
-    public ArrayList<String> getFieldsList(Node fields){
+    public ArrayList<String> getFieldsList(Node fields) {
         ArrayList<String> fieldsList = new ArrayList<>();
-        for(int i = 0; i < fieldsList.size(); i++){
+        for(int i = 0; i < fieldsList.size(); i++) {
             Node fieldNode = fields.getNode(i);
             String field = fieldNode.getString(0)+" "+fieldNode.getString(1);
         }
@@ -324,13 +323,13 @@ public class CreateDependencyTree extends Visitor {
      * to the data layout convention.
      */
 
-    public void stackFields(Node stackFields, Node currNode){
+    public void stackFields(Node stackFields, Node currNode) {
         ArrayList<String> currFields = getFieldsList(currNode);
-        for(int i = 0; i < stackFields.size(); i++){
+        for(int i = 0; i < stackFields.size(); i++) {
             Node stackFieldNode = stackFields.getNode(i);
             String stackFieldString  = stackFieldNode.getString(0)+" "+
-                    stackFieldNode.getString(1);
-            if(!currFields.contains(stackFieldString)){
+                                       stackFieldNode.getString(1);
+            if(!currFields.contains(stackFieldString)) {
                 currNode.getNode(3).getNode(0).addNode(stackFieldNode);
             }
         }
@@ -343,7 +342,7 @@ public class CreateDependencyTree extends Visitor {
      * @param currNode
      */
 
-    public void stackItUp(Node stack, Node currNode){
+    public void stackItUp(Node stack, Node currNode) {
         Node stackMeths = stack.getNode(3).getNode(2);
         Node stackFields = stack.getNode(3).getNode(0);
         stackFields(stackFields, currNode);
@@ -356,12 +355,12 @@ public class CreateDependencyTree extends Visitor {
      * @param n
      * @return A GNode with the correct dataLayout.
      */
-    public GNode getInheritedStructure(TreeNode n){
+    public GNode getInheritedStructure(TreeNode n) {
         Node orignal = n.ast;
         GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
         if(inherit.size() == 1) return (GNode)inherit.get(0).ast;
-        else{
+        else {
             GNode inheritSim = GNode.create("ClassDeclaration");
             inheritSim.add(orignal.getString(0));
             inheritSim.add(orignal.getString(1));
@@ -374,7 +373,7 @@ public class CreateDependencyTree extends Visitor {
 
             inheritSim.addNode(dataLayoutNode);
 
-            for(int i = 0; i<inherit.size(); i++){
+            for(int i = 0; i<inherit.size(); i++) {
                 stackItUp(inherit.get(i).ast, inheritSim);
             }
 
@@ -393,11 +392,11 @@ public class CreateDependencyTree extends Visitor {
      * @return List<GNode> with all the correct AST representations
      * of the classes.
      */
-    public List<GNode> getStackedHeader(Node n){
+    public List<GNode> getStackedHeader(Node n) {
         CreateDependencyTree headerAST = new CreateDependencyTree();
         List<TreeNode> inheritanceTree = headerAST.getDependencyInheritance(n);
         inheritanceSimAsts = new ArrayList<>();
-        for(TreeNode eachClassNode: inheritanceTree){
+        for(TreeNode eachClassNode: inheritanceTree) {
             GNode correctRep =  getInheritedStructure(eachClassNode);
             inheritanceSimAsts.add(correctRep);
         }
@@ -405,24 +404,24 @@ public class CreateDependencyTree extends Visitor {
     }
 
 
-    public GNode createJavaObject(){
+    public GNode createJavaObject() {
         GNode javaClass = GNode.create("ClassDeclaration");
         GNode methodDecl = GNode.create("MethodDeclarations");
         GNode constDecl = GNode.create("ConstructorDeclarations");
         GNode fieldDeclaration = GNode.create("FieldDeclarations");
 
         methodDecl.addNode(
-                createMethNode("hashCode",
-                        "int32_t", null));
+            createMethNode("hashCode",
+                           "int32_t", null));
         methodDecl.addNode(
-                createMethNode("toString",
-                        "String", null));
+            createMethNode("toString",
+                           "String", null));
         methodDecl.addNode(
-                createMethNode("getClass",
-                        "String", null));
+            createMethNode("getClass",
+                           "String", null));
         methodDecl.addNode(
-                createMethNode("equals",
-                        "bool", "Object"));
+            createMethNode("equals",
+                           "bool", "Object"));
 
         GNode dataLayout = GNode.create("DataLayoutNode");
         GNode vtable = GNode.create("VTableNode");
@@ -443,25 +442,29 @@ public class CreateDependencyTree extends Visitor {
         return javaClass;
     }
 
-    public GNode createMethNode(String methName, String ret, String params){
+    public GNode createMethNode(String methName, String ret, String params) {
 
         GNode methNode = GNode.create("MethodDeclaration");
         GNode modif = GNode.create("Modifiers");
 
         methNode.addNode(modif);
         methNode.add(methName);
-        methNode.add(null);
+//        methNode.add(null);
         GNode typeNode = createTypeNode(ret);
         methNode.addNode(typeNode);
 
         GNode formalParms = GNode.create("FormalParameters");
         GNode paramNode = createFormParmNode(params);
-        formalParms.addNode(paramNode);
+        if(paramNode != null) {
+            formalParms.addNode(paramNode);
+
+        }
+        methNode.addNode(formalParms);
         return methNode;
 
     }
 
-    public GNode createTypeNode(String typ){
+    public GNode createTypeNode(String typ) {
         GNode type = GNode.create("Type");
         GNode qfI = GNode.create("QualifiedIdentifier");
         qfI.add(typ);
@@ -470,18 +473,19 @@ public class CreateDependencyTree extends Visitor {
         return type;
     }
 
-    public GNode createFormParmNode(String typ){
-        GNode formParm = GNode.create("FormalParameter");
-        GNode modif = GNode.create("Modifiers");
+    public GNode createFormParmNode(String typ) {
+        if(typ != null) {
+            GNode formParm = GNode.create("FormalParameter");
+            GNode modif = GNode.create("Modifiers");
 
-        GNode type = createTypeNode(typ);
+            GNode type = createTypeNode(typ);
 
-        formParm.addNode(modif);
-        formParm.addNode(type);
-        formParm.add(null);
-        formParm.add(null);
-        formParm.add(null);
-        return formParm;
+            formParm.addNode(modif);
+            formParm.addNode(type);
+
+            return formParm;
+        }
+        return null;
     }
 
 

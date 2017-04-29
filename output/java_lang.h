@@ -50,9 +50,11 @@ java::lang::Object null();
 java::lang::String literal(const char*);
 
 template <typename T>
- +  void __delete(T* addr) {
- +    delete addr;
- +  }
++  void __delete(T* addr)
+{
+    +    delete addr;
+    +
+}
 
 }
 
@@ -348,10 +350,12 @@ inline java::lang::String literal(const char * s)
 
 // ========================================================================
 
-   static void __delete(__Array<T>* addr) {
- +      delete[] addr->__data;
- +      delete addr;
- +    }
+static void __delete(__Array<T>* addr)
+{
+    +      delete[] addr->__data;
+    +      delete addr;
+    +
+}
 
 // Forward declarations of data layout and vtable.
 template <typename T>
@@ -477,17 +481,21 @@ void checkStore(Ptr<Array<T> > array, U object)
     }
 }
 
- template <typename T, typename U>
- +  T java_cast(U object) {
- +    java::lang::Class k = T::value_t::__class();
- +
- +    if (! k->__vptr->isInstance(k, object)) {
- +      throw java::lang::ClassCastException();
- +    }
- +
- +    return T(object);
- +  }
- +
+template <typename T, typename U>
++  T java_cast(U object)
+{
+    +    java::lang::Class k = T::value_t::__class();
+    +
+    +    if (! k->__vptr->isInstance(k, object))
+    {
+        +      throw java::lang::ClassCastException();
+        +
+    }
+    +
+    +    return T(object);
+    +
+}
++
 
 
 }

@@ -79,8 +79,9 @@ int32_t __String::hashCode(String __this)
 }
 
 // java.lang.Class.isArray()
-bool __Class::isArray(Class __this) {
-     return __rt::null() != __this->component;
+bool __Class::isArray(Class __this)
+{
+    return __rt::null() != __this->component;
 }
 
 // java.lang.String.equals()
