@@ -25,7 +25,7 @@ B::__init(new__B(),B __this , int i) {
 super(i); 
 }
 int32_t __B::get(B __this ) { 
-return ; 
+return 10i->__vptr->i; 
 __Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
   static Class k = 
     new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
@@ -35,7 +35,12 @@ __Test025_VT __Test025::__vtable;
 int main(){ 
 __rt::Array<Object> as = new __rt::_Array<A>(10); 
 PrimaryIdentifier("as") = 5; 
+; 
  k = 0; 
+
+while(k < 10) {
+cout <<(get()); 
+k = PrimaryIdentifier("k"); 
 ; 
 }
 }

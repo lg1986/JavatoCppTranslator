@@ -315,8 +315,8 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        System.out.println(from);
-        System.out.println("EXP ST : "+ n);
+        System.out.println("\n exp st n = " + n + "\n");
+        //System.out.println("\n exp st n2 = " + n + "\n");
         if(n.size() > 0) {
             if (n.get(0).toString().contains("Arguments(CallExpression")) {
                 fieldMethod = true;
@@ -447,22 +447,39 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameter(Node n, String from) {
-
         printCheckStatementNode(n.getNode(0), "FormalParameter");
         printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
         printer.p(n.get(3).toString() + ")");
     }
 
     public void printForStatement(Node n, String from){
-            System.out.println("FOR SUCCESS");
+        System.out.println("\nFOR SUCCESS\n");
     }
 
     public void printWhileStatement(Node n, String from){
-        System.out.println("WHILE SUCCESS");
+        System.out.println("\n ****** while n = " + n + "\n");
+        String varName = n.getNode(0).getNode(0).get(0).toString();
+        String operator = n.getNode(0).get(1).toString();
+        String num = n.getNode(0).getNode(2).get(0).toString();
+        printer.p("\nwhile(" + varName + " " + operator + " " + num + ") {\n");
+
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), from);
+            }
+        }
+
+
     }
 
     public void printAdditiveExpression(Node n,String from){
-        System.out.println("IN ADDITIVE"+n);
+        System.out.println("\n ********additive n = " + n + "\n");
+
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), from);
+            }
+        }
     }
 
     public void printType(Node n, String from) {
@@ -489,7 +506,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
-        System.out.println(n.toString()+" "+from);
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
