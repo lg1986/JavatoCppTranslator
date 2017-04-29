@@ -10,7 +10,8 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
 }
 __A_VT __A::__vtable;
 A::__init(new__A(),A __this , int i) { 
-ThisExpression(null).i; 
+
+ThisExpression(null) =; 
 __Object::__init((Object)__this);
 }
 int32_t __A::get(A __this ) { 
@@ -25,26 +26,24 @@ B::__init(new__B(),B __this , int i) {
 super(); 
 }
 int32_t __B::get(B __this ) { 
-return 10i->__vptr->i; 
-__Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
+return  10 - 10; 
+__Test026::__Test026() : __vptr(&__vtable) Class __Test026::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.Test026"), __Object::__class());
   return k;
 }
-__Test025_VT __Test025::__vtable;
+__Test026_VT __Test026::__vtable;
 int main(){ 
-__rt::Array<Object> as = new __rt::_Array<A>(10); 
-<<<<<<< HEAD
-PrimaryIdentifier("as") = 5; 
+__rt::Array<A> as = new __rt::_Array<B>(10); 
+for(int i = 0; i < as.length; i++) {
+PrimaryIdentifier("as") =A__::init(new __A()); 
 ; 
-=======
-PrimaryIdentifier("as") = 0B__::init(new __B()3); 
->>>>>>> array-testing
  k = 0; 
 
-while(k < 10) {
+while(k< 10) {
 cout <<(get()); 
-k = PrimaryIdentifier("k"); 
+
+k = k + 1; 
 ; 
 }
 }

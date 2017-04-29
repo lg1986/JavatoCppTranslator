@@ -472,6 +472,11 @@ public class jppPrinter extends Visitor {
         String increment = n.getNode(0).getNode(4).getNode(0).get(1).toString();
         printer.p(varName + increment + ") {");
 
+        for(int i = 0; i<n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), from);
+            }
+        }
     }
 
     public void printWhileStatement(Node n, String from){
