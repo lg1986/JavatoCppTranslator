@@ -14,8 +14,8 @@ typedef __rt::Ptr<__A> A;
 struct __A
 {
     __AVT* __vptr
-    String toString
-    String __init(A)
+    A self
+    A __init(A)
 };
 struct __A_VT
 {
@@ -25,22 +25,22 @@ struct __A_VT
         : __is_a(__A::__class()),
           __delete(&__rt::__delete<__A>),
     };
-    struct __Test001;
-    struct Test001_VT;
-    typedef __rt::Ptr<__Test001> Test001;
-    struct __Test001
+    struct __Test017;
+    struct Test017_VT;
+    typedef __rt::Ptr<__Test017> Test017;
+    struct __Test017
 {
-    __Test001VT* __vptr
+    __Test017VT* __vptr
     void main
-    void __init(Test001)
+    void __init(Test017)
 };
-struct __Test001_VT
+struct __Test017_VT
 {
     Class __is a;
     void (*__delete)(__A*);
-    __Test001_VT()
-        : __is_a(__Test001::__class()),
-          __delete(&__rt::__delete<__Test001>),
+    __Test017_VT()
+        : __is_a(__Test017::__class()),
+          __delete(&__rt::__delete<__Test017>),
     };
     };
     };
