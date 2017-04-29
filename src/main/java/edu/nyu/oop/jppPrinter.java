@@ -26,6 +26,7 @@ public class jppPrinter extends Visitor {
     private String currentC;
     private boolean arrayConstructor = false;
     private boolean fieldMethod = false;
+    private boolean arrayInitialization = false;
 
     private String callExpIdentifier;
     private boolean fieldInitializer = false;
@@ -337,6 +338,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
+        if(n.toString().contains("SubscriptExpression")) arrayInitialization = true;
         if(n.size() > 0) {
                 // this checks if the arugments has a call expression and if it does sets it to true
                 // so that we know when to print the ->__vptr->
@@ -344,21 +346,6 @@ public class jppPrinter extends Visitor {
                     fieldMethod = true;}
 
                 for (int i = 0; i < n.size(); i++) {
-
-                        //System.out.println("\n one: " + one);
-/*
-                        if (one.equals("ThisExpression(null)")) {
-                            String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
-                            one = n.getNode(0).getNode(0).get(1).toString();
-                            printer.p(thisKeyword + ".");
-                            printer.p(one);
-                        }  else {
-                            printer.p(one + "lll ");
-                            String two = n.getNode(0).get(1).toString();
-                            printer.p(two + " kkkk");
-                            String three = n.getNode(0).getNode(2).get(0).toString();
-                            printer.p(three);
-                        }*/
 
                     if (n.get(i) != null && checkIfNode(n.getNode(i))) {
 
@@ -373,18 +360,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFieldDeclaration(Node n, String from) {
-//        System.out.println("\n field n: " + n + " \n");
-//
-//        try {
-//            System.out.println("finding fields: " + n.getNode(2).getNode(0).get(0).toString() + " \n");
-//            String fieldType = n.getNode(1).getNode(0).get(0).toString();
-//            String varName = n.getNode(2).getNode(0).get(0).toString();
-//
-//            System.out.println("done: " + fieldType + " " + varName + " \n");
-//        } catch (IndexOutOfBoundsException e) {
-//        } catch (NullPointerException e) {
-//        } catch (ClassCastException e) {}
-       // System.out.println("IN FIELD: "+n);
 
             for(int i = 0; i < n.size(); i++) {
                 if(n.get(i) != null && checkIfNode(n.get(i))) {
@@ -511,7 +486,11 @@ public class jppPrinter extends Visitor {
             printer.p("["+ indexNumber + "]");
         }
         else{
-            printer.p(n.get(0).toString());
+            if(from.equals("ExpressionStatement") && arrayInitialization) printer.p("__rt::literal("+n.get(0).toString()+")");
+            else{
+                printer.p(n.get(0).toString());
+            }
+
         }
 
     }
