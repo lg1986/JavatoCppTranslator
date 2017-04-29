@@ -18,6 +18,7 @@ public class HeaderFilePrinter extends Visitor{
     private Printer printer;
     private String packageName;
     private String currentClassName;
+    private boolean startwriting;
 
     public HeaderFilePrinter(List<GNode> asts) throws IOException{
         Writer w;
@@ -78,11 +79,36 @@ public class HeaderFilePrinter extends Visitor{
         printer.pln("struct __"+ currentClassName+";");
         printer.pln("struct "+ currentClassName+"_VT;");
         printer.pln("typedef __rt::Ptr<__"+currentClassName+"> "+ currentClassName+";");
+        startwriting = true;
     }
 
+    public void visitDataLayout(GNode n){
+        visit(n);
+    }
+    public void visitMethodDeclaration(GNode n){
+        System.out.println(n);
+        printer.pln(n.get(0).toString() + " " +n.get(1).toString());
+        printer.pln(n.get(0) +" " +"__init(" + currentClassName+ ")");
+        visit(n);
+
+    }
+    public void visitConstructorDeclaration(GNode n){
+        System.out.println("CONST"+n);
+        printer.pln("struct__"+n.get(0)+" {");
+        printer.pln("__"+n.get(0)+"_VT*__vprt;");
+        printer.pln("__"+n.get(0)+"();");
+        visit(n);
+        printer.pln("}");
+    }
+
+    public void visitFieldDeclaration(GNode n){
+
+
+    }
     public void visitClassDeclaration(GNode n) throws  IOException{
         currentClassName = n.get(1).toString();
         writeClassPreBase();
+        visit(n);
 
     }
 
