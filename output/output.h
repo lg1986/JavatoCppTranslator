@@ -24,6 +24,7 @@ __B_VT* __vptr;
 static Class __class();
 __B();
 static __B_VT __vtable;
+int32_t x;
 };
 struct __C;
 struct __C_VT;

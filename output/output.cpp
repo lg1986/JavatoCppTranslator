@@ -10,7 +10,7 @@ Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-__B::__B() : __vptr(&__vtable) {}
+__B::__B() : __vptr(&__vtable) ,x({}
 Class __B::__class() {
   static Class k = 
     new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
