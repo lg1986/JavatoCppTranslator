@@ -24,6 +24,8 @@ public class jppPrinter extends Visitor {
     private String currentClassName;
     private String currentC;
     private boolean fieldMethod = false;
+    private boolean arrayField = false;
+    private String arrayVar;
 
     private String callExpIdentifier;
     private boolean fieldInitializer = false;
@@ -236,6 +238,8 @@ public class jppPrinter extends Visitor {
             printForStatement(n,from);
         }else if(n.hasName("WhileStatement")){
             printWhileStatement(n,from);
+        }else if(n.hasName("IntegerLiteral")){
+            printIntegerLiteral(n,from);
         }
 
     }
@@ -266,6 +270,7 @@ public class jppPrinter extends Visitor {
         }
         if(from.equals("printType")){
             printer.p("__rt::Array<"+n.get(0).toString()+">");
+            arrayField = true;
         }
         //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
@@ -306,33 +311,34 @@ public class jppPrinter extends Visitor {
     }
 
     public void printExpressionStatement(Node n, String from) {
-        //System.out.println("\n expression n: " + n + "\n");
+        if(n.size() > 0) {
+            if (n.get(0).toString().contains("Arguments(CallExpression")) {
+                fieldMethod = true;
+            }
 
-        if(n.get(0).toString().contains("Arguments(CallExpression")){
-            fieldMethod = true;
-        }
-
-        for(int i = 0; i<n.size(); i++) {
-            try {
-                String one = n.getNode(0).getNode(0).get(0).toString();
-                //System.out.println("\n one: " + one);
-                if (one.equals("ThisExpression(null)")) {
-                    String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
-                    one = n.getNode(0).getNode(0).get(1).toString();
-                    printer.p(thisKeyword + ".");
-                    printer.p(one);
-                } else if ("PrimaryIdentifier(\"System\")".equals(one)) {
-                } else {
-                    printer.p(one + " ");
-                    String two = n.getNode(0).get(1).toString();
-                    printer.p(two + " ");
-                    String three = n.getNode(0).getNode(2).get(0).toString();
-                    printer.p(three);
+            for (int i = 0; i < n.size(); i++) {
+                try {
+                    String one = n.getNode(0).getNode(0).get(0).toString();
+                    //System.out.println("\n one: " + one);
+                    if (one.equals("ThisExpression(null)")) {
+                        String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
+                        one = n.getNode(0).getNode(0).get(1).toString();
+                        printer.p(thisKeyword + ".");
+                        printer.p(one);
+                    } else if ("PrimaryIdentifier(\"System\")".equals(one)) {
+                    } else {
+                        printer.p(one + " ");
+                        String two = n.getNode(0).get(1).toString();
+                        printer.p(two + " ");
+                        String three = n.getNode(0).getNode(2).get(0).toString();
+                        printer.p(three);
+                    }
+                } catch (NullPointerException e) {
                 }
-            } catch (NullPointerException e) {}
 
-            if(n.get(i) != null && checkIfNode(n.getNode(i))) {
-                printCheckStatementNode(n.getNode(i), "ExpressionStatement");
+                if (n.get(i) != null && checkIfNode(n.getNode(i))) {
+                    printCheckStatementNode(n.getNode(i), "ExpressionStatement");
+                }
             }
         }
     }
@@ -349,6 +355,7 @@ public class jppPrinter extends Visitor {
 //        } catch (IndexOutOfBoundsException e) {
 //        } catch (NullPointerException e) {
 //        } catch (ClassCastException e) {}
+       // System.out.println("IN FIELD: "+n);
 
         for(int i = 0; i < n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
@@ -357,6 +364,7 @@ public class jppPrinter extends Visitor {
         }
     }
     public void printDeclarator(Node n, String from) {
+
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Declarator");
@@ -368,6 +376,7 @@ public class jppPrinter extends Visitor {
 
 
     public void printDeclarators(Node n, String from) {
+
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printDeclarator(n.getNode(i), from);
@@ -394,7 +403,8 @@ public class jppPrinter extends Visitor {
     }
 
     public void printThisExpression(Node n, String from) {
-        printer.p("\nIN THIS\n");
+
+        //printer.p("\nIN THIS\n");
         printCheckStatementNode(n.getNode(0), "ThisExpression");
     }
 
@@ -406,6 +416,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameters(Node n, String from) {
+
         if(from.equals("FieldDeclaration")) {
             printer.p(currentC+" __this ");
         } else {
@@ -430,6 +441,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameter(Node n, String from) {
+
         printCheckStatementNode(n.getNode(0), "FormalParameter");
         printer.p(n.getNode(1).getNode(0).get(0).toString()+ " ");
         printer.p(n.get(3).toString() + ")");
@@ -462,8 +474,14 @@ public class jppPrinter extends Visitor {
 
     }
 
+    public void printIntegerLiteral(Node n, String from){
+        printer.p(n.get(0).toString());
+    }
 
     public void printBlock(Node n, String from) {
+        if(n.toString().contains("as")){
+            System.out.println("HERE" + n);
+        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -473,13 +491,11 @@ public class jppPrinter extends Visitor {
             printer.p("; \n");
         }
 
-        //Charlie: commented this out to fix object init call in constructor
-        //if(printer != mainPrinter) printer.p("} \n");
-
     }
 
 
     public void printConstructorDeclaration(Node n, String from) {
+
         if(test)
             printer = constructPrinter;
         constructorCounter++;
