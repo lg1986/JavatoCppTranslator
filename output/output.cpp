@@ -9,9 +9,11 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),A __this , int i) { 
+A::__init(new__A(),A __this , int i) {
 
 ThisExpression(null) =; 
+;
+>>>>>>> array-testing
 __Object::__init((Object)__this);
 }
 int32_t __A::get(A __this ) { 
@@ -33,11 +35,15 @@ __Test026::__Test026() : __vptr(&__vtable) Class __Test026::__class() {
   return k;
 }
 __Test026_VT __Test026::__vtable;
-int main(){ 
+int main(){
 __rt::Array<A> as = new __rt::_Array<B>(10); 
 for(int i = 0; i < as.length; i++) {
 PrimaryIdentifier("as") =A__::init(new __A()); 
 ; 
+
+__rt::Array<Object> as = new __rt::_Array<A>(10); 
+(*as)[0] = __rt::literal(3); 
+
  k = 0; 
 
 while(k< 10) {
@@ -45,6 +51,7 @@ cout <<(get());
 
 k = k + 1; 
 ; 
-}
+__rt::checkNotNull();
+__rt::checkIndex();}
 }
 }
