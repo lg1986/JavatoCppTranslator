@@ -14,6 +14,7 @@ ThisExpression(null).i;
 __Object::__init((Object)__this);
 }
 int32_t __A::get(A __this ) { 
+return i->__vptr->i; 
 __B::__B() : __vptr(&__vtable) Class __B::__class() {
   static Class k = 
     new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
@@ -24,6 +25,7 @@ B::__init(new__B(),B __this , int i) {
 super(i); 
 }
 int32_t __B::get(B __this ) { 
+return ; 
 __Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
   static Class k = 
     new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
@@ -31,6 +33,10 @@ __Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
 }
 __Test025_VT __Test025::__vtable;
 int main(){ 
+__rt::Array<Object> as = new __rt::_Array<A>(10); 
+PrimaryIdentifier("as") = 5; 
+ k = 0; 
+; 
 }
 }
 }

@@ -113,7 +113,6 @@ public class jppTraversal extends Visitor {
             }
         }
         currNode.addNode(expNode);*/
-        System.out.println("EXP:"+n);
         classNode.addNode(n);
     }
 
@@ -180,7 +179,7 @@ public class jppTraversal extends Visitor {
             getCheckStatementNode(n.getNode(i), blockNode);
         }
         currNode.addNode(blockNode);*/
-        classNode.addNode(n);
+        currNode.addNode(n);
     }
 
     /**
