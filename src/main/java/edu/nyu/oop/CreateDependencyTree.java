@@ -63,6 +63,7 @@ public class CreateDependencyTree extends Visitor {
     public List<TreeNode> inheritanceTree = new ArrayList<>();
     public List<GNode> headerAsts;
     public List<GNode> inheritanceSimAsts;
+    public TreeNode javaObjTreeNode;
 
     /**
      * Method that allows to interface with the program to
@@ -73,6 +74,7 @@ public class CreateDependencyTree extends Visitor {
     public List<TreeNode> getDependencyInheritance(Node n){
         CreateHeaderAST visitor = new CreateHeaderAST();
         this.headerAsts = visitor.getHeaderAsts(n);
+        javaObjTreeNode = new TreeNode("Java", "Object", createJavaObject());
         simulateInheritance();
         return this.inheritanceTree;
     }
@@ -186,12 +188,18 @@ public class CreateDependencyTree extends Visitor {
     public List<TreeNode> reOrderChain(TreeNode n){
         List<TreeNode> correctOrder = new ArrayList<>();
         TreeNode head = n;
+
         correctOrder.add(head);
         while(head.extendsNodes != null){
             correctOrder.add(head.extendsNodes);
             head = head.extendsNodes;
         }
+
+        TreeNode javaObj = new TreeNode("Java",
+                "Object", createJavaObject());
+        correctOrder.add(javaObj);
         Collections.reverse(correctOrder);
+        System.out.println(correctOrder);
         return correctOrder;
     }
 
@@ -253,6 +261,7 @@ public class CreateDependencyTree extends Visitor {
     public Node checkMeth(Node stackMeth, Node currMethsNode, String className){
         for(int i = 0; i<currMethsNode.size(); i++){
             Node currMethNode = currMethsNode.getNode(i);
+            System.out.println(currMethNode);
             String methName = currMethNode.getString(1);
             if(methName.equals(stackMeth.getString(1))) {
                 int loadrid = checkParams(stackMeth.getNode(2), currMethNode.getNode(2));
@@ -280,6 +289,7 @@ public class CreateDependencyTree extends Visitor {
      */
 
     public void stackMethods(Node stackMeths, Node currNode, String className){
+        System.out.println(stackMeths);
         for(int i = 0; i<stackMeths.size(); i++){
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
@@ -394,6 +404,85 @@ public class CreateDependencyTree extends Visitor {
         return inheritanceSimAsts;
     }
 
+
+    public GNode createJavaObject(){
+        GNode javaClass = GNode.create("ClassDeclaration");
+        GNode methodDecl = GNode.create("MethodDeclarations");
+        GNode constDecl = GNode.create("ConstructorDeclarations");
+        GNode fieldDeclaration = GNode.create("FieldDeclarations");
+
+        methodDecl.addNode(
+                createMethNode("hashCode",
+                        "int32_t", null));
+        methodDecl.addNode(
+                createMethNode("toString",
+                        "String", null));
+        methodDecl.addNode(
+                createMethNode("getClass",
+                        "String", null));
+        methodDecl.addNode(
+                createMethNode("equals",
+                        "bool", "Object"));
+
+        GNode dataLayout = GNode.create("DataLayoutNode");
+        GNode vtable = GNode.create("VTableNode");
+
+        vtable.addNode(methodDecl);
+
+        javaClass.add("Java");
+        javaClass.add("Object");
+        javaClass.add(null);
+
+        dataLayout.addNode(fieldDeclaration);
+        dataLayout.addNode(constDecl);
+        dataLayout.addNode(methodDecl);
+
+        javaClass.addNode(dataLayout);
+        javaClass.addNode(vtable);
+
+        return javaClass;
+    }
+
+    public GNode createMethNode(String methName, String ret, String params){
+
+        GNode methNode = GNode.create("MethodDeclaration");
+        GNode modif = GNode.create("Modifiers");
+
+        methNode.addNode(modif);
+        methNode.add(methName);
+        methNode.add(null);
+        GNode typeNode = createTypeNode(ret);
+        methNode.addNode(typeNode);
+
+        GNode formalParms = GNode.create("FormalParameters");
+        GNode paramNode = createFormParmNode(params);
+        formalParms.addNode(paramNode);
+        return methNode;
+
+    }
+
+    public GNode createTypeNode(String typ){
+        GNode type = GNode.create("Type");
+        GNode qfI = GNode.create("QualifiedIdentifier");
+        qfI.add(typ);
+        qfI.addNode(GNode.create("Dimensions"));
+        type.addNode(qfI);
+        return type;
+    }
+
+    public GNode createFormParmNode(String typ){
+        GNode formParm = GNode.create("FormalParameter");
+        GNode modif = GNode.create("Modifiers");
+
+        GNode type = createTypeNode(typ);
+
+        formParm.addNode(modif);
+        formParm.addNode(type);
+        formParm.add(null);
+        formParm.add(null);
+        formParm.add(null);
+        return formParm;
+    }
 
 
 }

@@ -29,8 +29,6 @@ public class CreateHeaderAST extends Visitor{
         for(Node dependencyNode:dependencyAsts){
             super.dispatch(dependencyNode);
         }
-        GNode javaObj = createJavaObject();
-        this.headerASTs.add(javaObj);
         return this.headerASTs;
     }
 
@@ -157,80 +155,5 @@ public class CreateHeaderAST extends Visitor{
         }
     }
 
-    public GNode createJavaObject(){
-        GNode javaClass = GNode.create("ClassDeclaration");
-        GNode methodDecl = GNode.create("MethodDeclarations");
-        GNode constDecl = GNode.create("ConstructorDeclarations");
-        GNode fieldDeclaration = GNode.create("FieldDeclarations");
 
-        methodDecl.addNode(
-                createMethNode("hashCode",
-                        "int32_t", null));
-        methodDecl.addNode(
-                createMethNode("toString",
-                        "String", null));
-        methodDecl.addNode(
-                createMethNode("getClass",
-                        "String", null));
-        methodDecl.addNode(
-                createMethNode("equals",
-                        "bool", "Object"));
-
-        GNode dataLayout = GNode.create("DataLayoutNode");
-        GNode vtable = GNode.create("VTableNode");
-
-        vtable.addNode(methodDecl);
-
-        javaClass.add("Java");
-        javaClass.add("Object");
-        javaClass.add(null);
-
-        dataLayout.addNode(fieldDeclaration);
-        dataLayout.addNode(constDecl);
-        dataLayout.addNode(methodDecl);
-
-        javaClass.addNode(dataLayout);
-        javaClass.addNode(vtable);
-
-        return javaClass;
-    }
-
-    public GNode createMethNode(String methName, String ret, String params){
-
-        GNode methNode = GNode.create("MethodDeclaration");
-        GNode modif = GNode.create("Modifiers");
-        methNode.addNode(modif);
-        methNode.add(null);
-        GNode typeNode = createTypeNode(ret);
-        methNode.addNode(typeNode);
-        methNode.add(methName);
-        GNode formalParms = GNode.create("FormalParameters");
-        GNode paramNode = createFormParmNode(params);
-        formalParms.addNode(paramNode);
-        return methNode;
-
-    }
-
-    public GNode createTypeNode(String typ){
-        GNode type = GNode.create("Type");
-        GNode qfI = GNode.create("QualifiedIdentifier");
-        qfI.add(typ);
-        qfI.addNode(GNode.create("Dimensions"));
-        type.addNode(qfI);
-        return type;
-    }
-
-    public GNode createFormParmNode(String typ){
-        GNode formParm = GNode.create("FormalParameter");
-        GNode modif = GNode.create("Modifiers");
-
-        GNode type = createTypeNode(typ);
-
-        formParm.addNode(modif);
-        formParm.addNode(type);
-        formParm.add(null);
-        formParm.add(null);
-        formParm.add(null);
-        return formParm;
-    }
 }
