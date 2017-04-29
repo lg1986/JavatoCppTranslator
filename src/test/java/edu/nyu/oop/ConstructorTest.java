@@ -59,12 +59,12 @@ public class ConstructorTest {
 
             // asserts
             // lines are line - 1
-            assertEquals("A::__init(new__A(),A __this , String s)", lines.get(1 - 1));    // vtable implementation for A(String s)
-            assertEquals("A::__init(new__A(),A __this )", lines.get(4 - 1));    // vtable implementation for A()
-            assertEquals("B::__init(new__B(),B __this )", lines.get(7 - 1));    // vtable implementation for B()
-            assertEquals("C::__init(new__C(),C __this )", lines.get(10 - 1));    // vtable implementation for C()
-            assertEquals("C::__init(new__C(),C __this , int i)", lines.get(13 - 1));    // vtable implementation for C(int i)
-            assertEquals("C::__init(new__C(),C __this , double d)", lines.get(16 - 1)); // vtable implementation for C(double d)
+            assertEquals("A __A::__init(A __this , String s)", lines.get(1 - 1));    // vtable implementation for A(String s)
+            assertEquals("A __A::__init(A __this )", lines.get(4 - 1));    // vtable implementation for A()
+            assertEquals("B __B::__init(B __this )", lines.get(7 - 1));    // vtable implementation for B()
+            assertEquals("C __C::__init(C __this )", lines.get(10 - 1));    // vtable implementation for C()
+            assertEquals("C __C::__init(C __this , int i)", lines.get(13 - 1));    // vtable implementation for C(int i)
+            assertEquals("C __C::__init(C __this , double d)", lines.get(16 - 1)); // vtable implementation for C(double d)
             assertEquals("a1 = A__::init(new __A(),\"test\");", lines.get(21 - 1));     // use of A(String s)
             assertEquals("a = A__::init(new __A());", lines.get(22 - 1));   // use of A()
             assertEquals("b = B__::init(new __B());", lines.get(23 - 1));  // use of B()
