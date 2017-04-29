@@ -240,6 +240,10 @@ public class jppPrinter extends Visitor {
             printWhileStatement(n,from);
         }else if(n.hasName("IntegerLiteral")){
             printIntegerLiteral(n,from);
+        }else if(n.hasName("AdditiveExpression")){
+            printAdditiveExpression(n,from);
+        }else if(n.hasName("SubscriptExpression")){
+            printSubscriptExpression(n,from);
         }
 
     }
@@ -455,6 +459,10 @@ public class jppPrinter extends Visitor {
         System.out.println("WHILE SUCCESS");
     }
 
+    public void printAdditiveExpression(Node n,String from){
+        System.out.println("IN ADDITIVE"+n);
+    }
+
     public void printType(Node n, String from) {
         for(int i =0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
@@ -479,9 +487,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
-        if(n.toString().contains("as")){
-            System.out.println("HERE" + n);
-        }
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i), "Block");
@@ -532,6 +537,9 @@ public class jppPrinter extends Visitor {
 
     }
 
+    public void printSubscriptExpression(Node n,String from){
+        System.out.println("IN SUBSCRIPT"+n);
+    }
 
     public void visitMethodDeclaration(GNode n) {
         if(!n.get(2).toString().equals("main")) {

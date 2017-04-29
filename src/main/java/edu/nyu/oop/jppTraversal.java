@@ -102,7 +102,7 @@ public class jppTraversal extends Visitor {
     //================================================================================
 
     public void getExpressionStatement(Node n, GNode currNode) {
-        GNode expNode = GNode.create("ExpressionStatement");
+       /* GNode expNode = GNode.create("ExpressionStatement");
         for(int i = 0; i<n.size(); i++) {
             if(n.get(i) != null && checkIfNode(n.get(i))) {
                 getCheckStatementNode(n.getNode(i), expNode);
@@ -110,7 +110,8 @@ public class jppTraversal extends Visitor {
                 expNode.add(n.get(i));
             }
         }
-        currNode.addNode(expNode);
+        currNode.addNode(expNode);*/
+        classNode.addNode(n);
     }
 
     public void getCallExpression(Node n, GNode currNode) {
@@ -333,6 +334,10 @@ public class jppTraversal extends Visitor {
         System.out.println("***************************");
         classNode.getNode(0).addNode(n);
         visit(n);
+    }
+
+    public void visitSubscriptExpression(GNode n){
+        classNode.getNode(0).addNode(n);
     }
 
     public void visitWhileStatement(GNode n){

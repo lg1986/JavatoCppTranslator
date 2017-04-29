@@ -34,7 +34,6 @@ __Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
 __Test025_VT __Test025::__vtable;
 int main(){ 
 __rt::Array<Object> as = new __rt::_Array<A>(10); 
-; 
  k = 0; 
 }
 }
