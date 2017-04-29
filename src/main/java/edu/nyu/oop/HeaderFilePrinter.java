@@ -95,7 +95,7 @@ public class HeaderFilePrinter extends Visitor {
 
     public void visitDataLayout(GNode n) {
         printer.pln("struct __"+currentClassName+" {");
-        printer.pln("__"+currentClassName+"_VT*"+" __vptr");
+        printer.pln("__"+currentClassName+"_VT*"+" __vptr;");
         System.out.println(n);
 //        for(int i = 0; i<n.size(); i++) {
 //            visit(n.getNode(i));
