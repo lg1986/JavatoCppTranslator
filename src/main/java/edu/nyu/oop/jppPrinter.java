@@ -24,8 +24,6 @@ public class jppPrinter extends Visitor {
     private String currentClassName;
     private String currentC;
     private boolean fieldMethod = false;
-    private boolean arrayField = false;
-    private String arrayVar;
 
     private String callExpIdentifier;
     private boolean fieldInitializer = false;
@@ -244,13 +242,18 @@ public class jppPrinter extends Visitor {
             printAdditiveExpression(n,from);
         }else if(n.hasName("SubscriptExpression")){
             printSubscriptExpression(n,from);
+        } else if(n.hasName("Expression")){
+            System.out.println("\nhere! \n");
+            printExpression(n,from);
         }
 
     }
 
+
+
     public void printPrimaryIdentifier(Node n, String from) {
-        String varName = n.get(0).toString();
-        printer.p(n.get(0).toString().replace("\"", ""));
+/*        String varName = n.get(0).toString();
+        //printer.p(n.get(0).toString().replace("\"", "") + "HELLO");
         if(from.equals("CallExpression")) {
             if(fieldMethod) printer.p("->__vptr->");
 
@@ -262,6 +265,9 @@ public class jppPrinter extends Visitor {
             printer.p("->__vptr->");
             printer.p(varName);
         }
+        if(from.equals("SubscriptExpression")){
+            printer.p("(*"+varName+")");
+        }*/
     }
 
     public void printQualifiedIdentifier(Node n, String from) {
@@ -274,7 +280,7 @@ public class jppPrinter extends Visitor {
         }
         if(from.equals("printType")){
             printer.p("__rt::Array<"+n.get(0).toString()+">");
-            arrayField = true;
+
         }
         //printer.p(n.get(0).toString().replace("\"", ""));
         // printer.p(n.get(0).toString().replace("\"", ""));
@@ -314,39 +320,59 @@ public class jppPrinter extends Visitor {
         }
     }
 
+    public void printExpression(Node n, String from){
+        for(int i = 0; i < n.size(); i++){
+            if(checkIfNode(n.get(i)))
+                printCheckStatementNode(n.getNode(i),from);
+            else{
+                System.out.println("Expression finally decided to cooperate");
+            }
+        }
+
+    }
+
     public void printExpressionStatement(Node n, String from) {
         System.out.println("\n exp st n = " + n + "\n");
         //System.out.println("\n exp st n2 = " + n + "\n");
+        System.out.println("EXP ST : "+ n);
+
         if(n.size() > 0) {
-            if (n.get(0).toString().contains("Arguments(CallExpression")) {
-                fieldMethod = true;
-            }
+                // this checks if the arugments has a call expression and if it does sets it to true
+                // so that we know when to print the ->__vptr->
+                if (n.get(0).toString().contains("Arguments(CallExpression")) {
+                    fieldMethod = true;}
 
-            for (int i = 0; i < n.size(); i++) {
-                try {
-                    String one = n.getNode(0).getNode(0).get(0).toString();
-                    //System.out.println("\n one: " + one);
-                    if (one.equals("ThisExpression(null)")) {
-                        String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
-                        one = n.getNode(0).getNode(0).get(1).toString();
-                        printer.p(thisKeyword + ".");
-                        printer.p(one);
-                    } else if ("PrimaryIdentifier(\"System\")".equals(one)) {
-                    } else {
-                        printer.p(one + " ");
-                        String two = n.getNode(0).get(1).toString();
-                        printer.p(two + " ");
-                        String three = n.getNode(0).getNode(2).get(0).toString();
-                        printer.p(three);
+
+                for (int i = 0; i < n.size(); i++) {
+
+                    try {
+                        String one = n.getNode(0).getNode(0).get(0).toString();
+                        //System.out.println("\n one: " + one);
+                        if (one.equals("ThisExpression(null)")) {
+                            String thisKeyword = n.getNode(0).getNode(0).get(0).toString();
+                            one = n.getNode(0).getNode(0).get(1).toString();
+                            printer.p(thisKeyword + ".");
+                            printer.p(one);
+                        }  else {
+                            printer.p(one + " ");
+                            String two = n.getNode(0).get(1).toString();
+                            printer.p(two + " ");
+                            String three = n.getNode(0).getNode(2).get(0).toString();
+                            printer.p(three);
+                        }
+                    } catch (NullPointerException e) {
+                        e.getMessage();
                     }
-                } catch (NullPointerException e) {
+                    if (n.get(i) != null && checkIfNode(n.getNode(i))) {
+
+                        printCheckStatementNode(n.getNode(i), "ExpressionStatement");
+                    }
+
                 }
 
-                if (n.get(i) != null && checkIfNode(n.getNode(i))) {
-                    printCheckStatementNode(n.getNode(i), "ExpressionStatement");
                 }
-            }
-        }
+
+
     }
 
     public void printFieldDeclaration(Node n, String from) {
@@ -363,11 +389,13 @@ public class jppPrinter extends Visitor {
 //        } catch (ClassCastException e) {}
        // System.out.println("IN FIELD: "+n);
 
-        for(int i = 0; i < n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                printCheckStatementNode(n.getNode(i), "FieldDeclaration");
+            for(int i = 0; i < n.size(); i++) {
+                if(n.get(i) != null && checkIfNode(n.get(i))) {
+                    printCheckStatementNode(n.getNode(i), "FieldDeclaration");
+                }
             }
-        }
+
+
     }
     public void printDeclarator(Node n, String from) {
 
@@ -409,8 +437,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printThisExpression(Node n, String from) {
-
-        //printer.p("\nIN THIS\n");
         printCheckStatementNode(n.getNode(0), "ThisExpression");
     }
 
@@ -422,7 +448,6 @@ public class jppPrinter extends Visitor {
     }
 
     public void printFormalParameters(Node n, String from) {
-
         if(from.equals("FieldDeclaration")) {
             printer.p(currentC+" __this ");
         } else {
@@ -480,6 +505,7 @@ public class jppPrinter extends Visitor {
                 printCheckStatementNode(n.getNode(i), from);
             }
         }
+
     }
 
     public void printType(Node n, String from) {
@@ -502,6 +528,7 @@ public class jppPrinter extends Visitor {
     }
 
     public void printIntegerLiteral(Node n, String from){
+
         printer.p(n.get(0).toString());
     }
 
@@ -557,7 +584,12 @@ public class jppPrinter extends Visitor {
     }
 
     public void printSubscriptExpression(Node n,String from){
-        System.out.println("IN SUBSCRIPT"+n);
+        for(int i = 0; i < n.size(); i++){
+            if(checkIfNode(n.get(i))){
+                printCheckStatementNode(n.getNode(i),"SubscriptExpression");
+            }
+        }
+
     }
 
     public void visitMethodDeclaration(GNode n) {
