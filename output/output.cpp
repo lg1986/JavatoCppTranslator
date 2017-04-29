@@ -9,35 +9,26 @@ __A::__A() : __vptr(&__vtable) Class __A::__class() {
   return k;
 }
 __A_VT __A::__vtable;
-A::__init(new__A(),A __this , int i) { 
- = ; 
-__Object::__init((Object)__this);
-}
-int32_t __A::get(A __this ) { 
-return ; 
-__B::__B() : __vptr(&__vtable) Class __B::__class() {
+__B::__B() : __vptr(&__vtable) 
+public int x = 5;
+Class __B::__class() {
   static Class k = 
     new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
   return k;
 }
 __B_VT __B::__vtable;
-B::__init(new__B(),B __this , int i) { 
-super(); 
-}
-int32_t __B::get(B __this ) { 
-return ; 
-__Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
+__C::__C() : __vptr(&__vtable) Class __C::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.C"), __Object::__class());
   return k;
 }
-__Test025_VT __Test025::__vtable;
-int main(){ 
-__rt::Array<Object> as = new __rt::_Array<A>(10); 
-(*as)[0] = __rt::literal(3); 
- k = 0; 
-; 
-__rt::checkNotNull();
-__rt::checkIndex();}
+__C_VT __C::__vtable;
+__ConstructorTest::__ConstructorTest() : __vptr(&__vtable) Class __ConstructorTest::__class() {
+  static Class k = 
+    new __Class(__rt::literal("nyu.edu.oop.ConstructorTest"), __Object::__class());
+  return k;
+}
+__ConstructorTest_VT __ConstructorTest::__vtable;
+}
 }
 }

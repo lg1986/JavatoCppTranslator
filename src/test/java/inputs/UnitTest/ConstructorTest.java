@@ -11,6 +11,7 @@ class A {
 }
 
 class B {
+    public int x = 5;
 
 }
 

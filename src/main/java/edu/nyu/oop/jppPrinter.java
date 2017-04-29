@@ -517,7 +517,7 @@ public class jppPrinter extends Visitor {
 
         if(nullConstructor == false) {
             String className = n.get(2).toString().replace("()", "").toString();
-            String constructor = className + "::__init(new__" + className + "(),";
+            String constructor = className + " __" + className + "::__init(new__" + className + "(),";
             printer.p(constructor);
             printFieldDeclaration(n,from);
 
