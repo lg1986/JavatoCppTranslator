@@ -24,7 +24,7 @@ class B extends A {
 public class Test025 {
     public static void main(String[] args) {
         Object[] as = new A[10];
-        as[0] = 5;
+        as[0] = new B(3);
        // for(int i = 0; i < as.length; i++) {
         //    as[i] = new B(i);
         //}
