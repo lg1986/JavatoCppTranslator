@@ -6,11 +6,14 @@ import java.io.Reader;
 import java.util.List;
 
 import edu.nyu.oop.util.NodeUtil;
+import edu.nyu.oop.util.SymbolTableBuilder;
 import edu.nyu.oop.util.XtcProps;
 import org.slf4j.Logger;
 
+import xtc.lang.JavaPrinter;
 import xtc.tree.GNode;
 import xtc.tree.Node;
+import xtc.util.SymbolTable;
 import xtc.util.Tool;
 import xtc.parser.ParseException;
 
@@ -41,6 +44,7 @@ public class Boot extends Tool {
 
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
                 bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
+                bool("completeMemberAccesses", "completeMemberAccesses", false, "Make all receivers of member accesses explicit.").
                 bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
 
     }
@@ -82,6 +86,7 @@ public class Boot extends Tool {
          * Command - "runxtc -createAllAST <path-to-file>"
          */
         if(runtime.test("createAllAST")) {
+
             DependencyAstVisitor visitor = new DependencyAstVisitor();
             List<GNode> astVisit = visitor.getDependencyAsts(n);
             for(GNode ast: astVisit){
@@ -97,6 +102,12 @@ public class Boot extends Tool {
             }
         }
 
+        if (runtime.test("completeMemberAccesses")) {
+            SymbolTable table = new SymbolTableBuilder(runtime).getTable(n);
+            new MemberAccessCompleter(runtime, table).dispatch(n);
+            new JavaPrinter(runtime.console()).dispatch(n);
+//            runtime.console().flush();
+        }
 
 
     }

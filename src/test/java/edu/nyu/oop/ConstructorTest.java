@@ -34,12 +34,12 @@ public class ConstructorTest {
     @Before
     public void beforeTest() {
         System.out.println("Executing ConstructorTest");
-        try {
-                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
-                jppPrinter jpp = new jppPrinter(n);
-            } catch (IOException e) {
-
-            }
+//        try {
+//                CreateHeaderDataLayout head = new CreateHeaderDataLayout(n);
+//                jppPrinter jpp = new jppPrinter(n);
+//            } catch (IOException e) {
+//
+//            }
     }
 
 

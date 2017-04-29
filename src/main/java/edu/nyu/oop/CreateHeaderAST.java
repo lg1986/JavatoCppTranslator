@@ -1,8 +1,11 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.ContextualVisitor;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
+import xtc.util.Runtime;
+import xtc.util.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +13,8 @@ import java.util.List;
 /**
  * Created by rishabh on 22/04/17.
  */
-public class CreateHeaderAST extends Visitor {
+public class CreateHeaderAST extends Visitor{
+
     public List<GNode> headerASTs = new ArrayList<GNode>();
 
     protected GNode dataLayoutNode;
@@ -39,9 +43,6 @@ public class CreateHeaderAST extends Visitor {
         }
         return details;
     }
-
-
-
 
     public GNode getFormalParameter(Node n){
         String typ = n.getNode(1).getNode(0).getString(0);
@@ -98,13 +99,10 @@ public class CreateHeaderAST extends Visitor {
     }
 
     public GNode getExtenderNode(Node n){
-
         String typ = n.getNode(0).getNode(0).getString(0);
         GNode extenderNode = GNode.create("Extension");
         extenderNode.add(typ);
         return extenderNode;
-
-
     }
 
     public void visitClassDeclaration(GNode n){

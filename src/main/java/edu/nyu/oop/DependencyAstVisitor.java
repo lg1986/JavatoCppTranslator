@@ -12,9 +12,13 @@
 
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.ContextualVisitor;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
+import xtc.util.SymbolTable;
+import xtc.util.Runtime;
+
 import edu.nyu.oop.util.JavaFiveImportParser;
 
 import java.util.*;
@@ -25,9 +29,12 @@ import java.util.*;
  * and provides the required
  * recursive parsing functionality.
  */
-public class DependencyAstVisitor extends Visitor {
+public class DependencyAstVisitor  extends Visitor{
 
     public HashSet<GNode> dependencyAsts = new HashSet<>();
+
+
+
 
     /**
      * Method to interface with this class.
