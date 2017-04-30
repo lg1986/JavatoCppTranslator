@@ -107,8 +107,9 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("struct __"+currentClassName+"_VT {");
         printer.pln("Class __is_a;");
         printer.pln("void (*__delete)(__" + currentClassName + "*);");
-//        System.out.println(n);
         visitMethodDeclarationsVTable(n.getNode(0));
+
+
         printer.pln("__"+currentClassName+"_VT()");
         printer.indent();
         printer.indentMore();
@@ -137,12 +138,13 @@ public class HeaderFilePrinter extends Visitor {
         } else {
             printer.p(n.get(0).toString() + " " + n.get(1).toString());
         }
-        printer.p("("+currentClassName);
-        if(n.getNode(2).size() > 0) {
-            for(int i = 0; i<n.getNode(2).size(); i++) {
-                visitFormalParameter(n.getNode(2).getNode(i));
-            }
-        }
+//        printer.p("("+currentClassName);
+//        if(n.getNode(2).size() > 0) {
+//            for(int i = 0; i<n.getNode(2).size(); i++) {
+//                visitFormalParameter(n.getNode(2).getNode(i));
+//            }
+//        }
+        printer.p(getParamString(n.getNode(2)));
         printer.pln(");");
     }
 
@@ -159,6 +161,15 @@ public class HeaderFilePrinter extends Visitor {
      * @param n
      */
 
+    public String getParamString(Node n) {
+        String paramString = "("+currentClassName;
+        for(int i = 0; i < n.size(); i++) {
+            paramString += "," + n.getNode(i).getString(0);
+        }
+        paramString +=")";
+        return paramString;
+    }
+
     public void visitMethodDeclarationsVTable(Node n) {
         for(int i = 0; i<n.size(); i++) {
             visitMethodDeclarationVTable(n.getNode(i));
@@ -171,9 +182,9 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
         else  ret = (n.get(0).toString()+" ");
-
+        String paramString = getParamString(n.getNode(2));
         if(!n.getString(3).equals(currentClassName))
-            printer.pln(ret+"(*"+methName+")"+"("+currentClassName+");");
+            printer.pln(ret+"(*"+methName+")"+paramString+";");
         else
             printer.pln(ret+"(__"+currentClassName+"::"+methName+");");
     }
@@ -196,10 +207,9 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
         else  ret = (n.get(0).toString()+" ");
-
+        String paramString = getParamString(n.getNode(2));
         if(!n.getString(3).equals(methName))
-            printer.p(methName+"(("+ret+"(*)("+currentClassName+"" +
-                      "))&__"+n.getString(3)+"::"+methName+")");
+            printer.p(methName+"(("+ret+"(*)"+paramString+")&__"+n.getString(3)+"::"+methName+")");
         else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
     }
 

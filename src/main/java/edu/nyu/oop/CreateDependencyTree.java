@@ -474,12 +474,14 @@ public class CreateDependencyTree extends Visitor {
     public GNode createFormParmNode(String typ) {
         if(typ != null) {
             GNode formParm = GNode.create("FormalParameter");
-            GNode modif = GNode.create("Modifiers");
-
-            GNode type = createTypeNode(typ);
-
-            formParm.addNode(modif);
-            formParm.addNode(type);
+//            GNode modif = GNode.create("Modifiers");
+//
+//            GNode type = createTypeNode(typ);
+//
+//            formParm.addNode(modif);
+//            formParm.addNode(type);
+            formParm.add(typ);
+            formParm.add("o");
 
             return formParm;
         }
