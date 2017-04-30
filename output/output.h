@@ -13,7 +13,7 @@ struct __A
 {
     __A_VT* __vptr;
     __A();
-    A self
+    A self(A);
 };
 struct __A_VT
 {
@@ -40,7 +40,7 @@ struct __A_VT
 {
     __Test017_VT* __vptr;
     __Test017();
-    void main
+    void main(Test017, String);
 };
 struct __Test017_VT
 {

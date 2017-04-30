@@ -125,19 +125,25 @@ public class HeaderFilePrinter extends Visitor {
         else return false;
     }
 
+
+    public void visitFormalParameter(Node n) {
+        printer.p(", "+n.getString(0));
+    }
     public void visitMethodDeclaration(Node n) {
+        System.out.println(n);
         if(checkIfNode(n.get(0))) {
             String ret = getReturnType(n);
-            printer.pln(ret + " " +n.get(1).toString());
+            printer.p(ret + " " +n.get(1).toString());
         } else {
-            printer.pln(n.get(0).toString() + " " + n.get(1).toString());
-            /*
-            if (n.get(3) != null) {
-                printer.p(n.get(3).toString());//above, printing A self instead of A self(A);
-            }
-            */
+            printer.p(n.get(0).toString() + " " + n.get(1).toString());
         }
-        visit(n);
+        printer.p("("+currentClassName);
+        if(n.getNode(2).size() > 0) {
+            for(int i = 0; i<n.getNode(2).size(); i++) {
+                visitFormalParameter(n.getNode(2).getNode(i));
+            }
+        }
+        printer.pln(");");
     }
 
     public void visitMethodDeclarations(Node  n) {
