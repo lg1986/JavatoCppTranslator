@@ -25,15 +25,15 @@ struct __A_VT
     bool (*equals)(A);
     Class (*getClass)(A);
     String (*toString)(A);
-    A (*self)(A);
+    A (__A::self);
     __A_VT()
         : __is_a(__A::__class()),
           __delete(&__rt::__delete<__A>),
-          ((int32_t (*)(A))&__Object::hashCode),
-          ((bool (*)(A))&__Object::equals),
-          ((Class (*)(A))&__Object::getClass),
-          ((String (*)(A))&__Object::toString),
-          ((A (*)(A))&__A::self),
+          hashCode((int32_t (*)(A))&__Object::hashCode),
+          equals((bool (*)(A))&__Object::equals),
+          getClass((Class (*)(A))&__Object::getClass),
+          toString((String (*)(A))&__Object::toString),
+          self((A (*)(A))&__A::self),
     };
     struct __Test017;
     struct __Test017_VT;
@@ -52,15 +52,15 @@ struct __Test017_VT
     bool (*equals)(Test017);
     Class (*getClass)(Test017);
     String (*toString)(Test017);
-    void (*main)(Test017);
+    void (__Test017::main);
     __Test017_VT()
         : __is_a(__Test017::__class()),
           __delete(&__rt::__delete<__Test017>),
-          ((int32_t (*)(Test017))&__Object::hashCode),
-          ((bool (*)(Test017))&__Object::equals),
-          ((Class (*)(Test017))&__Object::getClass),
-          ((String (*)(Test017))&__Object::toString),
-          ((void (*)(Test017))&__Test017::main),
+          hashCode((int32_t (*)(Test017))&__Object::hashCode),
+          equals((bool (*)(Test017))&__Object::equals),
+          getClass((Class (*)(Test017))&__Object::getClass),
+          toString((String (*)(Test017))&__Object::toString),
+          main((void (*)(Test017))&__Test017::main),
     };
     };
     };

@@ -122,14 +122,10 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("};");
     }
 
-
-
     public boolean checkIfNode(Object n) {
         if(n.getClass().toString().equals("Node")) return true;
         else return false;
     }
-
-
 
     public void visitMethodDeclaration(Node n) {
         if(checkIfNode(n.get(0))) {
@@ -145,8 +141,6 @@ public class HeaderFilePrinter extends Visitor {
         }
         visit(n);
     }
-
-
 
     public void visitMethodDeclarations(Node  n) {
         System.out.println(n);
@@ -172,14 +166,17 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
         else  ret = (n.get(0).toString()+" ");
-        printer.p(ret+"(*"+methName+")"+"("+currentClassName+");");
+
+        if(!n.getString(3).equals(currentClassName))
+            printer.pln(ret+"(*"+methName+")"+"("+currentClassName+");");
+        else
+            printer.pln(ret+"(__"+currentClassName+"::"+methName+");");
     }
 
     /**
      * VTable A_VT
      * @param n
      */
-
     public void visitMethodDeclarationVTableMethods(Node n) {
         for(int i = 0; i < n.size(); i++) {
             visitMethodDeclarationVTableMethod((GNode) n.getNode(i));
@@ -193,8 +190,12 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
         else  ret = (n.get(0).toString()+" ");
-        printer.pln("(("+ret+"(*)("+currentClassName+"" +
-                    "))&__"+n.getString(3)+"::"+methName+"),");
+
+        if(!n.getString(3).equals(methName))
+            printer.pln(methName+"(("+ret+"(*)("+currentClassName+"" +
+                        "))&__"+n.getString(3)+"::"+methName+"),");
+        else
+            printer.pln(methName+"(__"+currentClassName+"::"+methName+")");
     }
 
 
