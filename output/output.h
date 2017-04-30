@@ -2,11 +2,9 @@
 #include "java_lang.h"
 using namespace nyu::edu::oop;
 
-namespace nyu
+namespace inputs
 {
-namespace edu
-{
-namespace oop
+namespace test017
 {
 struct __A;
 struct __A_VT;
@@ -33,7 +31,7 @@ struct __A_VT
           equals((bool (*)(A))&__Object::equals),
           getClass((Class (*)(A))&__Object::getClass),
           toString((String (*)(A))&__Object::toString),
-          self((A (*)(A))&__A::self),
+          self((A (*)(A))&__A::self)
     };
     struct __Test017;
     struct __Test017_VT;
@@ -60,8 +58,7 @@ struct __Test017_VT
           equals((bool (*)(Test017))&__Object::equals),
           getClass((Class (*)(Test017))&__Object::getClass),
           toString((String (*)(Test017))&__Object::toString),
-          main((void (*)(Test017))&__Test017::main),
-    };
+          main((void (*)(Test017))&__Test017::main)
     };
     };
     };

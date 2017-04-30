@@ -35,7 +35,7 @@ public class HeaderFilePrinter extends Visitor {
         } catch (Exception e) {
             throw new RuntimeException("Output loc");
         }
-        writeStartBaseLayout();
+        writeStartBaseLayout(asts.get(0).getString(0));
         collect(asts);
         writeEndBaseLayout();
         printer.flush();
@@ -47,13 +47,12 @@ public class HeaderFilePrinter extends Visitor {
      * @throws IOException
      */
 
-    public void writeStartBaseLayout() throws IOException {
+    public void writeStartBaseLayout(String packageName) throws IOException {
         printer.pln("#pragma once");
         printer.pln("#include \"java_lang.h\"");
         printer.pln("using namespace nyu::edu::oop;\n");
-        printer.pln("namespace nyu{");
-        printer.pln("namespace edu{");
-        printer.pln("namespace oop{");
+        printer.pln("namespace inputs{");
+        printer.pln("namespace "+packageName+"{");
     }
 
     /**
@@ -63,7 +62,6 @@ public class HeaderFilePrinter extends Visitor {
      */
 
     public void writeEndBaseLayout() throws IOException {
-        printer.pln("};");
         printer.pln("};");
         printer.pln("};");
     }
@@ -115,7 +113,7 @@ public class HeaderFilePrinter extends Visitor {
         printer.indent();
         printer.indentMore();
         printer.pln(": __is_a(__"+currentClassName+"::__class()),");
-        printer.pln("__delete(&__rt::__delete<__"+currentClassName+">),");
+        printer.p("__delete(&__rt::__delete<__"+currentClassName+">)");
         visitMethodDeclarationVTableMethods(n.getNode(0));
         printer.indentLess();
 
@@ -162,6 +160,7 @@ public class HeaderFilePrinter extends Visitor {
     }
 
     public void visitMethodDeclarationVTable(Node n) {
+
         String methName = n.getString(1);
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
@@ -186,16 +185,16 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitMethodDeclarationVTableMethod(Node n) {
+        printer.pln(",");
         String methName = n.getString(1);
         String ret;
         if(checkIfNode(n.get(0))) ret = getReturnType(n);
         else  ret = (n.get(0).toString()+" ");
 
         if(!n.getString(3).equals(methName))
-            printer.pln(methName+"(("+ret+"(*)("+currentClassName+"" +
-                        "))&__"+n.getString(3)+"::"+methName+"),");
-        else
-            printer.pln(methName+"(__"+currentClassName+"::"+methName+")");
+            printer.p(methName+"(("+ret+"(*)("+currentClassName+"" +
+                      "))&__"+n.getString(3)+"::"+methName+")");
+        else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
     }
 
 
