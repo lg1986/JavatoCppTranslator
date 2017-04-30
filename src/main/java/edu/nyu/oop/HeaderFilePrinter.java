@@ -131,25 +131,18 @@ public class HeaderFilePrinter extends Visitor {
         printer.p(", "+n.getString(0));
     }
     public void visitMethodDeclaration(Node n) {
-        System.out.println(n);
+        printer.p("static ");
         if(checkIfNode(n.get(0))) {
             String ret = getReturnType(n);
             printer.p(ret + " " +n.get(1).toString());
         } else {
             printer.p(n.get(0).toString() + " " + n.get(1).toString());
         }
-//        printer.p("("+currentClassName);
-//        if(n.getNode(2).size() > 0) {
-//            for(int i = 0; i<n.getNode(2).size(); i++) {
-//                visitFormalParameter(n.getNode(2).getNode(i));
-//            }
-//        }
         printer.p(getParamString(n.getNode(2)));
         printer.pln(");");
     }
 
     public void visitMethodDeclarations(Node  n) {
-        System.out.println(n);
         for(int i = 0; i <n.size(); i++) {
             visitMethodDeclaration(n.getNode(i));
         }
@@ -218,14 +211,16 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitConstructorDeclaration(Node n) {
-        visit(n);
+        System.out.println(n);
+
     }
 
 
 
     public void visitConstructorDeclarations(Node n) {
+
         for(int i = 0; i <n.size(); i++) {
-            visit(n.getNode(i));
+            visitConstructorDeclaration(n.getNode(i));
         }
     }
 

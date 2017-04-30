@@ -357,6 +357,9 @@ public class CreateDependencyTree extends Visitor {
      */
     public GNode getInheritedStructure(TreeNode n) {
         Node orignal = n.ast;
+        GNode originalConsts =GNode.ensureVariable((GNode)
+                              n.ast.getNode(3).getNode(1));
+
         GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
         if(inherit.size() == 1) return (GNode)inherit.get(0).ast;
@@ -377,6 +380,8 @@ public class CreateDependencyTree extends Visitor {
                 stackItUp(inherit.get(i).ast, inheritSim);
             }
 
+
+            dataLayoutNode.set(1, originalConsts);
             GNode vtableNode = GNode.create("VTableNode");
             vtableNode.addNode(dataLayoutNode.getNode(2));
             inheritSim.addNode(vtableNode);
@@ -474,12 +479,6 @@ public class CreateDependencyTree extends Visitor {
     public GNode createFormParmNode(String typ) {
         if(typ != null) {
             GNode formParm = GNode.create("FormalParameter");
-//            GNode modif = GNode.create("Modifiers");
-//
-//            GNode type = createTypeNode(typ);
-//
-//            formParm.addNode(modif);
-//            formParm.addNode(type);
             formParm.add(typ);
             formParm.add("o");
 
