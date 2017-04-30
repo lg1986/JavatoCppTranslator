@@ -367,9 +367,9 @@ public class CreateDependencyTree extends Visitor {
             inheritSim.addNode(orignal.getNode(2));
 
             GNode dataLayoutNode = GNode.create("DataLayout");
-            dataLayoutNode.add(GNode.create("FieldDeclaration"));
-            dataLayoutNode.add(GNode.create("ConstructorDeclaration"));
-            dataLayoutNode.add(GNode.create("MethodDeclaration"));
+            dataLayoutNode.add(GNode.create("FieldDeclarations"));
+            dataLayoutNode.add(GNode.create("ConstructorDeclarations"));
+            dataLayoutNode.add(GNode.create("MethodDeclarations"));
 
             inheritSim.addNode(dataLayoutNode);
 
@@ -414,14 +414,17 @@ public class CreateDependencyTree extends Visitor {
             createMethNode("hashCode",
                            "int32_t", null));
         methodDecl.addNode(
-            createMethNode("toString",
-                           "String", null));
-        methodDecl.addNode(
-            createMethNode("getClass",
-                           "String", null));
-        methodDecl.addNode(
             createMethNode("equals",
                            "bool", "Object"));
+
+        methodDecl.addNode(
+            createMethNode("getClass",
+                           "Class", null));
+
+        methodDecl.addNode(
+            createMethNode("toString",
+                           "String", null));
+
 
         GNode dataLayout = GNode.create("DataLayoutNode");
         GNode vtable = GNode.create("VTableNode");
@@ -445,13 +448,8 @@ public class CreateDependencyTree extends Visitor {
     public GNode createMethNode(String methName, String ret, String params) {
 
         GNode methNode = GNode.create("MethodDeclaration");
-        GNode modif = GNode.create("Modifiers");
-
-        methNode.addNode(modif);
+        methNode.add(ret);
         methNode.add(methName);
-//        methNode.add(null);
-        GNode typeNode = createTypeNode(ret);
-        methNode.addNode(typeNode);
 
         GNode formalParms = GNode.create("FormalParameters");
         GNode paramNode = createFormParmNode(params);
@@ -460,8 +458,8 @@ public class CreateDependencyTree extends Visitor {
 
         }
         methNode.addNode(formalParms);
+        methNode.add("Object");
         return methNode;
-
     }
 
     public GNode createTypeNode(String typ) {

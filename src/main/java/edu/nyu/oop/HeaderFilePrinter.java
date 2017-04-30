@@ -96,12 +96,11 @@ public class HeaderFilePrinter extends Visitor {
     public void visitDataLayout(GNode n) {
         printer.pln("struct __"+currentClassName+" {");
         printer.pln("__"+currentClassName+"_VT*"+" __vptr;");
-        System.out.println(n);
-//        for(int i = 0; i<n.size(); i++) {
-//            visit(n.getNode(i));
-//        }
+
         printer.pln("__" + currentClassName + "();");
         visitMethodDeclarations(n.getNode(2));
+        visitFieldDeclarations((GNode)n.getNode(0));
+        visitConstructorDeclarations(n.getNode(1));
         printer.pln("};");
     }
 
@@ -110,14 +109,16 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("struct __"+currentClassName+"_VT {");
         printer.pln("Class __is_a;");
         printer.pln("void (*__delete)(__" + currentClassName + "*);");
-        visitMethodDeclarationsVTable(n);
+//        System.out.println(n);
+        visitMethodDeclarationsVTable(n.getNode(0));
         printer.pln("__"+currentClassName+"_VT()");
         printer.indent();
         printer.indentMore();
         printer.pln(": __is_a(__"+currentClassName+"::__class()),");
         printer.pln("__delete(&__rt::__delete<__"+currentClassName+">),");
-        visitMethodDeclarationVTableMethods(n);
+        visitMethodDeclarationVTableMethods(n.getNode(0));
         printer.indentLess();
+
         printer.pln("};");
     }
 
@@ -131,7 +132,6 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitMethodDeclaration(Node n) {
-        System.out.println("METHOD DECLARATION NODE HERE: " + n);
         if(checkIfNode(n.get(0))) {
             String ret = getReturnType(n);
             printer.pln(ret + " " +n.get(1).toString());
@@ -143,21 +143,42 @@ public class HeaderFilePrinter extends Visitor {
             }
             */
         }
-        printer.pln(n.get(0) +" " +"__init(" + currentClassName+ ");");
         visit(n);
     }
 
 
 
     public void visitMethodDeclarations(Node  n) {
-        System.out.println(" HERE HERE! ");
+        System.out.println(n);
         for(int i = 0; i <n.size(); i++) {
             visitMethodDeclaration(n.getNode(i));
         }
 
     }
 
+    /**
+     * A_VT top part - layout
+     * @param n
+     */
 
+    public void visitMethodDeclarationsVTable(Node n) {
+        for(int i = 0; i<n.size(); i++) {
+            visitMethodDeclarationVTable(n.getNode(i));
+        }
+    }
+
+    public void visitMethodDeclarationVTable(Node n) {
+        String methName = n.getString(1);
+        String ret;
+        if(checkIfNode(n.get(0))) ret = getReturnType(n);
+        else  ret = (n.get(0).toString()+" ");
+        printer.p(ret+"(*"+methName+")"+"("+currentClassName+");");
+    }
+
+    /**
+     * VTable A_VT
+     * @param n
+     */
 
     public void visitMethodDeclarationVTableMethods(Node n) {
         for(int i = 0; i < n.size(); i++) {
@@ -168,20 +189,17 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitMethodDeclarationVTableMethod(Node n) {
-        System.out.println("METHOD DECLARATION VTABLE NODE: " + n);
+        String methName = n.getString(1);
+        String ret;
+        if(checkIfNode(n.get(0))) ret = getReturnType(n);
+        else  ret = (n.get(0).toString()+" ");
+        printer.pln("(("+ret+"(*)("+currentClassName+"" +
+                    "))&__"+n.getString(3)+"::"+methName+"),");
     }
 
 
 
-    public void visitMethodDeclarationsVTable(Node n) {
-        for(int i = 0; i<n.size(); i++) {
-            visitMethodDeclarationVTable(n.getNode(i));
-        }
-    }
 
-    public void visitMethodDeclarationVTable(Node n) {
-
-    }
 
     public void visitConstructorDeclaration(Node n) {
         visit(n);
