@@ -49,11 +49,11 @@ java::lang::Object null();
 
 java::lang::String literal(const char*);
 
+// The template function for the virtual destructor.
 template <typename T>
-+  void __delete(T* addr)
+void __delete(T* addr)
 {
-    +    delete addr;
-    +
+    delete addr;
 }
 
 }
@@ -191,7 +191,7 @@ struct __String_VT
     // The dynamic type.
     Class __is_a;
 
-    void (*__delete)(__Class*);
+    void (*__delete)(__String*);
     int32_t (*hashCode)(String);
     bool (*equals)(String, Object);
     Class (*getClass)(String);
@@ -350,13 +350,6 @@ inline java::lang::String literal(const char * s)
 
 // ========================================================================
 
-static void __delete(__Array<T>* addr)
-{
-    +      delete[] addr->__data;
-    +      delete addr;
-    +
-}
-
 // Forward declarations of data layout and vtable.
 template <typename T>
 struct __Array;
@@ -381,6 +374,13 @@ struct __Array
     __Array(const int32_t length)
         : __vptr(&__vtable), length(length), __data(new T[length]())
     {
+    }
+
+    // The destructor.
+    static void __delete(__Array<T>* addr)
+    {
+        delete[] addr->__data;
+        delete addr;
     }
 
     // overload array subscript operators for convenient bounds-checked array access
@@ -411,9 +411,10 @@ struct __Array
 template <typename T>
 struct __Array_VT
 {
-    typedef Ptr<Array<T> > Reference;
+    typedef Array<T> Reference;
 
     java::lang::Class __is_a;
+    void (*__delete)(__Array<T>*);
     int32_t (*hashCode)(Reference);
     bool (*equals)(Reference, java::lang::Object);
     java::lang::Class (*getClass)(Reference);
@@ -421,8 +422,7 @@ struct __Array_VT
 
     __Array_VT()
         : __is_a(__Array<T>::__class()),
-
-          __delete(&Array<T>::__delete),
+          __delete(&__Array<T>::__delete),
           hashCode((int32_t(*)(Reference))
                    &java::lang::__Object::hashCode),
           equals((bool(*)(Reference,java::lang::Object))
@@ -467,35 +467,29 @@ void checkIndex(Array<T> array, int32_t index)
 
 // Template function to check array stores.
 template <typename T, typename U>
-void checkStore(Ptr<Array<T> > array, U object)
+void checkStore(Array<T> array, U object)
 {
     if (null() != (java::lang::Object) object)
     {
         java::lang::Class t1 = array->__vptr->getClass(array);
         java::lang::Class t2 = t1->__vptr->getComponentType(t1);
 
-        if (! t2->__vptr->isInstance(t2, object))
+        if (! t2->__vptr->isInstance(t2, (java::lang::Object) object))
         {
             throw java::lang::ArrayStoreException();
         }
     }
 }
 
-template <typename T, typename U>
-+  T java_cast(U object)
+template<typename T, typename U>
+T java_cast(U object)
 {
-    +    java::lang::Class k = T::value_t::__class();
-    +
-    +    if (! k->__vptr->isInstance(k, object))
-    {
-        +      throw java::lang::ClassCastException();
-        +
-    }
-    +
-    +    return T(object);
-    +
-}
-+
+    java::lang::Class c = T::value_type::__class();
 
+    if (!c->__vptr->isInstance(c, object))
+        throw java::lang::ClassCastException();
+
+    return T(object);
+}
 
 }

@@ -1,6 +1,6 @@
 package inputs.test017;
 
-class A {
+class A extends Test017{
     A self;
 
     public A(int x) {

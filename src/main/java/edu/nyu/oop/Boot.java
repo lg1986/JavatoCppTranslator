@@ -45,6 +45,8 @@ public class Boot extends Tool {
         runtime.bool("createAllAST", "createAllAST", false, "Create all ASTs").
         bool("createDependencyTree", "createDependencyTree", false, "Create Dependency Tree").
         bool("createHeaderFile", "createHeaderFile", false, "createHeaderFile").
+        bool("jppPrinter", "jppPrinter", false, "jppPrinter").
+        bool("jppTraversal", "jppTraversal",false, "jppTraversal").
         bool("completeMemberAccesses", "completeMemberAccesses", false, "Make all receivers of member accesses explicit.").
         bool("printJavaAST", "printJavaAST", false, "Print Java AST.");
 
@@ -122,6 +124,19 @@ public class Boot extends Tool {
             new MemberAccessCompleter(runtime, table).dispatch(n);
             new JavaPrinter(runtime.console()).dispatch(n);
 //            runtime.console().flush();
+        }
+
+        if(runtime.test("jppPrinter")) {
+            try {
+                JppPrinter printer = new JppPrinter(n);
+            } catch (Exception e) {
+
+            }
+
+        }
+        if(runtime.test("jppTraversal")) {
+            JppTraversal s = new JppTraversal();
+            s.getModifiedAsts(n);
         }
 
 

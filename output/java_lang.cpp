@@ -20,7 +20,7 @@ int32_t __Object::hashCode(Object __this)
 // java.lang.Object.equals(Object)
 bool __Object::equals(Object __this, Object other)
 {
-    return __this.raw() == other.raw();
+    return __this == other;
 }
 
 // java.lang.Object.getClass()
@@ -44,8 +44,7 @@ String __Object::toString(Object __this)
 // Internal accessor for java.lang.Object's class.
 Class __Object::__class()
 {
-    static Class k =
-        new __Class(__rt::literal("java.lang.Object"), __rt::null());
+    static Class k = new __Class(__rt::literal("java.lang.Object"), __rt::null());
     return k;
 }
 
@@ -76,12 +75,6 @@ int32_t __String::hashCode(String __this)
     }
 
     return hash;
-}
-
-// java.lang.Class.isArray()
-bool __Class::isArray(Class __this)
-{
-    return __rt::null() != __this->component;
 }
 
 // java.lang.String.equals()
@@ -125,8 +118,7 @@ char __String::charAt(String __this, int32_t idx)
 // Internal accessor for java.lang.String's class.
 Class __String::__class()
 {
-    static Class k =
-        new __Class(__rt::literal("java.lang.String"), __Object::__class());
+    static Class k = new __Class(__rt::literal("java.lang.String"), __Object::__class());
     return k;
 }
 
@@ -212,7 +204,13 @@ bool __Class::isInstance(Class __this, Object o)
     {
         if (__this->__vptr->equals(__this, (Object)k)) return true;
 
-        // FIXME: handle covariance of arrays
+        // Array covariance test
+        if (__this->__vptr->isArray(__this) && k->__vptr->isArray(k))
+        {
+            // k != __this implies component type of k must not be equal to component type of __this
+            k = k->__vptr->getComponentType(k);
+            __this = __this->__vptr->getComponentType(__this);
+        }
 
         k = k->__vptr->getSuperclass(k);
     }
@@ -224,8 +222,7 @@ bool __Class::isInstance(Class __this, Object o)
 // Internal accessor for java.lang.Class' class.
 Class __Class::__class()
 {
-    static Class k =
-        new __Class(__rt::literal("java.lang.Class"), __Object::__class());
+    static Class k = new __Class(__rt::literal("java.lang.Class"), __Object::__class());
     return k;
 }
 
@@ -255,8 +252,8 @@ java::lang::Class __Array<int32_t>::__class()
     // The Class object representing int.class
     static java::lang::Class ik =
         new java::lang::__Class(__rt::literal("int"),
-                                (java::lang::Class) __rt::null(),
-                                (java::lang::Class) __rt::null(),
+                                __rt::null(),
+                                __rt::null(),
                                 true);
     // The Class object representing int[].class
     static java::lang::Class k =
