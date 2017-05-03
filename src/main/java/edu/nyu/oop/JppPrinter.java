@@ -6,6 +6,7 @@ import xtc.tree.Printer;
 import xtc.tree.Visitor;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -82,17 +83,45 @@ public class JppPrinter extends Visitor {
     }
 
 
-//    public void visitConstructorDeclaration(GNode n) {
-//
-//    }
+    public String getParamsString(Node n) {
 
-    public void visitConstructorDeclarations(GNode n){
-        System.out.println(n);
-        System.out.println(n.size());
+        String paramString = "("+currentClassName;
+        for(int i = 0; i < n.size(); i++) {
+            paramString += ",";
+            Node param = n.getNode(i);
+            paramString += " "+(param.getNode(1).getNode(0).get(0));
+            paramString += " "+param.getString(3);
+
+        }
+        paramString += ")";
+        return paramString;
+    }
+
+    public void visitConstructorDeclaration(GNode n, int constNum) {
+        currentPrinter.pln(currentClassName+" __"+
+                           currentClassName+"::__init"+
+                getParamsString(n.getNode(3))+"{");
+        if(constNum == 0) {
+            if(currentClassNode.get(EXT) != null) {
+                currentPrinter.pln(currentClassNode.get(EXT).toString());
+            } else {
+                currentPrinter.pln("__Object::__init(__this);");
+            }
+        } else {
+            currentPrinter.pln("__init(__this);");
+        }
+        currentPrinter.pln("}");
+    }
+
+    public void visitConstructorDeclarations(GNode n) {
+        for(int i = 0; i <n.size(); i++) {
+            visitConstructorDeclaration((GNode)n.getNode(i), i);
+        }
     }
 
     public void visitClassDeclaration(GNode n) {
         currentClassName = n.getString(1);
+        currentClassNode = n;
         this.currentPrinter = this.outputCppPrinter;
         printClassGenerics(n);
         visit(n);

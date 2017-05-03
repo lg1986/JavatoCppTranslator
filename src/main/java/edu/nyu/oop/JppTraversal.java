@@ -26,14 +26,14 @@ public class JppTraversal extends Visitor {
         return this.asts;
     }
 
-    public void visitFieldDeclaration(GNode n){
+    public void visitFieldDeclaration(GNode n) {
         classNode.getNode(FIELDS).addNode(n);
     }
-    public void visitMethodDeclaration(GNode n){
+    public void visitMethodDeclaration(GNode n) {
         classNode.getNode(METHOD).addNode(n);
         visit(n);
     }
-    public void visitConstructorDeclaration(GNode n){
+    public void visitConstructorDeclaration(GNode n) {
         classNode.getNode(CONSTRS).addNode(n);
         visit(n);
     }
@@ -44,7 +44,11 @@ public class JppTraversal extends Visitor {
         classNode.addNode(n.getNode(0));
         classNode.add(n.getString(1));
 
-        classNode.add(n.get(3));
+        if(n.get(3) != null) {
+            classNode.addNode(n.getNode(3));
+        } else {
+            classNode.add(null);
+        }
 
         GNode fields = GNode.create("FieldDeclarations");
         GNode meths = GNode.create("MethodDeclarations");
@@ -52,6 +56,7 @@ public class JppTraversal extends Visitor {
         classNode.addNode(fields);
         classNode.addNode(consts);
         classNode.addNode(meths);
+        classNode.addNode(n);
         visit(n);
         asts.add(classNode);
     }
