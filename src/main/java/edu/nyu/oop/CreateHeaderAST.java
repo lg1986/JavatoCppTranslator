@@ -21,6 +21,7 @@ public class CreateHeaderAST extends Visitor {
     protected GNode dataLayoutNode;
     protected String packageName;
     protected String className;
+    protected GNode vtableNode;
 
     public List<GNode> getHeaderAsts(Node n) {
         DependencyAstVisitor visitor = new DependencyAstVisitor();
@@ -73,6 +74,16 @@ public class CreateHeaderAST extends Visitor {
         }
     }
 
+    public boolean checkIfStatic(Node n) {
+        if(n.size() > 1) {
+            if (n.get(1) != null) {
+                if (n.getNode(1).getString(0).equals("static")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * MethodDeclaratioNode --
      *  Return Type, Name, FormalParams(), className
@@ -80,11 +91,17 @@ public class CreateHeaderAST extends Visitor {
      */
     public void visitMethodDeclaration(GNode n) {
         GNode methodDeclaration = GNode.create("MethodDeclaration");
+        methodDeclaration.add(n.getNode(0));
         methodDeclaration.add(getType(n.getNode(2)));
         methodDeclaration.add(n.getString(3));
         methodDeclaration.addNode(getFormalParameters(n.getNode(4)));
         methodDeclaration.add(className);
-        dataLayoutNode.getNode(2).addNode(methodDeclaration);
+        if(!checkIfStatic(n.getNode(0))) {
+            dataLayoutNode.getNode(2).addNode(methodDeclaration);
+            vtableNode.addNode(methodDeclaration);
+        } else {
+            dataLayoutNode.getNode(2).addNode(methodDeclaration);
+        }
     }
 
     public void visitConstructorDeclaration(GNode n) {
@@ -101,7 +118,6 @@ public class CreateHeaderAST extends Visitor {
         fieldDeclaration.add(typ);
         fieldDeclaration.add(name);
         dataLayoutNode.getNode(0).addNode(fieldDeclaration);
-
     }
 
     public GNode getExtenderNode(Node n) {
@@ -125,6 +141,8 @@ public class CreateHeaderAST extends Visitor {
         else classNode.add(null);
 
         dataLayoutNode = GNode.create("DataLayout");
+        vtableNode = GNode.create("VTableNode");
+
         GNode methodDeclarations = GNode.create("MethodDeclarations");
         GNode constructorDeclarations = GNode.create("ConstructorDeclarations");
         GNode fieldDeclarations = GNode.create("FieldDeclarations");
@@ -135,7 +153,7 @@ public class CreateHeaderAST extends Visitor {
 
         visit(n);
 
-        GNode vtableNode = GNode.create("VTableNode");
+
         vtableNode.addNode(dataLayoutNode.getNode(2));
 
         classNode.addNode(dataLayoutNode); // 2

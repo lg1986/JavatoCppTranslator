@@ -260,17 +260,17 @@ public class CreateDependencyTree extends Visitor {
     public Node checkMeth(Node stackMeth, Node currMethsNode, String className) {
         for(int i = 0; i<currMethsNode.size(); i++) {
             Node currMethNode = currMethsNode.getNode(i);
-            String methName = currMethNode.getString(1);
-            if(methName.equals(stackMeth.getString(1))) {
+            String methName = currMethNode.getString(2);
+            if(methName.equals(stackMeth.getString(2))) {
 
-                int loadrid = checkParams(stackMeth.getNode(2), currMethNode.getNode(2));
+                int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
 
                 if(loadrid == 1) {
                     GNode retNode = GNode.ensureVariable((GNode) stackMeth);
                     return retNode;
                 } else {
                     GNode retNode = GNode.ensureVariable((GNode) stackMeth);
-                    retNode.set(3, className);
+                    retNode.set(4, className);
                     currMethsNode.set(i, retNode);
                     return null;
                 }
@@ -349,6 +349,16 @@ public class CreateDependencyTree extends Visitor {
         stackMethods(stackMeths, currNode, currNode.getString(1));
     }
 
+    public boolean checkIfStatic(Node n) {
+        if(n.size() > 1) {
+            if (n.get(1) != null) {
+                if (n.getNode(1).getString(0).equals("static")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
     /**
      * Control Unit for constructing the stacked
      * AST for any class.
@@ -383,7 +393,18 @@ public class CreateDependencyTree extends Visitor {
 
             dataLayoutNode.set(1, originalConsts);
             GNode vtableNode = GNode.create("VTableNode");
-            vtableNode.addNode(dataLayoutNode.getNode(2));
+            GNode vtableMethNode = GNode.create("MethodDeclarations");
+
+            Node dataLayoutMethNode = dataLayoutNode.getNode(2);
+            for(int i = 0; i<dataLayoutMethNode.size(); i++) {
+                Node me = dataLayoutMethNode.getNode(i);
+                if(!checkIfStatic(me.getNode(0))) {
+                    vtableMethNode.addNode(me);
+                }
+            }
+
+//            vtableNode.addNode(dataLayoutNode.getNode(2));
+            vtableNode.addNode(vtableMethNode);
             inheritSim.addNode(vtableNode);
 
             inheritSim.getNode(3).set(2, originalMeths);
@@ -453,6 +474,7 @@ public class CreateDependencyTree extends Visitor {
     public GNode createMethNode(String methName, String ret, String params) {
 
         GNode methNode = GNode.create("MethodDeclaration");
+        methNode.add(GNode.create("Modifiers"));
         methNode.add(ret);
         methNode.add(methName);
 

@@ -99,6 +99,9 @@ public class HeaderFilePrinter extends Visitor {
         visitMethodDeclarations(n.getNode(2));
         visitFieldDeclarations((GNode)n.getNode(0));
         visitConstructorDeclarations(n.getNode(1));
+
+        printer.pln("static Class __class();");
+        printer.pln("static __"+currentClassName+"_VT __vtable;");
         printer.pln("};");
     }
 
@@ -134,11 +137,11 @@ public class HeaderFilePrinter extends Visitor {
         printer.p("static ");
         if(checkIfNode(n.get(0))) {
             String ret = getReturnType(n);
-            printer.p(ret + " " +n.get(1).toString());
+            printer.p(ret + " " +n.get(2).toString());
         } else {
-            printer.p(n.get(0).toString() + " " + n.get(1).toString());
+            printer.p(n.get(1).toString() + " " + n.get(2).toString());
         }
-        printer.p(getParamString(n.getNode(2)));
+        printer.p(getParamString(n.getNode(3)));
         printer.pln(");");
     }
 
@@ -173,10 +176,10 @@ public class HeaderFilePrinter extends Visitor {
 
         String methName = n.getString(1);
         String ret;
-        if(checkIfNode(n.get(0))) ret = getReturnType(n);
-        else  ret = (n.get(0).toString()+" ");
-        String paramString = getParamString(n.getNode(2));
-        if(!n.getString(3).equals(currentClassName))
+        if(checkIfNode(n.get(1))) ret = getReturnType(n);
+        else  ret = (n.get(1).toString()+" ");
+        String paramString = getParamString(n.getNode(3));
+        if(!n.getString(4).equals(currentClassName))
             printer.pln(ret+"(*"+methName+")"+paramString+";");
         else
             printer.pln(ret+"(__"+currentClassName+"::"+methName+");");
@@ -196,13 +199,13 @@ public class HeaderFilePrinter extends Visitor {
 
     public void visitMethodDeclarationVTableMethod(Node n) {
         printer.pln(",");
-        String methName = n.getString(1);
+        String methName = n.getString(2);
         String ret;
-        if(checkIfNode(n.get(0))) ret = getReturnType(n);
-        else  ret = (n.get(0).toString()+" ");
-        String paramString = getParamString(n.getNode(2));
-        if(!n.getString(3).equals(methName))
-            printer.p(methName+"(("+ret+"(*)"+paramString+")&__"+n.getString(3)+"::"+methName+")");
+        if(checkIfNode(n.get(1))) ret = getReturnType(n);
+        else  ret = (n.get(1).toString()+" ");
+        String paramString = getParamString(n.getNode(3));
+        if(!n.getString(4).equals(currentClassName))
+            printer.p(methName+"(("+ret+"(*)"+paramString+")&__"+n.getString(4)+"::"+methName+")");
         else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
     }
 
@@ -211,8 +214,7 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitConstructorDeclaration(Node n) {
-        System.out.println(n);
-
+        printer.pln("static "+n.getString(0)+"__init"+getParamString(n.getNode(1))+";");
     }
 
 
@@ -226,14 +228,14 @@ public class HeaderFilePrinter extends Visitor {
 
 
 
-    public void visitFieldDeclaration(GNode n) {
-
+    public void visitFieldDeclaration(Node n) {
+        printer.pln(n.getString(0)+" "+n.getString(1)+";");
     }
 
 
     public void visitFieldDeclarations(GNode n) {
         for(int i = 0; i <n.size(); i++) {
-            visit(n.getNode(i));
+            visitFieldDeclaration(n.getNode(i));
         }
     }
 
