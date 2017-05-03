@@ -104,6 +104,7 @@ public class Boot extends Tool {
         }
 
         if(runtime.test("createHeaderFile")) {
+//            SymbolTable table = new SymbolTableBuilder(runtime).getTable(n);
             CreateDependencyTree headerAST = new CreateDependencyTree();
             List<GNode> tree = headerAST.getStackedHeader(n);
 
