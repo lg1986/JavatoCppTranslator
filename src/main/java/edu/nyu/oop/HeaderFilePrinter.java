@@ -50,7 +50,7 @@ public class HeaderFilePrinter extends Visitor {
     public void writeStartBaseLayout(String packageName) throws IOException {
         printer.pln("#pragma once");
         printer.pln("#include \"java_lang.h\"");
-        printer.pln("using namespace nyu::edu::oop;\n");
+        printer.pln("using namespace java::lang;\n");
         printer.pln("namespace inputs{");
         printer.pln("namespace "+packageName+"{");
     }
