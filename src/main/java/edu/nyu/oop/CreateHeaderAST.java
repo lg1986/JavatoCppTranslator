@@ -1,12 +1,8 @@
 package edu.nyu.oop;
 
-import edu.nyu.oop.util.ContextualVisitor;
-import xtc.lang.JavaPrinter;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
-import xtc.util.Runtime;
-import xtc.util.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -154,7 +150,7 @@ public class CreateHeaderAST extends Visitor {
         visit(n);
 
 
-        vtableNode.addNode(dataLayoutNode.getNode(2));
+//        vtableNode.addNode(dataLayoutNode.getNode(2));
 
         classNode.addNode(dataLayoutNode); // 2
         classNode.addNode(vtableNode); // 3

@@ -23,6 +23,7 @@ package edu.nyu.oop;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
+import xtc.util.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -64,6 +65,7 @@ public class CreateDependencyTree extends Visitor {
     public List<GNode> headerAsts;
     public List<GNode> inheritanceSimAsts;
     public TreeNode javaObjTreeNode;
+    public SymbolTable table;
 
     /**
      * Method that allows to interface with the program to
