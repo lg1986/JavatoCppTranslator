@@ -33,11 +33,32 @@ public class JppTraversal extends Visitor {
         return this.asts;
     }
 
+    public boolean checkIfNode(Object n) {
+        if(n instanceof String) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     public void visitFieldDeclaration(GNode n) {
         classNode.getNode(FIELDS).addNode(n);
     }
+    public void createConstructorAndAdd(GNode n) {
+        GNode constDec = GNode.create("ConstructorDeclaration");
+        for(int i = 0; i < n.size(); i++) {
+            if(checkIfNode(n.get(i))) constDec.addNode(n.getNode(i));
+            else constDec.add(n.get(i));
+        }
+        classNode.getNode(CONSTRS).addNode(constDec);
+    }
     public void visitMethodDeclaration(GNode n) {
-        classNode.getNode(METHOD).addNode(n);
+
+        if(n.get(2) == null) {
+            createConstructorAndAdd(n);
+
+        } else {
+            classNode.getNode(METHOD).addNode(n);
+        }
         visit(n);
     }
     public void visitConstructorDeclaration(GNode n) {

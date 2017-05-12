@@ -31,6 +31,7 @@ public class JppPrinter extends Visitor {
     private final int CONSTRS = 4;
     private final int METHOD = 5;
     private final int METHOD_BLOCK = 7;
+    private int constNum;
 
     /**
      * Main JppPrinter traversal utility
@@ -255,8 +256,9 @@ public class JppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
-        System.out.println(n);
-        currentPrinter.pln("{");
+        if(from.equals("ConstructorDeclaration")) {
+            printSuperConstructorInit(constNum);
+        }
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "Block");
             currentPrinter.p("; \n");
@@ -289,13 +291,8 @@ public class JppPrinter extends Visitor {
     public void visitMethodDeclarations(GNode n) {
         int constructors = 0;
         for(int i = 0; i<n.size(); i++) {
-            if(n.getNode(i).get(2) == null) {
-                printConstructorDeclaration(n.getNode(i), constructors+=1);
-            } else {
-                visitMethodDeclaration((GNode) n.getNode(i));
-            }
+            visitMethodDeclaration((GNode) n.getNode(i));
         }
-
     }
 
     /**
@@ -318,22 +315,30 @@ public class JppPrinter extends Visitor {
     /**
      * Specific ConstructorDeclartion traversal.
      * @param n
-     * @param constNum
      */
-    public void printConstructorDeclaration(Node n, int constNum) {
+    public void printConstructorDeclaration(Node n) {
         currentPrinter.pln(currentClassName+" __"+
                            currentClassName+"::__init"+
                            getParamsString(n.getNode(4))+"{");
-        printSuperConstructorInit(constNum);
         printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
         currentPrinter.pln("}");
     }
+
+    public void visitConstructorDeclarations(GNode n) {
+        constNum = n.size();
+//        if(constNum == 0)
+        for(int i = 0; i<n.size(); i++) {
+            printConstructorDeclaration(n.getNode(i));
+        }
+    }
+
     /**
      * Class Decalaration. Use the Visitor Double
      * dispatch pattern.
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
+        constNum = 0;
         currentClassName = n.getString(1);
         currentClassNode = n;
         this.currentPrinter = this.outputCppPrinter;
