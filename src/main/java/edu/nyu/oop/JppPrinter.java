@@ -166,6 +166,8 @@ public class JppPrinter extends Visitor {
     public void pru(Node n, String from) {
         if(n.hasName("StringLiteral")) {
             printStringLiteral(n, from);
+        } else if(n.hasName("VoidType")) {
+            currentPrinter.p("void ");
         } else if(n.hasName("PrimitiveType")) {
             loopToDispatch(n, "PrimitiveType");
         } else if(n.hasName("ReturnStatement")) {
@@ -261,7 +263,6 @@ public class JppPrinter extends Visitor {
     public void printSelectionExpression(Node n, String from) {
 
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
-
         } else {
             loopToDispatch(n, "SelectionExpression");
         }

@@ -13,34 +13,34 @@ Class __A::__class()
     return k;
 }
 __A_VT __A::__vtable;
-A __A::__init(A __this, int x)
+A __A::__init(A __this)
 {
     __Object::__init(__this);
-    __this->x = 10;
-    __this->self=__this;
     return __this;
 }
-A __A::self(A __this)
+String __A::toString(A __this)
 {
-    return __this->self;
+    String a = __rt::literal("A");
+    return a;
 }
-__Test017:: __Test017() : __vptr(&__vtable) {}
-Class __Test017::__class()
+__Test001:: __Test001() : __vptr(&__vtable) {}
+Class __Test001::__class()
 {
     static Class k =
-        new __Class(__rt::literal("nyu.edu.oop.Test017"), __Object::__class());
+        new __Class(__rt::literal("nyu.edu.oop.Test001"), __Object::__class());
     return k;
 }
-__Test017_VT __Test017::__vtable;
-Test017 __Test017::__init(Test017 __this)
+__Test001_VT __Test001::__vtable;
+Test001 __Test001::__init(Test001 __this)
 {
     __Object::__init(__this);
     return __this;
 }
-__Test017::main(Test017 __this, String args)
+void __Test001::main(Test001 __this, String args)
 {
-    A a = __A::__init(new __A(), 5);
-    std::cout << a->__vptr->self(a)->__vptr->toString(a)<< std::endl;
+    A a = __A::__init(new __A());
+    String s = a->__vptr->toString(a);
+    std::cout << a->__vptr->toString(a)<< std::endl;
 }
 }
 }
