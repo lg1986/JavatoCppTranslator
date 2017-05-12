@@ -121,6 +121,7 @@ public class HeaderFilePrinter extends Visitor {
         visitMethodDeclarationVTableMethods(n.getNode(0));
         printer.indentLess();
 
+        printer.pln("{}");
         printer.pln("};");
     }
 
@@ -133,16 +134,32 @@ public class HeaderFilePrinter extends Visitor {
     public void visitFormalParameter(Node n) {
         printer.p(", "+n.getString(0));
     }
-    public void visitMethodDeclaration(Node n) {
-        printer.p("static ");
+
+    public boolean checkIfStatic(Node n) {
         if(checkIfNode(n.get(0))) {
-            String ret = getReturnType(n);
-            printer.p(ret + " " +n.get(2).toString());
-        } else {
-            printer.p(n.get(1).toString() + " " + n.get(2).toString());
+            Node modifer = n.getNode(0);
+            if (modifer.size() <= 1) return false;
+            if (modifer.get(2) != null) {
+                if (modifer.getNode(2).getString(0).equals("static")) {
+                    return true;
+                }
+            }
+            return false;
         }
-        printer.p(getParamString(n.getNode(3)));
-        printer.pln(");");
+        return false;
+    }
+    public void visitMethodDeclaration(Node n) {
+        if(checkIfStatic(n) == false) {
+            printer.p("static ");
+            if (checkIfNode(n.getNode(0))) {
+                String ret = getReturnType(n);
+                printer.p(ret + " " + n.get(2).toString());
+            } else {
+                printer.p(n.get(1).toString() + " " + n.get(2).toString());
+            }
+            printer.p(getParamString(n.getNode(3)));
+            printer.pln(";");
+        }
     }
 
     public void visitMethodDeclarations(Node  n) {
@@ -173,16 +190,12 @@ public class HeaderFilePrinter extends Visitor {
     }
 
     public void visitMethodDeclarationVTable(Node n) {
-
-        String methName = n.getString(1);
+        String methName = n.getString(2);
         String ret;
         if(checkIfNode(n.get(1))) ret = getReturnType(n);
         else  ret = (n.get(1).toString()+" ");
         String paramString = getParamString(n.getNode(3));
-        if(!n.getString(4).equals(currentClassName))
-            printer.pln(ret+"(*"+methName+")"+paramString+";");
-        else
-            printer.pln(ret+"(__"+currentClassName+"::"+methName+");");
+        printer.pln(ret + "(*" + methName + ")" + paramString + ";");
     }
 
     /**
@@ -212,15 +225,29 @@ public class HeaderFilePrinter extends Visitor {
 
 
 
-
-    public void visitConstructorDeclaration(Node n) {
-        printer.pln("static "+n.getString(0)+"__init"+getParamString(n.getNode(1))+";");
+    public String getParamConstructorString(Node n) {
+        String paramString = "("+currentClassName+" __this";
+        for(int i = 0; i < n.size(); i++) {
+            paramString += "," + n.getNode(i).getString(0);
+        }
+        paramString +=")";
+        return paramString;
     }
 
 
+    public void visitConstructorDeclaration(Node n) {
+        printer.pln("static "+n.getString(0)+" __init"+getParamConstructorString(n.getNode(1))+";");
+    }
+
+
+    public void printDefaultConstructor() {
+        printer.pln("static "+ currentClassName+" __init("+currentClassName+" __this);");
+    }
 
     public void visitConstructorDeclarations(Node n) {
-
+        if(n.size() == 0) {
+            printDefaultConstructor();
+        }
         for(int i = 0; i <n.size(); i++) {
             visitConstructorDeclaration(n.getNode(i));
         }

@@ -33,6 +33,8 @@ public class JppPrinter extends Visitor {
     private final int METHOD_BLOCK = 7;
     private int constNum;
 
+    private String callExpPrim = "";
+
     public void printMain() {
         Writer wMainCpp;
 
@@ -44,13 +46,13 @@ public class JppPrinter extends Visitor {
             throw new RuntimeException("IO Error.");
         }
         Printer mainPrinter = new Printer(wMainCpp);
-        mainPrinter.pln("#include output.h");
+        mainPrinter.pln("#include \"output.h\"");
         mainPrinter.pln("using namespace java::lang;");
         mainPrinter.pln("int main(int argc, char* argv[]) {");
         mainPrinter.pln("  __rt::Array<String> args = new __rt::__Array<String>(argc - 1);\n");
         mainPrinter.pln("  for (int32_t i = 1; i < argc; i++) {");
         mainPrinter.pln("    (*args)[i] = __rt::literal(argv[i]);\n }");
-        mainPrinter.pln("inputs::"+currentClassName.toLowerCase()+"__"+currentClassName+"::main(args)");
+        mainPrinter.pln("inputs::"+currentClassName.toLowerCase()+"::__"+currentClassName+"::main(args);");
         mainPrinter.pln("return 0;");
         mainPrinter.pln("}");
         mainPrinter.flush();
@@ -97,12 +99,12 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+packageName+"{");
+        outputCppPrinter.pln("namespace "+"test001"+"{");
     }
 
     public void printClassGenerics(Node n) {
-        currentPrinter.p(currentClassName+"::"+currentClassName+"() : __vptr(&__vtable) ");
-        currentPrinter.pln("Class "+currentClassName+"::__class() {");
+        currentPrinter.p("__"+currentClassName+":: __"+currentClassName+"() : __vptr(&__vtable){} \n");
+        currentPrinter.pln("Class __"+currentClassName+"::__class() {");
         currentPrinter.indentMore();
         currentPrinter.pln("static Class k = ");
         currentPrinter.indentMore().indentMore();
@@ -111,7 +113,7 @@ public class JppPrinter extends Visitor {
         currentPrinter.indentMore();
         currentPrinter.pln("return k;");
         currentPrinter.pln("}");
-        currentPrinter.pln(currentClassName+"_VT " +currentClassName+"::__vtable;");
+        currentPrinter.pln("__"+currentClassName+"_VT __" +currentClassName+"::__vtable;");
     }
 
 
@@ -200,7 +202,13 @@ public class JppPrinter extends Visitor {
             printNewClassExpression(n, from);
         } else if(n.hasName("IntegerLiteral")) {
             printIntegerLiteral(n, from);
+        } else if(n.hasName("BooleanLiteral")) {
+            printBooleanLiteral(n, from);
         }
+    }
+
+    public void printBooleanLiteral(Node n, String from) {
+        currentPrinter.p(n.getString(0));
     }
 
     public void printNewClassExpression(Node n, String from) {
@@ -230,28 +238,41 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        loopToDispatch(n, "CallExpression");
+        if(n.getNode(0).hasName("PrimaryIdentifier"))
+            callExpPrim = n.getNode(0).getString(0);
+        if(n.get(2).equals("println") || n.get(2).equals("print")) {
+            currentPrinter.p("std::cout << ");
+            loopToDispatch(n.getNode(3), "CallExpression");
+            if(n.get(2).equals("println")) currentPrinter.p("<< std::endl");
+        } else {
+            loopToDispatch(n, "CallExpression");
+        }
     }
 
     public void printArgumentsList(Node n, String from) {
         if(!from.equals("NewClassExpression")) {
-            currentPrinter.p("(");
-        } else {
-            if(n.size() > 0) currentPrinter.p(", ");
+            currentPrinter.p("("+callExpPrim);
         }
+        if(n.size() > 0) currentPrinter.p(", ");
         loopToDispatch(n, "Arguments");
         currentPrinter.p(")");
     }
 
     public void printSelectionExpression(Node n, String from) {
-        loopToDispatch(n, "SelectionExpression");
+
+        if(n.getNode(0).get(0).equals("System")) {
+
+        } else {
+            loopToDispatch(n, "SelectionExpression");
+        }
     }
 
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-        if(from.equals("ConstructorDeclaration")) {
-            currentPrinter.p("__this->"+n.get(0).toString()+" ");
+        if(from.equals("SelectionExpression") && n.getString(0).equals("System")) {
+        } else if(from.equals("ConstructorDeclaration")) {
+            currentPrinter.p(n.get(0).toString()+" ");
         } else {
             currentPrinter.p(n.get(0).toString());
         }
@@ -296,7 +317,6 @@ public class JppPrinter extends Visitor {
     }
 
     public void printConstField(Node n, String from) {
-        System.out.println(n);
         pru(n.getNode(2), "ConstructorDeclaration");
         currentPrinter.p("; \n");
     }
@@ -306,6 +326,19 @@ public class JppPrinter extends Visitor {
         Node declNode = n.getNode(2).getNode(0);
         if(declNode.get(2) == null) return false;
         else return true;
+    }
+
+
+    public void fieldInitialiationConstructors(Node n) {
+        Node fieldsNode = currentClassNode.getNode(FIELDS);
+        System.out.println(currentClassNode);
+        for(int i = 0; i<fieldsNode.size(); i++) {
+            if(checkIfFieldDeclaration(fieldsNode.getNode(i))) {
+                currentPrinter.p("__this->");
+                printConstField(fieldsNode.getNode(i),
+                                "ConstructorDeclaration");
+            }
+        }
     }
 
     /**
@@ -319,14 +352,7 @@ public class JppPrinter extends Visitor {
         if(from.equals("ConstructorDeclaration")) {
             printSuperConstructorInit(constNum);
             if(constNum == 1) {
-                Node fieldsNode = currentClassNode.getNode(FIELDS);
-                for(int i = 0; i<fieldsNode.size(); i++) {
-                    if(checkIfFieldDeclaration(fieldsNode.getNode(i))) {
-                        currentPrinter.p("__this->");
-                        printConstField(fieldsNode.getNode(i),
-                                        "ConstructorDeclaration");
-                    }
-                }
+                fieldInitialiationConstructors(n);
             }
         }
         for(int i = 0; i<n.size(); i++) {
@@ -403,18 +429,18 @@ public class JppPrinter extends Visitor {
     public void printDefaultConstructor() {
         currentPrinter.pln(
             currentClassName+" __"+currentClassName+"::__init("+
-            currentClassName+ "__this) {");
-        currentPrinter.pln("__Object::__init(__this)");
+            currentClassName+ " __this) {");
+        currentPrinter.pln("__Object::__init(__this);");
         currentPrinter.pln("return __this; \n }");
 
     }
     public void visitConstructorDeclarations(GNode n) {
-        constNum = n.size();
 
-        if(constNum == 0) {
+        if(n.size() == 0) {
             printDefaultConstructor();
         }
         for(int i = 0; i<n.size(); i++) {
+            constNum += 1;
             printConstructorDeclaration(n.getNode(i));
         }
     }
@@ -454,9 +480,19 @@ public class JppPrinter extends Visitor {
     }
 
     public void getAllASTs(Runtime runtime, Node n) {
+        CreateDependencyTree headerAST = new CreateDependencyTree();
+        List<GNode> tree = headerAST.getStackedHeader(n);
+
+        try {
+            HeaderFilePrinter headerFile = new HeaderFilePrinter(tree);
+
+        } catch (IOException e) {
+            System.out.println("here!");
+        }
+
         JppTraversal visitor = new JppTraversal();
-        List<GNode> tree = visitor.getModifiedAsts(runtime, n);
-        this.asts = tree;
+        List<GNode> newtree = visitor.getModifiedAsts(runtime, n);
+        this.asts = newtree;
     }
 
 

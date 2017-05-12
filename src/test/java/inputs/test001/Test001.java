@@ -5,6 +5,9 @@ class A {
         String a = "A";
         return a;
     }
+    public A() {
+
+    }
 }
 
 public class Test001 {

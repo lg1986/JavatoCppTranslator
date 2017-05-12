@@ -1,43 +1,39 @@
 package inputs.constructors;
 
-
 class A {
-    public String toString() {
-        return "A";
+    int x = 2;
+
+    boolean b;
+
+    int y;
+
+    {
+        y = x + 3;
+    }
+
+    A() {
+        b = true;
+    }
+
+    A(int x1) {
+        x = x1;
+    }
+
+}
+
+class B extends A {
+    int z;
+
+    B(int x1) {
+        super(x1);
+        z = x1 + 1;
     }
 }
 
 public class Constructors {
     public static void main(String[] args) {
-        int[] ints = new int[2];
-        System.out.println(ints[1]);
+        B b = new B(2);
 
-        float[] floats = new float[2];
-        System.out.println(floats[1]);
-
-        A[] array = new A[5];
-
-        for (int i = 0; i < array.length; ++i) {
-            A a = new A();
-            array[i] = a;
-        }
-
-        for (int i = 0; i < array.length; ++i) {
-            A a = array[i];
-            System.out.println(a.toString());
-        }
-
-        try {
-            System.out.println(array[128]);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Caught ArrayIndexOutOfBoundsException");
-        }
-
-        try {
-            Object[] o = array;
-            o[2] = new Object();
-        } catch (ArrayStoreException e) {
-            System.out.println("Caught ArrayStoreException");
-        }
+        System.out.println(b.z);
     }
 }

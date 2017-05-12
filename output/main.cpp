@@ -1,4 +1,4 @@
-#include output.h
+#include "output.h"
 using namespace java::lang;
 int main(int argc, char* argv[])
 {
@@ -8,6 +8,6 @@ int main(int argc, char* argv[])
     {
         (*args)[i] = __rt::literal(argv[i]);
     }
-    inputs::test017__Test017::main(args)
+    inputs::test001::__Test001::main(args);
     return 0;
 }

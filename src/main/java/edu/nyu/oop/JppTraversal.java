@@ -40,9 +40,14 @@ public class JppTraversal extends Visitor {
             return true;
         }
     }
+    public void visitBlockDeclaration(GNode n) {
+
+    }
+
     public void visitFieldDeclaration(GNode n) {
         classNode.getNode(FIELDS).addNode(n);
     }
+
     public void createConstructorAndAdd(GNode n) {
         GNode constDec = GNode.create("ConstructorDeclaration");
         for(int i = 0; i < n.size(); i++) {
@@ -59,11 +64,9 @@ public class JppTraversal extends Visitor {
         } else {
             classNode.getNode(METHOD).addNode(n);
         }
-        visit(n);
     }
     public void visitConstructorDeclaration(GNode n) {
         classNode.getNode(CONSTRS).addNode(n);
-        visit(n);
     }
 
     public void visitClassDeclaration(GNode n) {
