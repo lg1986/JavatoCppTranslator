@@ -9,8 +9,10 @@ A::A() : __vptr(&__vtable) Class A::__class() {
   return k;
 }
 A_VT A::__vtable;
-A __A::__init(A __this, int x){
-__Object::__init(__this);
+__A::A(A __this, int x)
+{
+; 
+; 
 }
 __A::self(A __this)
 {

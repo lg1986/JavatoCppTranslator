@@ -6,13 +6,13 @@ class A {
 
     public A(int x) {
         self = this;
-        this.x = x;
+        x = x;
     }
 
     public int self() {
         A a = new A(1);
         a.print(a.getX());
-        return this.x;
+        return x;
     }
 
     public void print(int x) {

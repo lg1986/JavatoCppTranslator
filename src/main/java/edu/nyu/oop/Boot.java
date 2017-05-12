@@ -10,6 +10,7 @@ import edu.nyu.oop.util.SymbolTableBuilder;
 import edu.nyu.oop.util.XtcProps;
 import org.slf4j.Logger;
 
+
 import xtc.lang.JavaPrinter;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -93,8 +94,8 @@ public class Boot extends Tool {
             DependencyAstVisitor visitor = new DependencyAstVisitor();
             List<GNode> astVisit = visitor.getDependencyAsts(n);
             for(GNode ast: astVisit) {
-                runtime.console().format(ast).pln().flush();
 
+                runtime.console().format(ast).pln().flush();
             }
         }
         if(runtime.test("createDependencyTree")) {
@@ -106,7 +107,6 @@ public class Boot extends Tool {
         }
 
         if(runtime.test("createHeaderFile")) {
-
             CreateDependencyTree headerAST = new CreateDependencyTree();
             List<GNode> tree = headerAST.getStackedHeader(n);
 
@@ -123,12 +123,13 @@ public class Boot extends Tool {
             SymbolTable table = new SymbolTableBuilder(runtime).getTable(n);
             new MemberAccessCompleter(runtime, table).dispatch(n);
             new JavaPrinter(runtime.console()).dispatch(n);
+
 //            runtime.console().flush();
         }
 
         if(runtime.test("jppPrinter")) {
             try {
-                JppPrinter printer = new JppPrinter(n);
+                JppPrinter printer = new JppPrinter(runtime, n);
             } catch (Exception e) {
 
             }
@@ -136,7 +137,7 @@ public class Boot extends Tool {
         }
         if(runtime.test("jppTraversal")) {
             JppTraversal s = new JppTraversal();
-            s.getModifiedAsts(n);
+            s.getModifiedAsts(runtime, n);
         }
 
 

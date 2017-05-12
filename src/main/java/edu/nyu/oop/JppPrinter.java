@@ -4,6 +4,8 @@ import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Printer;
 import xtc.tree.Visitor;
+import xtc.util.Runtime;
+import xtc.util.SymbolTable;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class JppPrinter extends Visitor {
      * @param n
      * @throws IOException
      */
-    public JppPrinter(Node n) throws IOException {
+    public JppPrinter(Runtime runtime, Node n) throws IOException {
         Writer wMainCpp;
         Writer wOutputCpp;
         try {
@@ -48,7 +50,7 @@ public class JppPrinter extends Visitor {
         } catch (Exception e) {
             throw new RuntimeException("IO Error.");
         }
-        getAllASTs(n);
+        getAllASTs(runtime, n);
         writeStartBaseLayout(this.packageName);
         collect();
         writeEndBaseLayout();
@@ -158,7 +160,7 @@ public class JppPrinter extends Visitor {
             printDeclarator(n, from);
         } else if(n.hasName("NewClassExpression")) {
             printNewClassExpression(n, from);
-        } else if(n.hasName("IntegerLiteral")){
+        } else if(n.hasName("IntegerLiteral")) {
             printIntegerLiteral(n, from);
         }
     }
@@ -167,7 +169,7 @@ public class JppPrinter extends Visitor {
         loopToDispatch(n, "NewClassExpression");
     }
 
-    public void printIntegerLiteral(Node n, String from){
+    public void printIntegerLiteral(Node n, String from) {
         loopToDispatch(n, "IntegerLiteral");
     }
 
@@ -362,9 +364,9 @@ public class JppPrinter extends Visitor {
         }
     }
 
-    public void getAllASTs(Node n) {
+    public void getAllASTs(Runtime runtime, Node n) {
         JppTraversal visitor = new JppTraversal();
-        List<GNode> tree = visitor.getModifiedAsts(n);
+        List<GNode> tree = visitor.getModifiedAsts(runtime, n);
         this.asts = tree;
     }
 

@@ -1,4 +1,5 @@
 package inputs.symboltable;
+import inputs.test004.Test004;
 
 class A {
     static int x;

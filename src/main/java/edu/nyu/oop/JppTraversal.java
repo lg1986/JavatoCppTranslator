@@ -1,8 +1,11 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.SymbolTableBuilder;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Visitor;
+import xtc.util.Runtime;
+import xtc.util.SymbolTable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +21,13 @@ public class JppTraversal extends Visitor {
     private final int CONSTRS = 4;
     private final int METHOD = 5;
 
-    public List<GNode> getModifiedAsts(Node n) {
+    public List<GNode> getModifiedAsts(Runtime runtime, Node n) {
         DependencyAstVisitor visitor = new DependencyAstVisitor();
         List<GNode> tree = visitor.getDependencyAsts(n);
+        for(Node t: tree) {
+            SymbolTable table = new SymbolTableBuilder(runtime).getTable(t);
+            new MemberAccessCompleter(runtime, table).dispatch(t);
+        }
         asts = new ArrayList<>();
         collect(tree);
         return this.asts;
