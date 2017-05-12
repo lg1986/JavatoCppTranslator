@@ -1,22 +1,8 @@
 package inputs.test003;
 
-class B extends A {
-    String x;
-    public B() {
-
-    }
-
-    public int meth(int x) {
-        return 0;
-    }
-}
-
 class A {
     private String fld;
 
-    public A() {
-
-    }
     public A(String f) {
         fld = f;
     }

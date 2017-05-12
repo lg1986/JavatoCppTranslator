@@ -99,7 +99,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test002"+"{");
+        outputCppPrinter.pln("namespace "+"test003"+"{");
     }
 
     public void printClassGenerics(Node n) {
