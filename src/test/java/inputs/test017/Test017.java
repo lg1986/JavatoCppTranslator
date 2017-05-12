@@ -2,6 +2,7 @@ package inputs.test017;
 
 class A {
     A self;
+    int x = 10;
 
     public A(int x) {
         self = this;

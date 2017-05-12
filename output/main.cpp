@@ -1,6 +1,6 @@
 #include output.h
 using namespace java::lang;
-int main(int argc, char* argv[]
+int main(int argc, char* argv[])
 {
     __rt::Array<String> args = new __rt::__Array<String>(argc - 1);
 

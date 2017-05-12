@@ -29,6 +29,11 @@ Test017::Test017() : __vptr(&__vtable) Class Test017::__class()
     return k;
 }
 Test017_VT Test017::__vtable;
+Test017 __Test017::__init(Test017__this)
+{
+    __Object::__init(__this)
+    return __this;
+}
 __Test017::main(Test017 __this, String args)
 {
     A a = __A::__init(new __A(), 5);

@@ -291,10 +291,20 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    public void printConstField(Node n, String from) {
+        System.out.println(n);
+    }
+
     public void printBlock(Node n, String from) {
         currentPrinter.p("{");
         if(from.equals("ConstructorDeclaration")) {
             printSuperConstructorInit(constNum);
+            if(constNum == 1) {
+                for(int i = 0; i<currentClassNode.getNode(FIELDS).size(); i++) {
+                    printConstField(currentClassNode.getNode(FIELDS).getNode(i),
+                                    "ConstructorDeclaration");
+                }
+            }
         }
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "Block");
@@ -366,11 +376,26 @@ public class JppPrinter extends Visitor {
         printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
     }
 
+
+    public void printDefaultConstructor() {
+        currentPrinter.pln(
+            currentClassName+" __"+currentClassName+"::__init("+
+            currentClassName+ "__this) {");
+        currentPrinter.pln("__Object::__init(__this)");
+        currentPrinter.pln("return __this; \n }");
+
+    }
     public void visitConstructorDeclarations(GNode n) {
         constNum = n.size();
+
+        if(constNum == 0) {
+            printDefaultConstructor();
+        }
         for(int i = 0; i<n.size(); i++) {
             printConstructorDeclaration(n.getNode(i));
         }
+
+
     }
 
     /**
