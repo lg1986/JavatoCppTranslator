@@ -34,8 +34,6 @@ public class DependencyAstVisitor  extends Visitor {
     public HashSet<GNode> dependencyAsts = new HashSet<>();
 
 
-
-
     /**
      * Method to interface with this class.
      * @param n - This is the root node.

@@ -148,6 +148,8 @@ public class JppPrinter extends Visitor {
             printPrimaryIdentifier(n, from);
         } else if(n.hasName("ExpressionStatement")) {
             printExpressionStatement(n, from);
+        } else if(n.hasName("Expression")) {
+            loopToDispatch(n, "Expression");
         } else if(n.hasName("CallExpression")) {
             printCallExpression(n, from);
         } else if(n.hasName("Arguments")) {
@@ -195,7 +197,6 @@ public class JppPrinter extends Visitor {
     }
 
     public void printArgumentsList(Node n, String from) {
-        System.out.println(n);
         if(!from.equals("NewClassExpression")) {
             currentPrinter.p("(");
         } else {
@@ -279,14 +280,20 @@ public class JppPrinter extends Visitor {
 
 
     public void visitMethodDeclaration(GNode n) {
+        int consts = 0;
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "MethodDeclaration");
         }
     }
 
     public void visitMethodDeclarations(GNode n) {
+        int constructors = 0;
         for(int i = 0; i<n.size(); i++) {
-            visitMethodDeclaration((GNode) n.getNode(i));
+            if(n.getNode(i).get(2) == null) {
+                printConstructorDeclaration(n.getNode(i), constructors+=1);
+            } else {
+                visitMethodDeclaration((GNode) n.getNode(i));
+            }
         }
 
     }
@@ -297,7 +304,7 @@ public class JppPrinter extends Visitor {
      */
 
     public void printSuperConstructorInit(int constNum) {
-        if(constNum == 0) {
+        if(constNum == 1) {
             if(currentClassNode.get(EXT) != null) {
                 currentPrinter.pln(currentClassNode.get(EXT).toString());
             } else {
@@ -313,24 +320,14 @@ public class JppPrinter extends Visitor {
      * @param n
      * @param constNum
      */
-    public void visitConstructorDeclaration(GNode n, int constNum) {
+    public void printConstructorDeclaration(Node n, int constNum) {
         currentPrinter.pln(currentClassName+" __"+
                            currentClassName+"::__init"+
-                           getParamsString(n.getNode(3))+"{");
+                           getParamsString(n.getNode(4))+"{");
         printSuperConstructorInit(constNum);
+        printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
         currentPrinter.pln("}");
     }
-
-    /**
-     * ConstructorDeclarations traversal.
-     * @param n
-     */
-    public void visitConstructorDeclarations(GNode n) {
-        for(int i = 0; i <n.size(); i++) {
-            visitConstructorDeclaration((GNode)n.getNode(i), i);
-        }
-    }
-
     /**
      * Class Decalaration. Use the Visitor Double
      * dispatch pattern.
