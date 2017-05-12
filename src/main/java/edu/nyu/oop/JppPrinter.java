@@ -292,7 +292,15 @@ public class JppPrinter extends Visitor {
     }
 
     public void printConstField(Node n, String from) {
-        System.out.println(n);
+        pru(n.getNode(2), "ConstructorDeclaration");
+        currentPrinter.p("; \n");
+    }
+
+
+    public boolean checkIfFieldDeclaration(Node n) {
+        Node declNode = n.getNode(2).getNode(0);
+        if(declNode.get(2) == null) return false;
+        else return true;
     }
 
     public void printBlock(Node n, String from) {
@@ -300,9 +308,12 @@ public class JppPrinter extends Visitor {
         if(from.equals("ConstructorDeclaration")) {
             printSuperConstructorInit(constNum);
             if(constNum == 1) {
-                for(int i = 0; i<currentClassNode.getNode(FIELDS).size(); i++) {
-                    printConstField(currentClassNode.getNode(FIELDS).getNode(i),
-                                    "ConstructorDeclaration");
+                Node fieldsNode = currentClassNode.getNode(FIELDS);
+                for(int i = 0; i<fieldsNode.size(); i++) {
+                    if(checkIfFieldDeclaration(fieldsNode.getNode(i))) {
+                        printConstField(fieldsNode.getNode(i),
+                                        "ConstructorDeclaration");
+                    }
                 }
             }
         }

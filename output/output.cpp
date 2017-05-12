@@ -15,6 +15,7 @@ A_VT A::__vtable;
 A __A::__init(A __this, int x)
 {
     __Object::__init(__this);
+    x = 10;
     __this->self=__this;
     return __this;
 }
