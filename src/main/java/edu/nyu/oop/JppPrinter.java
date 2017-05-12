@@ -99,7 +99,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test001"+"{");
+        outputCppPrinter.pln("namespace "+"test002"+"{");
     }
 
     public void printClassGenerics(Node n) {
@@ -332,7 +332,6 @@ public class JppPrinter extends Visitor {
 
     public void fieldInitialiationConstructors(Node n) {
         Node fieldsNode = currentClassNode.getNode(FIELDS);
-        System.out.println(currentClassNode);
         for(int i = 0; i<fieldsNode.size(); i++) {
             if(checkIfFieldDeclaration(fieldsNode.getNode(i))) {
                 currentPrinter.p("__this->");
@@ -436,8 +435,6 @@ public class JppPrinter extends Visitor {
 
     }
     public void visitConstructorDeclarations(GNode n) {
-        System.out.println("\n here \n");
-        System.out.println(n);
         if(n.size() == 0) {
             printDefaultConstructor();
         }
