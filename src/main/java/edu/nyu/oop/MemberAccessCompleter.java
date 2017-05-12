@@ -2,7 +2,7 @@ package edu.nyu.oop;
 
 import edu.nyu.oop.util.ContextualVisitor;
 import edu.nyu.oop.util.TypeUtil;
-import xtc.lang.Java;
+import org.slf4j.Logger;
 import xtc.lang.JavaEntities;
 
 import xtc.Constants;
@@ -13,7 +13,6 @@ import xtc.util.SymbolTable;
 import xtc.util.Runtime;
 import xtc.type.*;
 
-import java.io.File;
 import java.util.*;
 
 public class MemberAccessCompleter extends ContextualVisitor {
@@ -32,31 +31,22 @@ public class MemberAccessCompleter extends ContextualVisitor {
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
-
         if (receiver == null &&
                 !"super".equals(methodName) &&
                 !"this".equals(methodName)) {
+            // find type to search for relevant methods
             Type typeToSearch = JavaEntities.currentType(table);
 
+            // find type of called method
             List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
             MethodT method =
                 JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
+
             if (method == null) return;
 
             // TODO: make 'this' access explicit
-            if(TypeUtil.isStaticType(method) == false) {
+            if (!TypeUtil.isStaticType(method)) {
                 n.set(0, makeThisExpression());
-            }
-
-
-            File f = new File("src/test/java/symboltable/Input.java");
-            List<File> files = new ArrayList<>();
-            files.add(f);
-            ClassOrInterfaceT classT = JavaEntities.currentType(table);
-            List<MethodT> methods = (JavaEntities.allMethods(table, files,
-                                     (ClassT) classT));
-            for (MethodT ml : methods) {
-                System.out.println(ml.toMethod());
             }
         }
     }
@@ -65,49 +55,38 @@ public class MemberAccessCompleter extends ContextualVisitor {
     public Node visitPrimaryIdentifier(GNode n) {
         String fieldName = n.getString(0);
 
+        // find type to search for relevant fields
         ClassOrInterfaceT typeToSearch = JavaEntities.currentType(table);
         if (typeToSearch == null) return n;
 
+        // find type of
         VariableT field = null;
         SymbolTable.Scope oldScope = table.current();
         JavaEntities.enterScopeByQualifiedName(table, typeToSearch.getScope());
-        for (final VariableT f : JavaEntities.fieldsOwnAndInherited(table, classpath(), typeToSearch)) {
+        for (final VariableT f : JavaEntities.fieldsOwnAndInherited(table, classpath(), typeToSearch))
             if (f.getName().equals(fieldName)) {
                 field = f;
                 break;
             }
-        }
         table.setScope(oldScope);
-
 
         if (field == null) return n;
 
-
         // TODO: make 'this' access explicit
-        try {
-            // If the scope of the table does not match the field name's scope
-            if(!oldScope.toString().equals(
-                        table.lookupScope(fieldName).toString())) {
-                if(TypeUtil.isStaticType(field) == false) {
-                    n = replaceWithThis(field, fieldName);
-                }
-            }
-        } catch (NullPointerException e) {
-            if(TypeUtil.isStaticType(field) == false) {
-                n = replaceWithThis(field, fieldName);
-            }
+        Type t = (Type) table.lookup(fieldName);
+        if (t == null || !t.isVariable()) {
+            t = field;
         }
+
+        if (JavaEntities.isFieldT(t) && !TypeUtil.isStaticType(t)) {
+            GNode n1 = GNode.create("SelectionExpression", makeThisExpression(), fieldName);
+            TypeUtil.setType(n1, TypeUtil.getType(n));
+            return n1;
+        }
+
         return n;
     }
 
-    public GNode replaceWithThis(Type typ, String name) {
-        GNode makeThis = makeThisExpression();
-        GNode c = GNode.create("SelectionExpression");
-        c.addNode(makeThis);
-        c.add(name);
-        TypeUtil.setType(c, typ);
-        return c;
-    }
 
     public List<Type> visitArguments(final GNode n) {
         List<Type> result = new ArrayList<Type>(n.size());

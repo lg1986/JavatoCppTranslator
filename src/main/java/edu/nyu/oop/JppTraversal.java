@@ -56,7 +56,6 @@ public class JppTraversal extends Visitor {
         classNode.addNode(fields);
         classNode.addNode(consts);
         classNode.addNode(meths);
-        classNode.addNode(n);
         visit(n);
         asts.add(classNode);
     }
