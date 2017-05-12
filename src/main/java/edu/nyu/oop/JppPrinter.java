@@ -33,12 +33,37 @@ public class JppPrinter extends Visitor {
     private final int METHOD_BLOCK = 7;
     private int constNum;
 
+    public void printMain() {
+        Writer wMainCpp;
+
+        try {
+            FileOutputStream fosMain = new FileOutputStream("output/main.cpp");
+            OutputStreamWriter oMainCpp = new OutputStreamWriter(fosMain, "utf-8");
+            wMainCpp = new BufferedWriter(oMainCpp);
+        } catch (Exception e) {
+            throw new RuntimeException("IO Error.");
+        }
+        Printer mainPrinter = new Printer(wMainCpp);
+        mainPrinter.pln("#include output.h");
+        mainPrinter.pln("using namespace java::lang;");
+        mainPrinter.pln("int main(int argc, char* argv[]) {");
+        mainPrinter.pln("  __rt::Array<String> args = new __rt::__Array<String>(argc - 1);\n");
+        mainPrinter.pln("  for (int32_t i = 1; i < argc; i++) {");
+        mainPrinter.pln("    (*args)[i] = __rt::literal(argv[i]);\n }");
+        mainPrinter.pln("inputs::"+currentClassName.toLowerCase()+"__"+currentClassName+"::main(args)");
+        mainPrinter.pln("return 0;");
+        mainPrinter.pln("}");
+        mainPrinter.flush();
+
+    }
     /**
      * Main JppPrinter traversal utility
      * basics.
      * @param n
      * @throws IOException
      */
+
+
     public JppPrinter(Runtime runtime, Node n) throws IOException {
         Writer wMainCpp;
         Writer wOutputCpp;
@@ -70,7 +95,7 @@ public class JppPrinter extends Visitor {
     public void writeStartBaseLayout(String packageName) {
         outputCppPrinter.pln("#include <iostream>");
         outputCppPrinter.pln("#include \"output.h\"");
-        outputCppPrinter.pln("using namespace java::lang");
+        outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
         outputCppPrinter.pln("namespace "+packageName+"{");
     }
@@ -275,6 +300,9 @@ public class JppPrinter extends Visitor {
             dispatchTopru(n.get(i), "Block");
             currentPrinter.p("; \n");
         }
+        if(from.equals("ConstructorDeclaration")) {
+            currentPrinter.pln("return __this;");
+        }
         currentPrinter.pln("}");
     }
 
@@ -295,6 +323,9 @@ public class JppPrinter extends Visitor {
 
     public void visitMethodDeclaration(GNode n) {
         int consts = 0;
+        if(n.getString(3).equals("main")) {
+            printMain();
+        }
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "MethodDeclaration");
         }
@@ -337,7 +368,6 @@ public class JppPrinter extends Visitor {
 
     public void visitConstructorDeclarations(GNode n) {
         constNum = n.size();
-//        if(constNum == 0)
         for(int i = 0; i<n.size(); i++) {
             printConstructorDeclaration(n.getNode(i));
         }
