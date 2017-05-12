@@ -122,6 +122,14 @@ public class JppPrinter extends Visitor {
                 currentPrinter.p("->__vptr->"+n.toString());
             } else if(from.equals("Declarator")) {
                 currentPrinter.p(n.toString() +" = ");
+            } else if(from.equals("PrimitiveType") || from.equals("Type")) {
+                String typ = n.toString();
+                if(typ.equals("int")) {
+                    typ = "int32_t";
+                } else if(typ.equals("boolean")) {
+                    typ = "bool";
+                }
+                currentPrinter.p(typ+" ");
             } else {
                 currentPrinter.p(n.toString());
             }
@@ -131,6 +139,8 @@ public class JppPrinter extends Visitor {
     public void pru(Node n, String from) {
         if(n.hasName("StringLiteral")) {
             printStringLiteral(n, from);
+        } else if(n.hasName("PrimitiveType")) {
+            loopToDispatch(n, "PrimitiveType");
         } else if(n.hasName("ReturnStatement")) {
             printReturnStatement(n, from);
         } else if(n.hasName("Block")) {
@@ -178,7 +188,8 @@ public class JppPrinter extends Visitor {
 
 
     public void printDeclarator(Node n, String from) {
-        loopToDispatch(n, "Declarator");
+        if(n.get(2) == null) loopToDispatch(n, "DeclaratorNotAssign");
+        else loopToDispatch(n, "Declarator");
     }
 
     public void printDeclarators(Node n, String from) {
@@ -256,6 +267,7 @@ public class JppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
+        currentPrinter.p("{");
         if(from.equals("ConstructorDeclaration")) {
             printSuperConstructorInit(constNum);
         }
@@ -317,11 +329,10 @@ public class JppPrinter extends Visitor {
      * @param n
      */
     public void printConstructorDeclaration(Node n) {
-        currentPrinter.pln(currentClassName+" __"+
-                           currentClassName+"::__init"+
-                           getParamsString(n.getNode(4))+"{");
+        currentPrinter.p(currentClassName+" __"+
+                         currentClassName+"::__init"+
+                         getParamsString(n.getNode(4)));
         printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
-        currentPrinter.pln("}");
     }
 
     public void visitConstructorDeclarations(GNode n) {

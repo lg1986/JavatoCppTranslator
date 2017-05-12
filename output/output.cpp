@@ -12,32 +12,23 @@ using namespace java::lang
         return k;
     }
     A_VT A::__vtable;
-    A __A::__init(A __this, int x)
+    String __A::toString(A __this)
     {
-        __Object::__init(__this);
-        __this->self=__this;
-        __this->x=x;
+        String a = __rt::literal("A");
+        return a;
+    }
+    Test001::Test001() : __vptr(&__vtable) Class Test001::__class()
+    {
+        static Class k =
+            new __Class(__rt::literal("nyu.edu.oop.Test001"), __Object::__class());
+        return k;
+    }
+    Test001_VT Test001::__vtable;
+    __Test001::main(Test001 __this, String args)
+    {
+        A a = __A::__init(new __A());
+        String s = a->__vptr->toString();
+        System->out->__vptr->println(a->__vptr->toString());
     }
     }
-    __A::self(A __this)
-    A a = __A::__init(new __A(), 1);
-    a->__vptr->print(a->__vptr->getX());
-    return __this->x;
     }
-__A::print(A __this, int x)
-}
-__A::getX(A __this)
-return __this->x;
-}
-Test017::Test017() : __vptr(&__vtable) Class Test017::__class()
-{
-    static Class k =
-        new __Class(__rt::literal("nyu.edu.oop.Test017"), __Object::__class());
-    return k;
-}
-Test017_VT Test017::__vtable;
-__Test017::main(Test017 __this, String args)
-A a = __A::__init(new __A(), 5);
-}
-}
-}
