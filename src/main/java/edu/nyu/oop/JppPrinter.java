@@ -99,7 +99,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test003"+"{");
+        outputCppPrinter.pln("namespace "+"test005"+"{");
     }
 
     public void printClassGenerics(Node n) {
@@ -481,7 +481,6 @@ public class JppPrinter extends Visitor {
     public void getAllASTs(Runtime runtime, Node n) {
         CreateDependencyTree headerAST = new CreateDependencyTree();
         List<GNode> tree = headerAST.getStackedHeader(n);
-
         try {
             HeaderFilePrinter headerFile = new HeaderFilePrinter(tree);
 

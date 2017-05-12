@@ -2,8 +2,6 @@ package inputs.test005;
 
 class A {
     public String toString() {
-        A a1 = new A();
-        a1.toString();
         return "A";
     }
 }

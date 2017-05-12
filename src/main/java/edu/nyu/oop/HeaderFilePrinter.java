@@ -22,7 +22,7 @@ public class HeaderFilePrinter extends Visitor {
 
     private Printer printer;
     private String packageName;
-    private String currentClassName;
+    private static String currentClassName;
 
     public HeaderFilePrinter(List<GNode> asts) throws IOException {
         Writer w;
