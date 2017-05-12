@@ -24,9 +24,15 @@ public class jppPrinter extends Visitor {
 
     private String currentClassName;
     private String currentC;
-    private boolean arrayConstructor = false;
+
     private boolean fieldMethod = false;
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    * added the fields below to be used for when writing numbers to the screen with brackets for indexing or when we are creating a new array
+     */
     private boolean arrayInitialization = false;
+    private boolean arrayConstructor = false;
+
 
     private String callExpIdentifier;
     private boolean fieldInitializer = false;
@@ -243,14 +249,20 @@ public class jppPrinter extends Visitor {
     }
 
 
-
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printPrimaryIdentifier(Node n, String from) {
 
         if(from.equals("SubscriptExpression")){
             printer.p("(*"+n.get(0).toString()+")");
         }
     }
-
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printQualifiedIdentifier(Node n, String from) {
         if(from.equals("NewClassExpression")) {
             String classname = n.get(0).toString().replace("()", "").toString();
@@ -264,6 +276,10 @@ public class jppPrinter extends Visitor {
             }
 
         }
+        /*
+    * added this ---- looking now do not think this would be the best approach!!!
+    *
+     */
         if(from.equals("printType")){
             printer.p("__rt::Array<"+n.get(0).toString()+">");
 
@@ -271,6 +287,10 @@ public class jppPrinter extends Visitor {
 
     }
 
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printArguments(Node n, String from) {
 
         if(!from.equals("NewClassExpression")) {
@@ -300,6 +320,10 @@ public class jppPrinter extends Visitor {
         }
     }
 
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printNewClassExpression(Node n, String from) {
         if(arrayConstructor){
             String constType = n.getNode(2).getString(0);
@@ -315,7 +339,10 @@ public class jppPrinter extends Visitor {
             }
         }
     }
-
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printExpression(Node n, String from){
         if(n.toString().contains("SubscriptExpression") && n.toString().contains("NewClassExpression")){
             arrayConstructor = true;
@@ -337,6 +364,10 @@ public class jppPrinter extends Visitor {
 
     }
 
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printExpressionStatement(Node n, String from) {
         if(n.toString().contains("SubscriptExpression")) arrayInitialization = true;
         if(n.size() > 0) {
@@ -479,6 +510,12 @@ public class jppPrinter extends Visitor {
         }
 
     }
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    * the block below I changed for when we are indexing into to an array
+    * it uses the boolean that I have marked above to only print a number with the brackets if it is used in the array context
+    *
+     */
 
     public void printIntegerLiteral(Node n, String from){
         if(from.equals("SubscriptExpression")){
@@ -539,12 +576,20 @@ public class jppPrinter extends Visitor {
         }
     }
 
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printNewArrayExpression(Node n,String from){
         String arrayType = n.getNode(0).get(0).toString();
         String arraySize = n.getNode(1).getNode(0).get(0).toString();
         printer.p("new __rt::__Array<"+arrayType+">(" +  arraySize +")");
     }
 
+    /*
+    * ARRAY METHOD CHANGED BY CHARLIE
+    *
+     */
     public void printSubscriptExpression(Node n,String from){
 
         for(int i = 0; i < n.size(); i++){
