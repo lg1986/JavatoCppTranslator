@@ -101,6 +101,12 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    public void loopToDispatch(Node n, String from) {
+        for(int i = 0; i < n.size(); i++) {
+            dispatchTopru(n.get(i), from);
+        }
+    }
+
     public void dispatchTopru(Object n, String from) {
         if(n != null && checkIfNode(n)) {
             pru((Node)n, from);
@@ -111,7 +117,10 @@ public class JppPrinter extends Visitor {
                 currentPrinter.p("->"+n.toString());
             } else if(from.equals("CallExpression")) {
                 currentPrinter.p("->__vptr->"+n.toString());
-
+            } else if(from.equals("Declarator")) {
+                currentPrinter.p(n.toString() +" = ");
+            } else {
+                currentPrinter.p(n.toString());
             }
         }
     }
@@ -141,33 +150,61 @@ public class JppPrinter extends Visitor {
             printCallExpression(n, from);
         } else if(n.hasName("Arguments")) {
             printArgumentsList(n, from);
+        } else if(n.hasName("FieldDeclaration")) {
+            printFieldDeclaration(n, from);
+        } else if(n.hasName("Declarators")) {
+            printDeclarators(n, from);
+        } else if(n.hasName("Declarator")) {
+            printDeclarator(n, from);
+        } else if(n.hasName("NewClassExpression")) {
+            printNewClassExpression(n, from);
+        } else if(n.hasName("IntegerLiteral")){
+            printIntegerLiteral(n, from);
         }
+    }
+
+    public void printNewClassExpression(Node n, String from) {
+        loopToDispatch(n, "NewClassExpression");
+    }
+
+    public void printIntegerLiteral(Node n, String from){
+        loopToDispatch(n, "IntegerLiteral");
+    }
+
+
+    public void printDeclarator(Node n, String from) {
+        loopToDispatch(n, "Declarator");
+    }
+
+    public void printDeclarators(Node n, String from) {
+        loopToDispatch(n, "Declarators");
+    }
+
+    public void printFieldDeclaration(Node n, String from) {
+        loopToDispatch(n, "FieldDeclaration");
     }
 
     public void printExpressionStatement(Node n, String from) {
-        for(int i = 0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), "ExpressionStatement");
-        }
+        loopToDispatch(n, "ExpressionStatement");
     }
 
     public void printCallExpression(Node n, String from) {
-        for(int i = 0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), "CallExpression");
-        }
+        loopToDispatch(n, "CallExpression");
     }
 
     public void printArgumentsList(Node n, String from) {
-        currentPrinter.p("(");
-        for(int i = 0; i < n.size(); i++) {
-            dispatchTopru(n.get(i), "Arguments");
+        System.out.println(n);
+        if(!from.equals("NewClassExpression")) {
+            currentPrinter.p("(");
+        } else {
+            if(n.size() > 0) currentPrinter.p(", ");
         }
+        loopToDispatch(n, "Arguments");
         currentPrinter.p(")");
     }
 
     public void printSelectionExpression(Node n, String from) {
-        for(int i = 0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), "SelectionExpression");
-        }
+        loopToDispatch(n, "SelectionExpression");
     }
 
 
@@ -215,6 +252,7 @@ public class JppPrinter extends Visitor {
     }
 
     public void printBlock(Node n, String from) {
+        System.out.println(n);
         currentPrinter.pln("{");
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "Block");
@@ -229,7 +267,12 @@ public class JppPrinter extends Visitor {
         }
     }
     public void printQualifiedIdentifier(Node n, String from) {
-        currentPrinter.p(n.getString(0)+" ");
+        if(from.equals("NewClassExpression")) {
+            currentPrinter.p("__"+n.getString(0)+"::__init("+
+                             "new __"+n.getString(0)+"()");
+        } else {
+            currentPrinter.p(n.getString(0) + " ");
+        }
     }
 
 
