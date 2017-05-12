@@ -250,7 +250,11 @@ public class JppPrinter extends Visitor {
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-        currentPrinter.p(n.get(0).toString());
+        if(from.equals("ConstructorDeclaration")) {
+            currentPrinter.p("__this->"+n.get(0).toString()+" ");
+        } else {
+            currentPrinter.p(n.get(0).toString());
+        }
     }
     /**
      * getParamsString -- Util
@@ -292,6 +296,7 @@ public class JppPrinter extends Visitor {
     }
 
     public void printConstField(Node n, String from) {
+        System.out.println(n);
         pru(n.getNode(2), "ConstructorDeclaration");
         currentPrinter.p("; \n");
     }
@@ -303,6 +308,12 @@ public class JppPrinter extends Visitor {
         else return true;
     }
 
+    /**
+     * TO:DO Fix the cheap solution for __this in field
+     * initializations
+     * @param n
+     * @param from
+     */
     public void printBlock(Node n, String from) {
         currentPrinter.p("{");
         if(from.equals("ConstructorDeclaration")) {
@@ -311,6 +322,7 @@ public class JppPrinter extends Visitor {
                 Node fieldsNode = currentClassNode.getNode(FIELDS);
                 for(int i = 0; i<fieldsNode.size(); i++) {
                     if(checkIfFieldDeclaration(fieldsNode.getNode(i))) {
+                        currentPrinter.p("__this->");
                         printConstField(fieldsNode.getNode(i),
                                         "ConstructorDeclaration");
                     }
@@ -405,8 +417,6 @@ public class JppPrinter extends Visitor {
         for(int i = 0; i<n.size(); i++) {
             printConstructorDeclaration(n.getNode(i));
         }
-
-
     }
 
     /**
