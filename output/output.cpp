@@ -36,7 +36,7 @@ Test001 __Test001::__init(Test001 __this)
     __Object::__init(__this);
     return __this;
 }
-void __Test001::main(Test001 __this, String args)
+void __Test001::main(__rt::Array<String> args)
 {
     A a = __A::__init(new __A());
     String s = a->__vptr->toString(a);

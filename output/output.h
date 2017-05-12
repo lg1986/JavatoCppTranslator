@@ -41,7 +41,7 @@ struct __Test001
 {
     __Test001_VT* __vptr;
     __Test001();
-    static void main(Test001,String);
+    static void main(__rt::Array<String> args);
     static Test001 __init(Test001 __this);
     static Class __class();
     static __Test001_VT __vtable;
