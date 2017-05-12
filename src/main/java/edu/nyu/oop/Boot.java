@@ -130,8 +130,8 @@ public class Boot extends Tool {
         if(runtime.test("jppPrinter")) {
             try {
                 JppPrinter printer = new JppPrinter(runtime, n);
-            } catch (Exception e) {
-
+            } catch (IOException e) {
+                System.out.println(e);
             }
 
         }

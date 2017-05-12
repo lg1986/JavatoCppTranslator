@@ -260,7 +260,7 @@ public class JppPrinter extends Visitor {
 
     public void printSelectionExpression(Node n, String from) {
 
-        if(n.getNode(0).get(0).equals("System")) {
+        if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
 
         } else {
             loopToDispatch(n, "SelectionExpression");
@@ -435,7 +435,8 @@ public class JppPrinter extends Visitor {
 
     }
     public void visitConstructorDeclarations(GNode n) {
-
+        System.out.println("\n here \n");
+        System.out.println(n);
         if(n.size() == 0) {
             printDefaultConstructor();
         }
