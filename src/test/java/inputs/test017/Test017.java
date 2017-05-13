@@ -8,7 +8,7 @@ class A {
         self = this;
     }
 
-    public A self() {
+    public A self_imp() {
         return self;
     }
 }
@@ -16,6 +16,6 @@ class A {
 public class Test017 {
     public static void main(String[] args) {
         A a = new A(5);
-        System.out.println(a.self().toString());
+        System.out.println(a.self_imp().toString());
     }
 }

@@ -3,7 +3,7 @@
 using namespace java::lang;
 
 namespace inputs{
-namespace test011{
+namespace test017{
 struct __A;
 struct __A_VT;
 typedef __rt::Ptr<__A> A;
@@ -14,10 +14,10 @@ static int32_t hashCode(A);
 static bool equals(A,Object);
 static Class getClass(A);
 static String toString(A);
-static void setA(A,String);
-static void printOther(A,A);
- String a;
-static A __init(A __this);
+static A self_imp(A);
+ A self;
+ int x;
+static A __init(A __this,int);
 static Class __class();
 static __A_VT __vtable;
 };
@@ -28,159 +28,45 @@ int32_t (*hashCode)(A);
 bool (*equals)(A,Object);
 Class (*getClass)(A);
 String (*toString)(A);
-void (*setA)(A,String);
-void (*printOther)(A,A);
+A (*self_imp)(A);
 __A_VT()
   : __is_a(__A::__class()),
 __delete(&__rt::__delete<__A>),
 hashCode((int32_t (*)(A))&__Object::hashCode),
 equals((bool (*)(A,Object))&__Object::equals),
 getClass((Class (*)(A))&__Object::getClass),
-toString(__A::toString),
-setA(__A::setA),
-printOther(__A::printOther){}
+toString((String (*)(A))&__Object::toString),
+self_imp(__A::self_imp){}
 };
-struct __B1;
-struct __B1_VT;
-typedef __rt::Ptr<__B1> B1;
-struct __B1 {
-__B1_VT* __vptr;
-__B1();
-static int32_t hashCode(B1);
-static bool equals(B1,Object);
-static Class getClass(B1);
-static String toString(B1);
-static void setA(B1,String);
-static void printOther(B1,A);
- String a;
- String b;
-static B1 __init(B1 __this);
-static Class __class();
-static __B1_VT __vtable;
-};
-struct __B1_VT {
-Class __is_a;
-void (*__delete)(__B1*);
-int32_t (*hashCode)(B1);
-bool (*equals)(B1,Object);
-Class (*getClass)(B1);
-String (*toString)(B1);
-void (*setA)(B1,String);
-void (*printOther)(B1,A);
-__B1_VT()
-  : __is_a(__B1::__class()),
-__delete(&__rt::__delete<__B1>),
-hashCode((int32_t (*)(B1))&__Object::hashCode),
-equals((bool (*)(B1,Object))&__Object::equals),
-getClass((Class (*)(B1))&__Object::getClass),
-toString((String (*)(B1))&__A::toString),
-setA((void (*)(B1,String))&__A::setA),
-printOther((void (*)(B1,A))&__A::printOther){}
-};
-struct __B2;
-struct __B2_VT;
-typedef __rt::Ptr<__B2> B2;
-struct __B2 {
-__B2_VT* __vptr;
-__B2();
-static int32_t hashCode(B2);
-static bool equals(B2,Object);
-static Class getClass(B2);
-static String toString(B2);
-static void setA(B2,String);
-static void printOther(B2,A);
- String a;
- String b;
-static B2 __init(B2 __this);
-static Class __class();
-static __B2_VT __vtable;
-};
-struct __B2_VT {
-Class __is_a;
-void (*__delete)(__B2*);
-int32_t (*hashCode)(B2);
-bool (*equals)(B2,Object);
-Class (*getClass)(B2);
-String (*toString)(B2);
-void (*setA)(B2,String);
-void (*printOther)(B2,A);
-__B2_VT()
-  : __is_a(__B2::__class()),
-__delete(&__rt::__delete<__B2>),
-hashCode((int32_t (*)(B2))&__Object::hashCode),
-equals((bool (*)(B2,Object))&__Object::equals),
-getClass((Class (*)(B2))&__Object::getClass),
-toString((String (*)(B2))&__A::toString),
-setA((void (*)(B2,String))&__A::setA),
-printOther((void (*)(B2,A))&__A::printOther){}
-};
-struct __C;
-struct __C_VT;
-typedef __rt::Ptr<__C> C;
-struct __C {
-__C_VT* __vptr;
-__C();
-static int32_t hashCode(C);
-static bool equals(C,Object);
-static Class getClass(C);
-static String toString(C);
-static void setA(C,String);
-static void printOther(C,A);
- String a;
- String b;
- String c;
-static C __init(C __this);
-static Class __class();
-static __C_VT __vtable;
-};
-struct __C_VT {
-Class __is_a;
-void (*__delete)(__C*);
-int32_t (*hashCode)(C);
-bool (*equals)(C,Object);
-Class (*getClass)(C);
-String (*toString)(C);
-void (*setA)(C,String);
-void (*printOther)(C,A);
-__C_VT()
-  : __is_a(__C::__class()),
-__delete(&__rt::__delete<__C>),
-hashCode((int32_t (*)(C))&__Object::hashCode),
-equals((bool (*)(C,Object))&__Object::equals),
-getClass((Class (*)(C))&__Object::getClass),
-toString((String (*)(C))&__A::toString),
-setA((void (*)(C,String))&__A::setA),
-printOther((void (*)(C,A))&__A::printOther){}
-};
-struct __Test011;
-struct __Test011_VT;
-typedef __rt::Ptr<__Test011> Test011;
-struct __Test011 {
-__Test011_VT* __vptr;
-__Test011();
-static int32_t hashCode(Test011);
-static bool equals(Test011,Object);
-static Class getClass(Test011);
-static String toString(Test011);
+struct __Test017;
+struct __Test017_VT;
+typedef __rt::Ptr<__Test017> Test017;
+struct __Test017 {
+__Test017_VT* __vptr;
+__Test017();
+static int32_t hashCode(Test017);
+static bool equals(Test017,Object);
+static Class getClass(Test017);
+static String toString(Test017);
 static void main(__rt::Array<String>);
-static Test011 __init(Test011 __this);
+static Test017 __init(Test017 __this);
 static Class __class();
-static __Test011_VT __vtable;
+static __Test017_VT __vtable;
 };
-struct __Test011_VT {
+struct __Test017_VT {
 Class __is_a;
-void (*__delete)(__Test011*);
-int32_t (*hashCode)(Test011);
-bool (*equals)(Test011,Object);
-Class (*getClass)(Test011);
-String (*toString)(Test011);
-__Test011_VT()
-  : __is_a(__Test011::__class()),
-__delete(&__rt::__delete<__Test011>),
-hashCode((int32_t (*)(Test011))&__Object::hashCode),
-equals((bool (*)(Test011,Object))&__Object::equals),
-getClass((Class (*)(Test011))&__Object::getClass),
-toString((String (*)(Test011))&__Object::toString){}
+void (*__delete)(__Test017*);
+int32_t (*hashCode)(Test017);
+bool (*equals)(Test017,Object);
+Class (*getClass)(Test017);
+String (*toString)(Test017);
+__Test017_VT()
+  : __is_a(__Test017::__class()),
+__delete(&__rt::__delete<__Test017>),
+hashCode((int32_t (*)(Test017))&__Object::hashCode),
+equals((bool (*)(Test017,Object))&__Object::equals),
+getClass((Class (*)(Test017))&__Object::getClass),
+toString((String (*)(Test017))&__Object::toString){}
 };
 };
 };
