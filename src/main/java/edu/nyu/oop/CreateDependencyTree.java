@@ -257,7 +257,7 @@ public class CreateDependencyTree extends Visitor {
         return checkAllParams(stackParamsList, currParamsList);
     }
 
-    public GNode makeDeepCopyMethNode(Node currMethNode, String name){
+    public GNode makeDeepCopyMethNode(Node currMethNode, String name) {
         GNode retNode = GNode.create("MethodDeclaration");
         retNode.add(currMethNode.get(0));
         retNode.add(currMethNode.get(1));
@@ -285,7 +285,7 @@ public class CreateDependencyTree extends Visitor {
                     return makeDeepCopyMethNode(stackMeth, null);
                 } else {
                     currMethsNode.set(i,
-                            makeDeepCopyMethNode(currMethNode, stackMeth.getString(4)));
+                                      makeDeepCopyMethNode(currMethNode, stackMeth.getString(4)));
                     return null;
                 }
             }

@@ -1,87 +1,67 @@
 #include <iostream>
 #include "output.h"
 using namespace java::lang;
-namespace inputs{
-namespace test012{
-__A::__A() : __vptr(&__vtable){} 
-Class __A::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.A"), __Object::__class());
-  return k;
+namespace inputs
+{
+namespace test015
+{
+__A::__A() : __vptr(&__vtable) {}
+Class __A::__class()
+{
+    static Class k =
+        new __Class(__rt::literal("inputs.test015.A"), __Object::__class());
+    return k;
 }
 __A_VT __A::__vtable;
-A __A::__init(A __this) {
-__Object::__init(__this);
-return __this; 
- }
-void __A::setA(A __this, String x)
-{__this->a=x; 
+A __A::__init(A __this)
+{
+    __Object::__init(__this);
+    return __this;
 }
 void __A::printOther(A __this, A other)
-{std::cout << other->__vptr->myToString(other)<< std::endl; 
+{
+    std::cout << other->__vptr->toString(other)<< std::endl;
 }
-String __A::myToString(A __this)
-{return __this->a; 
+__B::__B() : __vptr(&__vtable) {}
+Class __B::__class()
+{
+    static Class k =
+        new __Class(__rt::literal("inputs.test015.B"),  __A::__class());
+    return k;
 }
-__B1::__B1() : __vptr(&__vtable){} 
-Class __B1::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.B1"), __Object::__class());
-  return k;
+__B_VT __B::__vtable;
+B __B::__init(B __this)
+{
+    __Object::__init(__this);
+    return __this;
 }
-__B1_VT __B1::__vtable;
-B1 __B1::__init(B1 __this) {
-__Object::__init(__this);
-return __this; 
- }
-__B2::__B2() : __vptr(&__vtable){} 
-Class __B2::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.B2"), __Object::__class());
-  return k;
+void __B::printOther(B __this, A other)
+{
+    std::cout << other->__vptr->toString(other)<< std::endl;
 }
-__B2_VT __B2::__vtable;
-B2 __B2::__init(B2 __this) {
-__Object::__init(__this);
-return __this; 
- }
-__C::__C() : __vptr(&__vtable){} 
-Class __C::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.C"), __Object::__class());
-  return k;
+String __B::toString(B __this)
+{
+    return __this->some->__vptr->toString(__this->some);
 }
-__C_VT __C::__vtable;
-C __C::__init(C __this) {
-__Object::__init(__this);
-return __this; 
- }
-String __C::myToString(C __this)
-{return __rt::literal("still C"); 
+__Test015::__Test015() : __vptr(&__vtable) {}
+Class __Test015::__class()
+{
+    static Class k =
+        new __Class(__rt::literal("inputs.test015.Test015"), __Object::__class());
+    return k;
 }
-__Test012::__Test012() : __vptr(&__vtable){} 
-Class __Test012::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test012"), __Object::__class());
-  return k;
+__Test015_VT __Test015::__vtable;
+Test015 __Test015::__init(Test015 __this)
+{
+    __Object::__init(__this);
+    return __this;
 }
-__Test012_VT __Test012::__vtable;
-Test012 __Test012::__init(Test012 __this) {
-__Object::__init(__this);
-return __this; 
- }
-void __Test012::main(__rt::Array<String>args){A a = __A::__init(new __A()); 
-a->__vptr->setA(a, __rt::literal("A")); 
-B1 b1 = __B1::__init(new __B1()); 
-b1->__vptr->setA(b1, __rt::literal("B1")); 
-B2 b2 = __B2::__init(new __B2()); 
-b2->__vptr->setA(b2, __rt::literal("B2")); 
-C c = __C::__init(new __C()); 
-c->__vptr->setA(c, __rt::literal("C")); 
-a->__vptr->printOther(a, a); 
-a->__vptr->printOther(a, b1); 
-a->__vptr->printOther(a, b2); 
-a->__vptr->printOther(a, c); 
+void __Test015::main(__rt::Array<String>args)
+{
+    A a = __A::__init(new __A());
+    B other = __B::__init(new __B());
+    other->some=a;
+    a->__vptr->printOther(a, other);
 }
 }
 }

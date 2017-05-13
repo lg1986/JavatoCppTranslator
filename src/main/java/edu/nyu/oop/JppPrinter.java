@@ -110,7 +110,13 @@ public class JppPrinter extends Visitor {
         currentPrinter.indentMore();
         currentPrinter.pln("static Class k = ");
         currentPrinter.indentMore().indentMore();
-        String nextLine = "new __Class(__rt::literal(\"nyu.edu.oop."+currentClassName.replace("__","")+"\"), __Object::__class());";
+        String nextLine = "new __Class(__rt::literal(\"inputs."+this.packageName+"."+ currentClassName.replace("__", "") + "\"), ";
+        if(n.get(EXT) == null) {
+            nextLine+="__Object::__class());";
+        } else {
+            String extClass = n.getNode(EXT).getNode(0).getNode(0).getString(0);
+            nextLine+=" __"+extClass+"::__class());";
+        }
         currentPrinter.pln(nextLine);
         currentPrinter.indentMore();
         currentPrinter.pln("return k;");
@@ -208,6 +214,8 @@ public class JppPrinter extends Visitor {
             printIntegerLiteral(n, from);
         } else if(n.hasName("BooleanLiteral")) {
             printBooleanLiteral(n, from);
+        } else if(n.hasName("CastExpression")) {
+            printCastExpression(n, "from");
         }
     }
 
@@ -260,6 +268,7 @@ public class JppPrinter extends Visitor {
 
     public void printArgumentsList(Node n, String from) {
         if(!from.equals("NewClassExpression")) {
+            if(callExpPrim == null) callExpPrim = "__this";
             currentPrinter.p("("+callExpPrim);
         }
         if(n.size() > 0) currentPrinter.p(", ");
@@ -268,7 +277,14 @@ public class JppPrinter extends Visitor {
     }
 
     public void printSelectionExpression(Node n, String from) {
-
+        if(from.equals("CallExpression")) {
+            if(n.getNode(0).getString(0) == null) {
+                callExpPrim = "__this"+"->"+n.getString(1);
+            } else {
+                callExpPrim = n.getNode(0).getString(0) + "->" + n.getString(1);
+                System.out.println(callExpPrim);
+            }
+        }
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
         } else {
             loopToDispatch(n, "SelectionExpression");
@@ -358,6 +374,7 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
+        System.out.println(n);
 
         if(from.equals("ConstructorDeclaration")) {
 
@@ -386,6 +403,13 @@ public class JppPrinter extends Visitor {
         } else {
             currentPrinter.p(n.getString(0) + " ");
         }
+    }
+
+    public void printCastExpression(Node n, String from) {
+        currentPrinter.p("(");
+        printType(n.getNode(0), "CastExpression");
+        currentPrinter.p(")");
+        currentPrinter.p(" "+n.getNode(1).getString(0));
     }
 
     public boolean checkIfStatic(Node n) {
@@ -432,8 +456,9 @@ public class JppPrinter extends Visitor {
         if(checkIfStatic(n)) {
             dispatchTopru(n.get(2), "MethodDeclaration");
             dispatchTopru(n.get(3), "MethodDeclaration");
-            currentPrinter.p(getParamStringForMethods(n.getNode(4)));
+            currentPrinter.pln(getParamStringForMethods(n.getNode(4)));
             dispatchTopru(n.get(7), "MethodDeclaration");
+
 
         } else {
             for (int i = 0; i < n.size(); i++) {
