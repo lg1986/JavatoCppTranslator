@@ -53,6 +53,7 @@ class TreeNode {
             return this.className+" "+this.packageName;
         }
     }
+
 }
 
 /**
@@ -180,6 +181,10 @@ public class CreateDependencyTree extends Visitor {
     }
 
 
+    public TreeNode makeDeepCopy(TreeNode n) {
+        TreeNode retNode = new TreeNode(n.packageName, n.className, GNode.create((GNode)n.ast));
+        return retNode;
+    }
     /**
      * Util class -- this is to flip the inheritance chain and
      * then perform the stacking.
@@ -192,7 +197,7 @@ public class CreateDependencyTree extends Visitor {
 
         correctOrder.add(head);
         while(head.extendsNodes != null) {
-            correctOrder.add(head.extendsNodes);
+            correctOrder.add(makeDeepCopy(head.extendsNodes));
             head = head.extendsNodes;
         }
 
@@ -266,10 +271,10 @@ public class CreateDependencyTree extends Visitor {
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                 if(loadrid == 1) {
-                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
+                    GNode retNode = GNode.create((GNode) stackMeth);
                     return retNode;
                 } else {
-                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
+                    GNode retNode = GNode.create((GNode) stackMeth);
                     retNode.set(4, className);
                     currMethsNode.set(i, retNode);
 //                    System.out.println("\n RETNODE \n");
@@ -304,7 +309,7 @@ public class CreateDependencyTree extends Visitor {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
             if(toAdd != null) {
-                GNode copyToAdd = GNode.ensureVariable((GNode)toAdd);
+                GNode copyToAdd = GNode.create((GNode)toAdd);
 //                System.out.println("\n adding:");
 //                System.out.println(copyToAdd);
                 currNode.getNode(3).getNode(2).addNode(copyToAdd);
@@ -338,7 +343,6 @@ public class CreateDependencyTree extends Visitor {
      * This is the main method for stacking fields according
      * to the data layout convention.
      */
-
     public void stackFields(Node stackFields, Node currNode) {
         ArrayList<String> currFields = getFieldsList(currNode);
         for(int i = 0; i < stackFields.size(); i++) {
@@ -357,7 +361,6 @@ public class CreateDependencyTree extends Visitor {
      * @param stack
      * @param currNode
      */
-
     public void stackItUp(Node stack, Node currNode) {
         Node stackMeths = stack.getNode(3).getNode(2);
         Node stackFields = stack.getNode(3).getNode(0);
@@ -383,10 +386,10 @@ public class CreateDependencyTree extends Visitor {
      */
     public GNode getInheritedStructure(TreeNode n) {
         Node orignal = n.ast;
-        GNode originalConsts =GNode.ensureVariable((GNode)
-                              n.ast.getNode(3).getNode(1));
+        GNode originalConsts =GNode.create((GNode)
+                                           n.ast.getNode(3).getNode(1));
 
-        GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
+        GNode originalMeths = GNode.create((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
         if(inherit.size() == 1) {
             return (GNode)inherit.get(0).ast;
@@ -402,16 +405,13 @@ public class CreateDependencyTree extends Visitor {
             dataLayoutNode.add(GNode.create("MethodDeclarations"));
 
             inheritSim.addNode(dataLayoutNode);
-
             for(int i = 0; i<inherit.size(); i++) {
                 stackItUp(inherit.get(i).ast, inheritSim);
             }
-
-
             dataLayoutNode.set(1, originalConsts);
+
             GNode vtableNode = GNode.create("VTableNode");
             GNode vtableMethNode = GNode.create("MethodDeclarations");
-
             Node dataLayoutMethNode = dataLayoutNode.getNode(2);
             for(int i = 0; i<dataLayoutMethNode.size(); i++) {
                 Node me = dataLayoutMethNode.getNode(i);
@@ -419,16 +419,8 @@ public class CreateDependencyTree extends Visitor {
                     vtableMethNode.addNode(me);
                 }
             }
-
-
-//            vtableNode.addNode(dataLayoutNode.getNode(2));
             vtableNode.addNode(vtableMethNode);
             inheritSim.addNode(vtableNode);
-
-
-
-            inheritSim.getNode(3).set(2, originalMeths);
-
 
             return inheritSim;
         }
@@ -446,7 +438,6 @@ public class CreateDependencyTree extends Visitor {
         inheritanceSimAsts = new ArrayList<>();
         for(TreeNode eachClassNode: inheritanceTree) {
             GNode correctRep =  getInheritedStructure(eachClassNode);
-
             inheritanceSimAsts.add(correctRep);
         }
         return inheritanceSimAsts;
