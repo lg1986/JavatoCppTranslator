@@ -257,6 +257,17 @@ public class CreateDependencyTree extends Visitor {
         return checkAllParams(stackParamsList, currParamsList);
     }
 
+    public GNode makeDeepCopyMethNode(Node currMethNode, String name){
+        GNode retNode = GNode.create("MethodDeclaration");
+        retNode.add(currMethNode.get(0));
+        retNode.add(currMethNode.get(1));
+        retNode.add(currMethNode.get(2));
+        retNode.add(currMethNode.get(3));
+        if(name != null) retNode.add(name);
+        else retNode.add(currMethNode.add(4));
+        return retNode;
+    }
+
     /**
      * Helper method for StackMethods
      * @param stackMeth
@@ -271,16 +282,10 @@ public class CreateDependencyTree extends Visitor {
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                 if(loadrid == 1) {
-                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
-                    return retNode;
+                    return makeDeepCopyMethNode(stackMeth, null);
                 } else {
-                    GNode retNode = GNode.create("MethodDeclaration");
-                    retNode.add(currMethNode.get(0));
-                    retNode.add(currMethNode.get(1));
-                    retNode.add(currMethNode.get(2));
-                    retNode.add(currMethNode.get(3));
-                    retNode.add(stackMeth.getString(4));
-                    currMethsNode.set(i, retNode);
+                    currMethsNode.set(i,
+                            makeDeepCopyMethNode(currMethNode, stackMeth.getString(4)));
                     return null;
                 }
             }

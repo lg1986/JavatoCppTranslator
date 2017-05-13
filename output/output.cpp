@@ -2,7 +2,7 @@
 #include "output.h"
 using namespace java::lang;
 namespace inputs{
-namespace test010{
+namespace test012{
 __A::__A() : __vptr(&__vtable){} 
 Class __A::__class() {
   static Class k = 
@@ -18,9 +18,9 @@ void __A::setA(A __this, String x)
 {__this->a=x; 
 }
 void __A::printOther(A __this, A other)
-{std::cout << other->__vptr->toString(other)<< std::endl; 
+{std::cout << other->__vptr->myToString(other)<< std::endl; 
 }
-String __A::toString(A __this)
+String __A::myToString(A __this)
 {return __this->a; 
 }
 __B1::__B1() : __vptr(&__vtable){} 
@@ -56,18 +56,21 @@ C __C::__init(C __this) {
 __Object::__init(__this);
 return __this; 
  }
-__Test010::__Test010() : __vptr(&__vtable){} 
-Class __Test010::__class() {
+String __C::myToString(C __this)
+{return __rt::literal("still C"); 
+}
+__Test012::__Test012() : __vptr(&__vtable){} 
+Class __Test012::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test010"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.Test012"), __Object::__class());
   return k;
 }
-__Test010_VT __Test010::__vtable;
-Test010 __Test010::__init(Test010 __this) {
+__Test012_VT __Test012::__vtable;
+Test012 __Test012::__init(Test012 __this) {
 __Object::__init(__this);
 return __this; 
  }
-void __Test010::main(__rt::Array<String>args){A a = __A::__init(new __A()); 
+void __Test012::main(__rt::Array<String>args){A a = __A::__init(new __A()); 
 a->__vptr->setA(a, __rt::literal("A")); 
 B1 b1 = __B1::__init(new __B1()); 
 b1->__vptr->setA(b1, __rt::literal("B1")); 
