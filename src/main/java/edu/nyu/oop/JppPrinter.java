@@ -66,7 +66,8 @@ public class JppPrinter extends Visitor {
      */
 
 
-    public JppPrinter(Runtime runtime, Node n) throws IOException {
+    public JppPrinter(Runtime runtime, Node n, String packageName) throws IOException {
+        this.packageName = packageName;
         Writer wMainCpp;
         Writer wOutputCpp;
         try {
@@ -85,6 +86,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.flush();
     }
 
+
     /**
      * Utils for printing basic
      * boiler plate for output.cpp
@@ -99,7 +101,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test011"+"{");
+        outputCppPrinter.pln("namespace "+packageName+"{");
     }
 
     public void printClassGenerics(Node n) {

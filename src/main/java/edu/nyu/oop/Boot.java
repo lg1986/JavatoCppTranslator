@@ -129,7 +129,8 @@ public class Boot extends Tool {
 
         if(runtime.test("jppPrinter")) {
             try {
-                JppPrinter printer = new JppPrinter(runtime, n);
+                String packageName = n.getNode(0).getNode(1).getString(1);
+                JppPrinter printer = new JppPrinter(runtime, n,packageName);
             } catch (IOException e) {
                 System.out.println(e);
             }

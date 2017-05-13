@@ -274,8 +274,12 @@ public class CreateDependencyTree extends Visitor {
                     GNode retNode = GNode.ensureVariable((GNode) stackMeth);
                     return retNode;
                 } else {
-                    GNode retNode = GNode.ensureVariable((GNode) currMethNode);
-                    retNode.set(4, stackMeth.getString(4));
+                    GNode retNode = GNode.create("MethodDeclaration");
+                    retNode.add(currMethNode.get(0));
+                    retNode.add(currMethNode.get(1));
+                    retNode.add(currMethNode.get(2));
+                    retNode.add(currMethNode.get(3));
+                    retNode.add(stackMeth.getString(4));
                     currMethsNode.set(i, retNode);
                     return null;
                 }
