@@ -182,7 +182,7 @@ public class CreateDependencyTree extends Visitor {
 
 
     public TreeNode makeDeepCopy(TreeNode n) {
-        TreeNode retNode = new TreeNode(n.packageName, n.className, GNode.create((GNode)n.ast));
+        TreeNode retNode = new TreeNode(n.packageName, n.className, GNode.ensureVariable((GNode) n.ast));
         return retNode;
     }
     /**
@@ -271,14 +271,12 @@ public class CreateDependencyTree extends Visitor {
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                 if(loadrid == 1) {
-                    GNode retNode = GNode.create((GNode) stackMeth);
+                    GNode retNode = GNode.ensureVariable((GNode) stackMeth);
                     return retNode;
                 } else {
-                    GNode retNode = GNode.create((GNode) stackMeth);
+                    GNode retNode = GNode.ensureVariable((GNode) currMethNode);
                     retNode.set(4, className);
                     currMethsNode.set(i, retNode);
-//                    System.out.println("\n RETNODE \n");
-//                    System.out.println(retNode);
                     return null;
                 }
             }
@@ -299,19 +297,12 @@ public class CreateDependencyTree extends Visitor {
      */
 
     public void stackMethods(Node stackMeths, Node currNode, String className) {
-//        System.out.println("\n CLASS: "+className);
-//        System.out.println("\n STACK METHODS:");
-//        System.out.println(stackMeths);
-//
-//        System.out.println("\n CURR METHS: ");
-//        System.out.println(currNode);
+
         for(int i = 0; i<stackMeths.size(); i++) {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
             if(toAdd != null) {
-                GNode copyToAdd = GNode.create((GNode)toAdd);
-//                System.out.println("\n adding:");
-//                System.out.println(copyToAdd);
+                GNode copyToAdd = GNode.ensureVariable((GNode)toAdd);
                 currNode.getNode(3).getNode(2).addNode(copyToAdd);
             }
         }
@@ -386,10 +377,10 @@ public class CreateDependencyTree extends Visitor {
      */
     public GNode getInheritedStructure(TreeNode n) {
         Node orignal = n.ast;
-        GNode originalConsts =GNode.create((GNode)
-                                           n.ast.getNode(3).getNode(1));
+        GNode originalConsts =GNode.ensureVariable((GNode)
+                              n.ast.getNode(3).getNode(1));
 
-        GNode originalMeths = GNode.create((GNode)orignal.getNode(3).getNode(2));
+        GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
         if(inherit.size() == 1) {
             return (GNode)inherit.get(0).ast;
@@ -438,7 +429,7 @@ public class CreateDependencyTree extends Visitor {
         inheritanceSimAsts = new ArrayList<>();
         for(TreeNode eachClassNode: inheritanceTree) {
             GNode correctRep =  getInheritedStructure(eachClassNode);
-            inheritanceSimAsts.add(correctRep);
+            inheritanceSimAsts.add(GNode.create(correctRep));
         }
         return inheritanceSimAsts;
     }
