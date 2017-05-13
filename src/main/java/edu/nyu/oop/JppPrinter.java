@@ -282,7 +282,6 @@ public class JppPrinter extends Visitor {
                 callExpPrim = "__this"+"->"+n.getString(1);
             } else {
                 callExpPrim = n.getNode(0).getString(0) + "->" + n.getString(1);
-                System.out.println(callExpPrim);
             }
         }
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
@@ -294,8 +293,11 @@ public class JppPrinter extends Visitor {
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-        if(from.equals("SelectionExpression") && n.getString(0).equals("System")) {
-        } else if(from.equals("ConstructorDeclaration")) {
+        if(from.equals("SubscriptExpression")) {
+            currentPrinter.p("(*"+n.get(0).toString()+")");
+        } else if(from.equals("SelectionExpression")
+                  && n.getString(0).equals("System")) {}
+        else if(from.equals("ConstructorDeclaration")) {
             currentPrinter.p(n.get(0).toString()+" ");
         } else {
             currentPrinter.p(n.get(0).toString());

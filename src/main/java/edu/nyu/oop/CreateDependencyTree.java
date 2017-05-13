@@ -329,7 +329,7 @@ public class CreateDependencyTree extends Visitor {
         ArrayList<String> fieldsList = new ArrayList<>();
         for(int i = 0; i < fieldsList.size(); i++) {
             Node fieldNode = fields.getNode(i);
-            String field = fieldNode.getString(0)+" "+fieldNode.getString(1);
+            String field = fieldNode.getString(1)+" "+fieldNode.getString(2);
         }
         return fieldsList;
     }
@@ -346,8 +346,8 @@ public class CreateDependencyTree extends Visitor {
         ArrayList<String> currFields = getFieldsList(currNode);
         for(int i = 0; i < stackFields.size(); i++) {
             Node stackFieldNode = stackFields.getNode(i);
-            String stackFieldString  = stackFieldNode.getString(0)+" "+
-                                       stackFieldNode.getString(1);
+            String stackFieldString  = stackFieldNode.getString(1)+" "+
+                                       stackFieldNode.getString(2);
             if(!currFields.contains(stackFieldString)) {
                 currNode.getNode(3).getNode(0).addNode(stackFieldNode);
             }

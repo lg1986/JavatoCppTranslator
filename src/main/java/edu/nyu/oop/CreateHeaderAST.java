@@ -114,9 +114,11 @@ public class CreateHeaderAST extends Visitor {
     }
 
     public void visitFieldDeclaration(GNode n) {
+
         String typ = n.getNode(1).getNode(0).getString(0);
         String name = n.getNode(2).getNode(0).getString(0);
         GNode fieldDeclaration = GNode.create("FieldDeclaration");
+        fieldDeclaration.addNode(n.getNode(0));
         fieldDeclaration.add(typ);
         fieldDeclaration.add(name);
         dataLayoutNode.getNode(0).addNode(fieldDeclaration);
