@@ -4,7 +4,7 @@ using namespace java::lang;
 
 namespace inputs
 {
-namespace test005
+namespace test008
 {
 struct __A;
 struct __A_VT;
@@ -17,6 +17,7 @@ struct __A
     static bool equals(A,Object);
     static Class getClass(A);
     static String toString(A);
+    String a;
     static A __init(A __this);
     static Class __class();
     static __A_VT __vtable;
@@ -35,7 +36,7 @@ struct __A_VT
           hashCode((int32_t (*)(A))&__Object::hashCode),
           equals((bool (*)(A,Object))&__Object::equals),
           getClass((Class (*)(A))&__Object::getClass),
-          toString(__A::toString) {}
+          toString((String (*)(A))&__Object::toString) {}
 };
 struct __B;
 struct __B_VT;
@@ -48,7 +49,9 @@ struct __B
     static bool equals(B,Object);
     static Class getClass(B);
     static String toString(B);
-    static B __init(B __this);
+    String a;
+    String b;
+    static B __init(B __this,String);
     static Class __class();
     static __B_VT __vtable;
 };
@@ -66,39 +69,39 @@ struct __B_VT
           hashCode((int32_t (*)(B))&__Object::hashCode),
           equals((bool (*)(B,Object))&__Object::equals),
           getClass((Class (*)(B))&__Object::getClass),
-          toString(__B::toString) {}
+          toString((String (*)(B))&__Object::toString) {}
 };
-struct __Test005;
-struct __Test005_VT;
-typedef __rt::Ptr<__Test005> Test005;
-struct __Test005
+struct __Test008;
+struct __Test008_VT;
+typedef __rt::Ptr<__Test008> Test008;
+struct __Test008
 {
-    __Test005_VT* __vptr;
-    __Test005();
-    static int32_t hashCode(Test005);
-    static bool equals(Test005,Object);
-    static Class getClass(Test005);
-    static String toString(Test005);
-    static void main(Test005,String);
-    static Test005 __init(Test005 __this);
+    __Test008_VT* __vptr;
+    __Test008();
+    static int32_t hashCode(Test008);
+    static bool equals(Test008,Object);
+    static Class getClass(Test008);
+    static String toString(Test008);
+    static void main(__rt::Array<String> args);
+    static Test008 __init(Test008 __this);
     static Class __class();
-    static __Test005_VT __vtable;
+    static __Test008_VT __vtable;
 };
-struct __Test005_VT
+struct __Test008_VT
 {
     Class __is_a;
-    void (*__delete)(__Test005*);
-    int32_t (*hashCode)(Test005);
-    bool (*equals)(Test005,Object);
-    Class (*getClass)(Test005);
-    String (*toString)(Test005);
-    __Test005_VT()
-        : __is_a(__Test005::__class()),
-          __delete(&__rt::__delete<__Test005>),
-          hashCode((int32_t (*)(Test005))&__Object::hashCode),
-          equals((bool (*)(Test005,Object))&__Object::equals),
-          getClass((Class (*)(Test005))&__Object::getClass),
-          toString((String (*)(Test005))&__Object::toString) {}
+    void (*__delete)(__Test008*);
+    int32_t (*hashCode)(Test008);
+    bool (*equals)(Test008,Object);
+    Class (*getClass)(Test008);
+    String (*toString)(Test008);
+    __Test008_VT()
+        : __is_a(__Test008::__class()),
+          __delete(&__rt::__delete<__Test008>),
+          hashCode((int32_t (*)(Test008))&__Object::hashCode),
+          equals((bool (*)(Test008,Object))&__Object::equals),
+          getClass((Class (*)(Test008))&__Object::getClass),
+          toString((String (*)(Test008))&__Object::toString) {}
 };
 };
 };

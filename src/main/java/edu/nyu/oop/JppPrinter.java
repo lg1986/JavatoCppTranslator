@@ -99,7 +99,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test005"+"{");
+        outputCppPrinter.pln("namespace "+"test008"+"{");
     }
 
     public void printClassGenerics(Node n) {
@@ -348,12 +348,11 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
-        currentPrinter.p("{");
+
         if(from.equals("ConstructorDeclaration")) {
-            printSuperConstructorInit(constNum);
-            if(constNum == 1) {
-                fieldInitialiationConstructors(n);
-            }
+
+        } else {
+            currentPrinter.p("{");
         }
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "Block");
@@ -402,10 +401,12 @@ public class JppPrinter extends Visitor {
      * @param constNum
      */
 
-    public void printSuperConstructorInit(int constNum) {
+    public void printSuperConstructorInit(int constNum, String paramsList) {
         if(constNum == 1) {
             if(currentClassNode.get(EXT) != null) {
-                currentPrinter.pln(currentClassNode.get(EXT).toString());
+                String extClass =
+                    currentClassNode.getNode(EXT).getNode(0).getNode(0).getString(0);
+                currentPrinter.pln("__"+extClass+"::__init( __this);");
             } else {
                 currentPrinter.pln("__Object::__init(__this);");
             }
@@ -422,6 +423,11 @@ public class JppPrinter extends Visitor {
         currentPrinter.p(currentClassName+" __"+
                          currentClassName+"::__init"+
                          getParamsString(n.getNode(4)));
+        currentPrinter.pln("{");
+        printSuperConstructorInit(constNum, getParamsString(n.getNode(4)));
+        if(constNum == 1) {
+            fieldInitialiationConstructors(n);
+        }
         printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
     }
 
