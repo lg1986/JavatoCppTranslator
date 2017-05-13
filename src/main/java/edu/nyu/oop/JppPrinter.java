@@ -99,11 +99,11 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test009"+"{");
+        outputCppPrinter.pln("namespace "+"test011"+"{");
     }
 
     public void printClassGenerics(Node n) {
-        currentPrinter.p("__"+currentClassName+":: __"+currentClassName+"() : __vptr(&__vtable){} \n");
+        currentPrinter.p("__"+currentClassName+"::__"+currentClassName+"() : __vptr(&__vtable){} \n");
         currentPrinter.pln("Class __"+currentClassName+"::__class() {");
         currentPrinter.indentMore();
         currentPrinter.pln("static Class k = ");
@@ -240,8 +240,9 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        System.out.println(n);
-        if(n.getNode(0).hasName("PrimaryIdentifier")) {
+        if(from.equals("SubscriptExpression")) {
+            currentPrinter.p("(*"+n.get(0).toString()+")");
+        } else if(n.getNode(0).hasName("PrimaryIdentifier")) {
             callExpPrim = n.getNode(0).getString(0);
         } else if(n.getNode(0).hasName("SelectionExpression")) {
             callExpPrim = n.getNode(0).getNode(0).getString(0);

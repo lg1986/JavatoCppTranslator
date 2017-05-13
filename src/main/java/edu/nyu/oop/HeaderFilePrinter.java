@@ -125,9 +125,17 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("};");
     }
 
+
+
     public boolean checkIfNode(Object n) {
-        if(n.getClass().toString().equals("Node")) return true;
-        else return false;
+        if(n != null) {
+            if (n instanceof String) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -137,10 +145,12 @@ public class HeaderFilePrinter extends Visitor {
 
     public boolean checkIfStatic(Node n) {
         if(checkIfNode(n.get(0))) {
-            Node modifer = n.getNode(0);
-            if (modifer.size() <= 1) return false;
-            if (modifer.get(2) != null) {
-                if (modifer.getNode(2).getString(0).equals("static")) {
+            System.out.println(n.get(0));
+            Node modifers = n.getNode(0);
+
+            if (modifers.size() <= 1) return false;
+            if (modifers.get(1) != null) {
+                if (modifers.getNode(1).getString(0).equals("static")) {
                     return true;
                 }
             }
@@ -148,18 +158,41 @@ public class HeaderFilePrinter extends Visitor {
         }
         return false;
     }
-    public void visitMethodDeclaration(Node n) {
-        if(checkIfStatic(n) == false) {
-            printer.p("static ");
-            if (checkIfNode(n.getNode(0))) {
-                String ret = getReturnType(n);
-                printer.p(ret + " " + n.get(2).toString());
+
+    public String getParamString(Node n, boolean isStatic) {
+        String paramString = "(";
+        if(!isStatic) paramString+=currentClassName;
+        for(int i = 0; i < n.size(); i++) {
+            Node paramNode = n.getNode(i);
+
+            if(paramNode.size() > 2 && paramNode.get(2) != null) {
+
+                if(!isStatic) paramString+=",";
+                String arrayParam = "__rt::Array<"+
+                                    paramNode.getString(0)+">";
+                paramString += arrayParam;
             } else {
-                printer.p(n.get(1).toString() + " " + n.get(2).toString());
+                paramString += ","+paramNode.getString(0);
             }
-            printer.p(getParamString(n.getNode(3)));
-            printer.pln(";");
         }
+        paramString +=")";
+        return paramString;
+    }
+    public void visitMethodDeclaration(Node n) {
+        printer.p("static ");
+        if (checkIfNode(n.getNode(0))) {
+            String ret = getReturnType(n);
+            printer.p(ret + " " + n.get(2).toString());
+        } else {
+            printer.p(n.get(1).toString() + " " + n.get(2).toString());
+        }
+        if(checkIfStatic(n)) {
+            printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+        } else {
+            printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+        }
+
+        printer.pln(";");
     }
 
     public void visitMethodDeclarations(Node  n) {
@@ -174,14 +207,7 @@ public class HeaderFilePrinter extends Visitor {
      * @param n
      */
 
-    public String getParamString(Node n) {
-        String paramString = "("+currentClassName;
-        for(int i = 0; i < n.size(); i++) {
-            paramString += "," + n.getNode(i).getString(0);
-        }
-        paramString +=")";
-        return paramString;
-    }
+
 
     public void visitMethodDeclarationsVTable(Node n) {
         for(int i = 0; i<n.size(); i++) {
@@ -194,7 +220,7 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(1))) ret = getReturnType(n);
         else  ret = (n.get(1).toString()+" ");
-        String paramString = getParamString(n.getNode(3));
+        String paramString = getParamString(n.getNode(3), false);
         printer.pln(ret + "(*" + methName + ")" + paramString + ";");
     }
 
@@ -216,7 +242,7 @@ public class HeaderFilePrinter extends Visitor {
         String ret;
         if(checkIfNode(n.get(1))) ret = getReturnType(n);
         else  ret = (n.get(1).toString()+" ");
-        String paramString = getParamString(n.getNode(3));
+        String paramString = getParamString(n.getNode(3), false);
         if(!n.getString(4).equals(currentClassName))
             printer.p(methName+"(("+ret+"(*)"+paramString+")&__"+n.getString(4)+"::"+methName+")");
         else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
@@ -267,7 +293,7 @@ public class HeaderFilePrinter extends Visitor {
     }
 
     public String getReturnType(Node n) {
-        String ret = n.getNode(2).getNode(0).getString(0);
+        String ret = n.getString(1);
         return ret;
 
     }

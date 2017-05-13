@@ -275,7 +275,7 @@ public class CreateDependencyTree extends Visitor {
                     return retNode;
                 } else {
                     GNode retNode = GNode.ensureVariable((GNode) currMethNode);
-                    retNode.set(4, className);
+                    retNode.set(4, stackMeth.getString(4));
                     currMethsNode.set(i, retNode);
                     return null;
                 }
@@ -297,7 +297,6 @@ public class CreateDependencyTree extends Visitor {
      */
 
     public void stackMethods(Node stackMeths, Node currNode, String className) {
-
         for(int i = 0; i<stackMeths.size(); i++) {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);

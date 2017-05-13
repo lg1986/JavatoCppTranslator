@@ -8,6 +8,6 @@ int main(int argc, char* argv[])
     {
         (*args)[i] = __rt::literal(argv[i]);
     }
-    inputs::test009::__Test009::main(args);
+    inputs::test011::__Test011::main(args);
     return 0;
 }

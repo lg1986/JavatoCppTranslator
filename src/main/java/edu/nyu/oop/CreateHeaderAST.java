@@ -43,13 +43,19 @@ public class CreateHeaderAST extends Visitor {
     }
 
     public GNode getFormalParameter(Node n) {
+
         String typ = n.getNode(1).getNode(0).getString(0);
+
         String name = n.getString(3);
         GNode parameter = GNode.create("FormalParameter");
         parameter.add(typ);
         parameter.add(name);
+        if(n.getNode(1).size() > 1 && n.getNode(1).get(1) != null) {
+            parameter.add("Array");
+        } else {
+            parameter.add(null);
+        }
         return parameter;
-
     }
 
     public GNode getFormalParameters(Node n) {
