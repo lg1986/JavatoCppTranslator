@@ -145,7 +145,6 @@ public class HeaderFilePrinter extends Visitor {
 
     public boolean checkIfStatic(Node n) {
         if(checkIfNode(n.get(0))) {
-            System.out.println(n.get(0));
             Node modifers = n.getNode(0);
 
             if (modifers.size() <= 1) return false;

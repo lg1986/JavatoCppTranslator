@@ -82,7 +82,7 @@ Test011 __Test011::__init(Test011 __this)
     __Object::__init(__this);
     return __this;
 }
-void __Test011::main(Test011 __this, String args)
+void __Test011::main(__rt::Array<String>args)
 {
     A a = __A::__init(new __A());
     a->__vptr->setA(a, __rt::literal("A"));

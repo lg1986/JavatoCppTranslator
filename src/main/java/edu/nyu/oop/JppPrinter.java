@@ -283,6 +283,7 @@ public class JppPrinter extends Visitor {
             currentPrinter.p(n.get(0).toString());
         }
     }
+
     /**
      * getParamsString -- Util
      * @param n
@@ -291,6 +292,8 @@ public class JppPrinter extends Visitor {
     public String getParamsString(Node n) {
         String paramString = "("+currentClassName+" __this";
         for(int i = 0; i < n.size(); i++) {
+            Node paramNode = n.getNode(i);
+
             paramString += ",";
             Node param = n.getNode(i);
             paramString += " "+(param.getNode(1).getNode(0).get(0));
@@ -383,15 +386,59 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    public boolean checkIfStatic(Node n) {
+        if(checkIfNode(n.get(0))) {
+            Node modifiers = n.getNode(0);
 
+            if(modifiers.size() <= 1) return false;
+            if(modifiers.get(1) != null) {
+                if(modifiers.getNode(1).getString(0).equals("static")) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+
+    public String getParamStringForMethods(Node n) {
+        String paramString = "(";
+        for(int i = 0; i < n.size(); i++) {
+            Node paramNode = n.getNode(i);
+
+            Node typeNode = paramNode.getNode(1);
+            if(typeNode.size() == 2 && typeNode.get(1) != null) {
+
+                String arrayParam = "__rt::Array<"+
+                                    typeNode.getNode(0).getString(0)+">";
+                paramString += arrayParam + paramNode.getString(3);
+            } else {
+                String typ = typeNode.getNode(0).getString(0);
+                paramString += typ+" "+paramNode.getString(3);
+            }
+            if(i != n.size()-1) paramString += ",";
+        }
+        paramString +=")";
+        return paramString;
+    }
     public void visitMethodDeclaration(GNode n) {
         int consts = 0;
         if(n.getString(3).equals("main")) {
             printMain();
         }
-        for(int i = 0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), "MethodDeclaration");
+        if(checkIfStatic(n)) {
+            dispatchTopru(n.get(2), "MethodDeclaration");
+            dispatchTopru(n.get(3), "MethodDeclaration");
+            currentPrinter.p(getParamStringForMethods(n.getNode(4)));
+            dispatchTopru(n.get(7), "MethodDeclaration");
+
+        } else {
+            for (int i = 0; i < n.size(); i++) {
+                dispatchTopru(n.get(i), "MethodDeclaration");
+            }
         }
+
     }
 
     public void visitMethodDeclarations(GNode n) {
