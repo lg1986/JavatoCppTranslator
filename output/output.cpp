@@ -3,7 +3,7 @@
 using namespace java::lang;
 namespace inputs
 {
-namespace test008
+namespace test009
 {
 __A:: __A() : __vptr(&__vtable) {}
 Class __A::__class()
@@ -16,42 +16,26 @@ __A_VT __A::__vtable;
 A __A::__init(A __this)
 {
     __Object::__init(__this);
-    __this->a=__rt::literal("A");
-    std::cout << __this->a<< std::endl;
+    __this->self=__this;
     return __this;
 }
-__B:: __B() : __vptr(&__vtable) {}
-Class __B::__class()
+__Test009:: __Test009() : __vptr(&__vtable) {}
+Class __Test009::__class()
 {
     static Class k =
-        new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
+        new __Class(__rt::literal("nyu.edu.oop.Test009"), __Object::__class());
     return k;
 }
-__B_VT __B::__vtable;
-B __B::__init(B __this, String s)
-{
-    __A::__init( __this);
-    __this->b=__rt::literal("B");
-    __this->a=__rt::literal("B");
-    std::cout << __this->a<< std::endl;
-    return __this;
-}
-__Test008:: __Test008() : __vptr(&__vtable) {}
-Class __Test008::__class()
-{
-    static Class k =
-        new __Class(__rt::literal("nyu.edu.oop.Test008"), __Object::__class());
-    return k;
-}
-__Test008_VT __Test008::__vtable;
-Test008 __Test008::__init(Test008 __this)
+__Test009_VT __Test009::__vtable;
+Test009 __Test009::__init(Test009 __this)
 {
     __Object::__init(__this);
     return __this;
 }
-void __Test008::main(__rt::Array<String> args)
+void __Test009::main(__rt::Array<String> args)
 {
-    B b = __B::__init(new __B(), __rt::literal("s"));
+    A a = __A::__init(new __A());
+    std::cout << a->self->__vptr->toString(a)<< std::endl;
 }
 }
 }

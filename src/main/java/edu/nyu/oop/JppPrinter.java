@@ -99,7 +99,7 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("#include \"output.h\"");
         outputCppPrinter.pln("using namespace java::lang;");
         outputCppPrinter.pln("namespace inputs{");
-        outputCppPrinter.pln("namespace "+"test008"+"{");
+        outputCppPrinter.pln("namespace "+"test009"+"{");
     }
 
     public void printClassGenerics(Node n) {
@@ -240,8 +240,12 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        if(n.getNode(0).hasName("PrimaryIdentifier"))
+        System.out.println(n);
+        if(n.getNode(0).hasName("PrimaryIdentifier")) {
             callExpPrim = n.getNode(0).getString(0);
+        } else if(n.getNode(0).hasName("SelectionExpression")) {
+            callExpPrim = n.getNode(0).getNode(0).getString(0);
+        }
         if(n.get(2).equals("println") || n.get(2).equals("print")) {
             currentPrinter.p("std::cout << ");
             loopToDispatch(n.getNode(3), "CallExpression");
