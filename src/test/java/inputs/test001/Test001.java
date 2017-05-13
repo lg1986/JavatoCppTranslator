@@ -8,6 +8,21 @@ class A {
     public A() {
 
     }
+
+    public String myString(double i, int x) {
+        return "i";
+    }
+
+    public String myString(int x) {
+        return "s";
+    }
+
+}
+
+class B extends A {
+    public String myString(String s) {
+        return "S";
+    }
 }
 
 public class Test001 {

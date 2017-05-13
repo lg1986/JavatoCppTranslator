@@ -1,9 +1,12 @@
 package edu.nyu.oop;
 
+import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Printer;
 import xtc.tree.Visitor;
+import xtc.type.MethodT;
+import xtc.type.Type;
 import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
@@ -18,6 +21,8 @@ public class JppPrinter extends Visitor {
     private Printer outputCppPrinter;
     private Printer mainCppPrinter;
     private Printer currentPrinter;
+    protected SymbolTable table;
+    protected Runtime runtime;
 
     private List<GNode> asts;
     private String packageName;
@@ -249,6 +254,10 @@ public class JppPrinter extends Visitor {
         loopToDispatch(n, "ExpressionStatement");
     }
 
+
+    public final List<File> classpath() {
+        return JavaEntities.classpath(runtime);
+    }
     public void printCallExpression(Node n, String from) {
         if(from.equals("SubscriptExpression")) {
             currentPrinter.p("(*"+n.get(0).toString()+")");
@@ -376,7 +385,6 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
-        System.out.println(n);
 
         if(from.equals("ConstructorDeclaration")) {
 

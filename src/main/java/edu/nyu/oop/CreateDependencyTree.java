@@ -220,8 +220,7 @@ public class CreateDependencyTree extends Visitor {
         ArrayList<String> paramsList = new ArrayList<>();
         for(int i = 0; i<paramNodes.size(); i++) {
             Node paramNode = paramNodes.getNode(i);
-            String paramString  = paramNode.getString(0)+
-                                  " "+paramNode.get(1);
+            String paramString  = paramNode.getString(0);
             paramsList.add(paramString);
         }
         return paramsList;
@@ -231,15 +230,16 @@ public class CreateDependencyTree extends Visitor {
      * Helper method for StackMethods
      * @param stackParams
      * @param currParams
-     * @return int --> 1 new method
+     * @return int --> 0 new method
      * it is. int --> 1 overriden method
      */
     public int checkAllParams(ArrayList<String> stackParams,
                               ArrayList<String> currParams) {
+
         if(stackParams.size() != currParams.size()) return 1;
         if(stackParams.size() == 0) return 0;
         for(int i = 0; i < stackParams.size(); i++) {
-            if(!currParams.contains(stackParams.get(i))) return 1;
+            if(!currParams.contains(stackParams.get(i))) return 2;
         }
         return 0;
     }
@@ -259,12 +259,18 @@ public class CreateDependencyTree extends Visitor {
 
     public GNode makeDeepCopyMethNode(Node currMethNode, String name) {
         GNode retNode = GNode.create("MethodDeclaration");
+        String param_mangle = getParamsList(currMethNode.getNode(3)).toString();
+        String methName = currMethNode.getString(2);
+        if(param_mangle != "[]") {
+            methName += "__"+param_mangle.
+                        replace("[", "").replace("]", "").replace(", ", "__").replace(" ", "");
+        }
         retNode.add(currMethNode.get(0));
         retNode.add(currMethNode.get(1));
-        retNode.add(currMethNode.get(2));
+        retNode.add(methName);
         retNode.add(currMethNode.get(3));
         if(name != null) retNode.add(name);
-        else retNode.add(currMethNode.add(4));
+        else retNode.add(currMethNode.get(4));
         return retNode;
     }
 
@@ -282,8 +288,9 @@ public class CreateDependencyTree extends Visitor {
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                 if(loadrid == 1) {
+
                     return makeDeepCopyMethNode(stackMeth, null);
-                } else {
+                } else if(loadrid == 0) {
                     currMethsNode.set(i,
                                       makeDeepCopyMethNode(currMethNode, stackMeth.getString(4)));
                     return null;
@@ -310,7 +317,7 @@ public class CreateDependencyTree extends Visitor {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
             if(toAdd != null) {
-                GNode copyToAdd = GNode.ensureVariable((GNode)toAdd);
+                GNode copyToAdd = makeDeepCopyMethNode(toAdd, null);
                 currNode.getNode(3).getNode(2).addNode(copyToAdd);
             }
         }

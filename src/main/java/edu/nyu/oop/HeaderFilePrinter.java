@@ -205,9 +205,6 @@ public class HeaderFilePrinter extends Visitor {
      * A_VT top part - layout
      * @param n
      */
-
-
-
     public void visitMethodDeclarationsVTable(Node n) {
         for(int i = 0; i<n.size(); i++) {
             visitMethodDeclarationVTable(n.getNode(i));
