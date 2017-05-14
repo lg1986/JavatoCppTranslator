@@ -36,9 +36,20 @@ public class OverloadingResolver extends ContextualVisitor {
         if(actuals.size() > 0 && !methodName.equals("println")) {
             String overload_params = "";
             for (Type a : actuals) {
-                overload_params += "__";
-                overload_params += a.toString().replace("annotated(", "").replace(")", "");
+//                System.out.println("\n");
+//                System.out.println(a.isAnnotated());
+//                System.out.println(a);
 
+                overload_params += "__";
+                if(a.isAnnotated()) {
+//                    System.out.println(a.toString()+" here!");
+                    overload_params += a.toString().replace("annotated(", "").replace(")", "");
+                } else {
+                    if(a.getName().equals("xtc.type.IntegerT")) overload_params += "int";
+                    else overload_params += a.getName();
+
+                }
+//                System.out.println(overload_params);
             }
             n.set(2, n.getString(2)+overload_params);
         }
