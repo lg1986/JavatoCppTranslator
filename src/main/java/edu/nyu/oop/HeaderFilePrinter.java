@@ -287,11 +287,13 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitFieldDeclaration(Node n) {
+        System.out.println(n);
         String modif = "";
         if(n.getNode(0).size() > 0) {
             modif = n.getNode(0).getNode(0).getString(0);
         }
-        printer.pln(modif+" "+n.getString(1)+" "+n.getString(2)+";");
+
+        printer.pln("static "+n.getString(1)+" "+n.getString(2)+";");
     }
 
 

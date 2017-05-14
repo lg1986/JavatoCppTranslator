@@ -1,5 +1,6 @@
 package edu.nyu.oop.util;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,31 +31,35 @@ public class SymbolTableBuilder extends ContextualVisitor {
         super(runtime, new SymbolTable());
     }
 
+    private void forceMark(Node n) {
+        n.setProperty(Constants.SCOPE, table.current().getQualifiedName());
+    }
+
     public void visitClassDeclaration(GNode n) {
         String className = n.getString(1);
         table.enter(className);
-        table.mark(n);
+        forceMark(n);
         visit(n);
         table.exit();
     }
 
     public void visitBlock(GNode n) {
         table.enter(table.freshName("block"));
-        table.mark(n);
+        forceMark(n);
         visit(n);
         table.exit();
     }
 
     public void visitBlockDeclaration(GNode n) {
         table.enter(table.freshName("block"));
-        table.mark(n);
+        forceMark(n);
         visit(n);
         table.exit();
     }
 
     public void visitForStatement(GNode n) {
         table.enter(table.freshName("forStatement"));
-        table.mark(n);
+        forceMark(n);
         visit(n);
         table.exit();
     }
@@ -70,6 +75,14 @@ public class SymbolTableBuilder extends ContextualVisitor {
         final List<Attribute> modifiers = (List<Attribute>) dispatch(n.getNode(0));
         Type type = (Type) dispatch(n.getNode(1));
         return processDeclarators(modifiers, type, n.getGeneric(2));
+    }
+
+    public void visitBasicForControl(final GNode n) {
+        @SuppressWarnings("unchecked")
+        final List<Attribute> modifiers = (List<Attribute>) dispatch(n.getNode(0));
+        Type type = (Type) dispatch(n.getNode(1));
+        processDeclarators(modifiers, type, n.getGeneric(2));
+        visit(n);
     }
 
     /**
@@ -155,6 +168,8 @@ public class SymbolTableBuilder extends ContextualVisitor {
         new JavaAstSimplifier().dispatch(n);
         new JavaAnalyzer(runtime, table).dispatch(n);
         dispatch(n);
+        //table.current().dump(runtime.console());
+        //runtime.console().flush();
         return table;
     }
 

@@ -1,61 +1,76 @@
 package edu.nyu.oop;
 
-import edu.nyu.oop.util.ContextualVisitor;
-import edu.nyu.oop.util.TypeUtil;
+import edu.nyu.oop.util.*;
 import xtc.Constants;
+import xtc.lang.Java;
 import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
 import xtc.tree.Node;
-import xtc.type.ClassT;
-import xtc.type.MethodT;
-import xtc.type.Type;
-import xtc.type.VariableT;
+import xtc.type.*;
 import xtc.util.Runtime;
 import xtc.util.SymbolTable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by rishabh on 13/05/17.
  */
 public class OverloadingResolver extends ContextualVisitor {
-    public OverloadingResolver(Runtime runtime, SymbolTable table) {
+    protected Node t;
+    protected SymbolTable oldtable;
+    public OverloadingResolver(Runtime runtime, SymbolTable table, Node t) {
+
         super(runtime, table);
+        this.t = t;
+    }
+
+//    public void visitClassDeclaration(GNode n){
+//
+//    }
+
+    public Node getRecieverClass(String className) {
+        for(int i = 0; i<t.size(); i++) {
+            if(t.get(i) != null && t.getNode(i).hasName("ClassDeclaration")) {
+                if(t.getNode(i).get(1).equals(className)) return t.getNode(i);
+            }
+        }
+        return null;
     }
 
     public void visitCallExpression(GNode n) {
+
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
 
-        Type typeToSearch = JavaEntities.currentType(table);
-
-        // find type of called method
-        List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
-//        JavaEntities.enterScopeByQualifiedName(table, typeToSearch.getScope());
-        MethodT method =
-                JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
-        if(method == null) return;
-        System.out.println(method);
-        if(actuals.size() > 0 && !methodName.equals("println")) {
-            String overload_params = "";
-            for (Type a : actuals) {
-                overload_params += "__";
-                if(a.isAnnotated()) {
-                    if(a.toString().contains("java.lang.String")) {
-                        System.out.println("here!");
-                        overload_params += "String";
-                    } else overload_params += a.toString().replace("annotated(", "").replace(")", "");
-                } else {
-                    if(a.getName().equals("xtc.type.IntegerT")) overload_params += "int";
-                    else overload_params += a.getName();
-
-                }
-//                System.out.println(overload_params);
+        Type typeToSearch = TypeUtil.getType(receiver);
+        if(!methodName.equals("println") && !methodName.equals("main")) {
+            if (typeToSearch.isVariable()) {
+                VariableT vt = typeToSearch.toVariable();
+                typeToSearch = vt.getType();
             }
+            // find type of called method
+            List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
+            MethodT method =
+                JavaEntities.typeDotMethod(table, classpath(), typeToSearch,
+                                           true, methodName, actuals);
+
+            List<Type> params = method.getParameters();
+            String overload_params = "";
+
+            for (Type param : params) {
+                overload_params += "__";
+                String[] s = param.toString().split(", class");
+                String over =  (s[0].replace("param(alias(", ""));
+                over = over.split(", ")[0].toString().replace("param(", "");
+                overload_params += over;
+            }
+            System.out.println(overload_params);
             n.set(2, n.getString(2)+overload_params);
         }
+
 
     }
 

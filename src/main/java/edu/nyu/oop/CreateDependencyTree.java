@@ -261,9 +261,11 @@ public class CreateDependencyTree extends Visitor {
         GNode retNode = GNode.create("MethodDeclaration");
         String param_mangle = getParamsList(currMethNode.getNode(3)).toString();
         String methName = currMethNode.getString(2);
-        if(param_mangle != "[]" &&  !methName.equals("main") && !methName.equals("equals")) {
-            methName += "__"+param_mangle.
-                        replace("[", "").replace("]", "").replace(", ", "__").replace(" ", "");
+        if(!methName.contains("__")) {
+            if (param_mangle != "[]" && !methName.equals("main") && !methName.equals("equals")) {
+                methName += "__" + param_mangle.
+                            replace("[", "").replace("]", "").replace(", ", "__").replace(" ", "");
+            }
         }
         retNode.add(currMethNode.get(0));
         retNode.add(currMethNode.get(1));
@@ -284,11 +286,10 @@ public class CreateDependencyTree extends Visitor {
     public Node checkMeth(Node stackMeth, Node currMethsNode, String className) {
         for(int i = 0; i<currMethsNode.size(); i++) {
             Node currMethNode = currMethsNode.getNode(i);
-            String methName = currMethNode.getString(2);
+            String methName = currMethNode.getString(2).split("__")[0];
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                 if(loadrid == 1) {
-
                     return makeDeepCopyMethNode(stackMeth, null);
                 } else if(loadrid == 0) {
                     currMethsNode.set(i,

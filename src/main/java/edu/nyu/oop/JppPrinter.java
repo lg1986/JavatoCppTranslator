@@ -285,8 +285,13 @@ public class JppPrinter extends Visitor {
             if(callExpPrim == null) callExpPrim = "__this";
             currentPrinter.p("("+callExpPrim);
         }
-        if(n.size() > 0) currentPrinter.p(", ");
-        loopToDispatch(n, "Arguments");
+
+        for(int i = 0; i<n.size(); i++) {
+            currentPrinter.p(",");
+            pru(n.getNode(i), "Arguments");
+
+        }
+//        loopToDispatch(n, "Arguments");
         currentPrinter.p(")");
     }
 
@@ -420,10 +425,12 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCastExpression(Node n, String from) {
+
         currentPrinter.p("(");
         printType(n.getNode(0), "CastExpression");
         currentPrinter.p(")");
-        currentPrinter.p(" "+n.getNode(1).getString(0));
+        currentPrinter.p(" ");
+        dispatchTopru(n.get(1), "CastExpression");
     }
 
     public boolean checkIfStatic(Node n) {
