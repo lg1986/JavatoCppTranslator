@@ -27,7 +27,6 @@ public class OverloadingResolver extends ContextualVisitor {
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
-        System.out.println(methodName);
 
         Type typeToSearch = JavaEntities.currentType(table);
 
@@ -35,15 +34,14 @@ public class OverloadingResolver extends ContextualVisitor {
         // find type of called method
         List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
         if(actuals.size() > 0 && !methodName.equals("println")) {
+            String overload_params = "";
             for (Type a : actuals) {
-                System.out.println(a.toString().replace("annotated(", "").replace(")", ""));
-                System.out.println(n);
-                n.set(2, n.getString(2)+"__int");
-            }
+                overload_params += "__";
+                overload_params += a.toString().replace("annotated(", "").replace(")", "");
 
+            }
+            n.set(2, n.getString(2)+overload_params);
         }
-        MethodT method =
-            JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
 
     }
 

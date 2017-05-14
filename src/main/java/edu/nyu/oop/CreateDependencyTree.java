@@ -259,7 +259,12 @@ public class CreateDependencyTree extends Visitor {
 
     public GNode makeDeepCopyMethNode(Node currMethNode, String name) {
         GNode retNode = GNode.create("MethodDeclaration");
+        String param_mangle = getParamsList(currMethNode.getNode(3)).toString();
         String methName = currMethNode.getString(2);
+        if(param_mangle != "[]" &&  !methName.equals("main") && !methName.equals("equals")) {
+            methName += "__"+param_mangle.
+                        replace("[", "").replace("]", "").replace(", ", "__").replace(" ", "");
+        }
         retNode.add(currMethNode.get(0));
         retNode.add(currMethNode.get(1));
         retNode.add(methName);

@@ -163,15 +163,15 @@ public class HeaderFilePrinter extends Visitor {
         if(!isStatic) paramString+=currentClassName;
         for(int i = 0; i < n.size(); i++) {
             Node paramNode = n.getNode(i);
-
             if(paramNode.size() > 2 && paramNode.get(2) != null) {
-
                 if(!isStatic) paramString+=",";
                 String arrayParam = "__rt::Array<"+
                                     paramNode.getString(0)+">";
                 paramString += arrayParam;
             } else {
-                paramString += ","+paramNode.getString(0);
+                String typ = paramNode.getString(0);
+                if(typ.equals("int")) typ = "int32_t";
+                paramString += ","+typ;
             }
         }
         paramString +=")";
@@ -181,6 +181,7 @@ public class HeaderFilePrinter extends Visitor {
         printer.p("static ");
         if (checkIfNode(n.getNode(0))) {
             String ret = getReturnType(n);
+            if(ret.equals("int")) ret = "int32_t";
             printer.p(ret + " " + n.get(2).toString());
         } else {
             printer.p(n.get(1).toString() + " " + n.get(2).toString());
@@ -215,9 +216,12 @@ public class HeaderFilePrinter extends Visitor {
         String methName = n.getString(2);
         String ret;
         if(checkIfNode(n.get(1))) ret = getReturnType(n);
-        else  ret = (n.get(1).toString()+" ");
+        else  ret = (n.get(1).toString());
+        if(ret.equals("int")) {
+            ret = "int32_t";
+        }
         String paramString = getParamString(n.getNode(3), false);
-        printer.pln(ret + "(*" + methName + ")" + paramString + ";");
+        printer.pln(ret + " (*" + methName + ")" + paramString + ";");
     }
 
     /**
@@ -237,10 +241,14 @@ public class HeaderFilePrinter extends Visitor {
         String methName = n.getString(2);
         String ret;
         if(checkIfNode(n.get(1))) ret = getReturnType(n);
-        else  ret = (n.get(1).toString()+" ");
+        else  ret = (n.get(1).toString());
+        if(ret.equals("int")) {
+            System.out.println(n);
+            ret = "int32_t";
+        }
         String paramString = getParamString(n.getNode(3), false);
         if(!n.getString(4).equals(currentClassName))
-            printer.p(methName+"(("+ret+"(*)"+paramString+")&__"+n.getString(4)+"::"+methName+")");
+            printer.p(methName+"(("+ret+" (*)"+paramString+")&__"+n.getString(4)+"::"+methName+")");
         else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
     }
 

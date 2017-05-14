@@ -1,7 +1,7 @@
 package inputs.test035;
 
 class A {
-    int m(byte b) {
+    int m(int b) {
         System.out.println("A.m(byte)");
         return b;
     }
@@ -13,7 +13,7 @@ class A {
 public class Test035 {
     public static void main(String[] args) {
         A a = new A();
-        byte b = 1;
+        int b = 1;
         double d = 1.0;
         a.m(b);
         a.m(b + b);

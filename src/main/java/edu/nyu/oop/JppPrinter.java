@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.TypeUtil;
 import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
 import xtc.tree.Node;
@@ -221,6 +222,10 @@ public class JppPrinter extends Visitor {
             printBooleanLiteral(n, from);
         } else if(n.hasName("CastExpression")) {
             printCastExpression(n, "from");
+        } else if(n.hasName("AdditiveExpression")) {
+            printAdditiveExpression(n, "AdditiveExpression");
+        } else if(n.hasName("FloatingPointLiteral")) {
+            printFloatingPointLiteral(n, "FloatingPointLiteral");
         }
     }
 
@@ -385,7 +390,6 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
-
         if(from.equals("ConstructorDeclaration")) {
 
         } else {
@@ -438,9 +442,11 @@ public class JppPrinter extends Visitor {
     }
 
 
-    public String getParamStringForMethods(Node n) {
+    public String getParamStringForMethods(Node n, boolean isStatic) {
         String paramString = "(";
+        if(!isStatic) paramString += currentClassName;
         for(int i = 0; i < n.size(); i++) {
+            if(!isStatic && i == 0) paramString +=", ";
             Node paramNode = n.getNode(i);
 
             Node typeNode = paramNode.getNode(1);
@@ -451,12 +457,36 @@ public class JppPrinter extends Visitor {
                 paramString += arrayParam + paramNode.getString(3);
             } else {
                 String typ = typeNode.getNode(0).getString(0);
+                if(typ.equals("int")) {
+                    typ = "int32_t";
+                }
                 paramString += typ+" "+paramNode.getString(3);
             }
             if(i != n.size()-1) paramString += ",";
         }
         paramString +=")";
         return paramString;
+    }
+    public String getMangler(Node paramNodes) {
+        ArrayList<String> paramsList = new ArrayList<>();
+        for(int i = 0; i<paramNodes.size(); i++) {
+            Node paramNode = paramNodes.getNode(i);
+            String paramString = paramNode.getNode(1).getNode(0).getString(0);
+            paramsList.add(paramString);
+        }
+        String retString = "";
+        for(String x : paramsList) {
+            retString += "__";
+            retString += x;
+        }
+        return retString;
+    }
+
+    public void printFloatingPointLiteral(Node n, String from) {
+        currentPrinter.p(n.getString(0));
+    }
+    public void printAdditiveExpression(Node n, String from) {
+        loopToDispatch(n, "AdditiveExpression");
     }
     public void visitMethodDeclaration(GNode n) {
         int consts = 0;
@@ -466,14 +496,14 @@ public class JppPrinter extends Visitor {
         if(checkIfStatic(n)) {
             dispatchTopru(n.get(2), "MethodDeclaration");
             dispatchTopru(n.get(3), "MethodDeclaration");
-            currentPrinter.pln(getParamStringForMethods(n.getNode(4)));
+            currentPrinter.pln(getParamStringForMethods(n.getNode(4), true));
             dispatchTopru(n.get(7), "MethodDeclaration");
 
-
         } else {
-            for (int i = 0; i < n.size(); i++) {
-                dispatchTopru(n.get(i), "MethodDeclaration");
-            }
+            dispatchTopru(n.get(2), "MethodDeclaration");
+            currentPrinter.p(n.getString(3)+getMangler(n.getNode(4)));
+            currentPrinter.pln(getParamStringForMethods(n.getNode(4), false));
+            dispatchTopru(n.get(7), "MethodDeclaration");
         }
 
     }
