@@ -94,6 +94,8 @@ public class JppPrinter extends Visitor {
     public void writeEndBaseLayout() {
         outputCppPrinter.pln("}");
         outputCppPrinter.pln("}");
+        getAllTemplateSpecializations();
+
     }
 
     public void writeStartBaseLayout(String packageName) {
@@ -122,6 +124,38 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("return k;");
         currentPrinter.pln("}");
         currentPrinter.pln("__"+currentClassName+"_VT __" +currentClassName+"::__vtable;");
+    }
+
+    public void printTemplateSpecialization(String className, String extender) {
+        currentPrinter.pln("template<>");
+        currentPrinter.pln("java::lang::Class __Array<inputs::"+this.packageName+"::"+className+">::__class(){");
+
+        currentPrinter.p("static java::lang::Class k =\n");
+        currentPrinter.p("new java::lang::__Class(__rt::literal(\"[Linputs."+packageName+"."+className+";\"), \n");
+        if(extender.equals("Object"))
+            currentPrinter.p("java::lang::__Object::__class(),\n");
+        else
+            currentPrinter.p("inputs::"+packageName+"::__"+extender+"::__class(), \n");
+        currentPrinter.p("inputs::"+packageName+"::__"+className+"::__class());");
+
+        currentPrinter.pln("return k;");
+        currentPrinter.pln("}");
+
+    }
+
+    public void getAllTemplateSpecializations() {
+        currentPrinter.pln("namespace __rt {");
+        for(Node s:asts) {
+            String className = s.getString(1);
+            String extender = "Object";
+            if(s.get(2)!=null) {
+
+                extender = s.getNode(2).getNode(0).getNode(0).getString(0);
+            }
+            printTemplateSpecialization(className, extender);
+
+        }
+        currentPrinter.pln("}");
     }
 
 
@@ -405,7 +439,6 @@ public class JppPrinter extends Visitor {
 
     public void printForStatement(Node n, String from) {
         loopToDispatch(n, "ForStatement");
-        System.out.println(n.getNode(0));
     }
 
     public void printWhileStatement(Node n, String from) {
@@ -428,6 +461,7 @@ public class JppPrinter extends Visitor {
         }
         for(int i = 0; i<n.size(); i++) {
             dispatchTopru(n.get(i), "Block");
+//            if(from.equals("ForStatement") && i != n.size())
             currentPrinter.p("; \n");
         }
         if(from.equals("ConstructorDeclaration")) {
@@ -580,6 +614,7 @@ public class JppPrinter extends Visitor {
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
+        System.out.println(n);
         constNum = 0;
         currentClassName = n.getString(1);
         currentClassNode = n;
