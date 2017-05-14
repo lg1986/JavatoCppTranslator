@@ -6,6 +6,7 @@ import xtc.Constants;
 import xtc.lang.JavaEntities;
 import xtc.tree.GNode;
 import xtc.tree.Node;
+import xtc.type.ClassT;
 import xtc.type.MethodT;
 import xtc.type.Type;
 import xtc.type.VariableT;
@@ -30,20 +31,22 @@ public class OverloadingResolver extends ContextualVisitor {
 
         Type typeToSearch = JavaEntities.currentType(table);
 
-
         // find type of called method
         List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
+//        JavaEntities.enterScopeByQualifiedName(table, typeToSearch.getScope());
+        MethodT method =
+                JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
+        if(method == null) return;
+        System.out.println(method);
         if(actuals.size() > 0 && !methodName.equals("println")) {
             String overload_params = "";
             for (Type a : actuals) {
-//                System.out.println("\n");
-//                System.out.println(a.isAnnotated());
-//                System.out.println(a);
-
                 overload_params += "__";
                 if(a.isAnnotated()) {
-//                    System.out.println(a.toString()+" here!");
-                    overload_params += a.toString().replace("annotated(", "").replace(")", "");
+                    if(a.toString().contains("java.lang.String")) {
+                        System.out.println("here!");
+                        overload_params += "String";
+                    } else overload_params += a.toString().replace("annotated(", "").replace(")", "");
                 } else {
                     if(a.getName().equals("xtc.type.IntegerT")) overload_params += "int";
                     else overload_params += a.getName();

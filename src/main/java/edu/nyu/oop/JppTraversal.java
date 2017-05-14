@@ -29,7 +29,7 @@ public class JppTraversal extends Visitor {
         for(Node t: tree) {
             SymbolTable table = new SymbolTableBuilder(runtime).getTable(t);
             new MemberAccessCompleter(runtime, table).dispatch(t);
-            new OverloadingResolver(runtime, table).dispatch(t);
+//            new OverloadingResolver(runtime, table).dispatch(t);
         }
         asts = new ArrayList<>();
         collect(tree);
