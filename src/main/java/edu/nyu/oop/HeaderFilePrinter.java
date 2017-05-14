@@ -178,20 +178,22 @@ public class HeaderFilePrinter extends Visitor {
         return paramString;
     }
     public void visitMethodDeclaration(Node n) {
-        printer.p("static ");
-        if (checkIfNode(n.getNode(0))) {
-            String ret = getReturnType(n);
-            printer.p(ret + " " + n.get(2).toString());
-        } else {
-            printer.p(n.get(1).toString() + " " + n.get(2).toString());
-        }
-        if(checkIfStatic(n)) {
-            printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
-        } else {
-            printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
-        }
+        if (n.getString(4).equals(currentClassName)) {
+            printer.p("static ");
+            if (checkIfNode(n.getNode(0))) {
+                String ret = getReturnType(n);
+                printer.p(ret + " " + n.get(2).toString());
+            } else {
+                printer.p(n.get(1).toString() + " " + n.get(2).toString());
+            }
+            if (checkIfStatic(n)) {
+                printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+            } else {
+                printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+            }
 
-        printer.pln(";");
+            printer.pln(";");
+        }
     }
 
     public void visitMethodDeclarations(Node  n) {
@@ -278,15 +280,15 @@ public class HeaderFilePrinter extends Visitor {
         }
     }
 
-
-
-
     public void visitFieldDeclaration(Node n) {
         String modif = "";
         if(n.getNode(0).size() > 0) {
             modif = n.getNode(0).getNode(0).getString(0);
         }
-        printer.pln(modif+" "+n.getString(1)+" "+n.getString(2)+";");
+        if(!modif.equals("static")) {
+            modif = "";
+        }
+        printer.pln(modif+n.getString(1)+" "+n.getString(2)+";");
     }
 
 
