@@ -262,6 +262,10 @@ public class JppPrinter extends Visitor {
             printPostfixExpression(n, from);
         } else if(n.hasName("BasicForControl")) {
             printBasicForControl(n, "BasicForControl");
+        } else if(n.hasName("NewArrayExpression")) {
+            printNewArrayExpression(n, from);
+        } else if(n.hasName("SubscriptExpression")) {
+            printSubscriptExpression(n, from);
         }
     }
 
@@ -295,10 +299,16 @@ public class JppPrinter extends Visitor {
         loopToDispatch(n, "ExpressionStatement");
     }
 
+
+    public void printSubscriptExpression(Node n, String from) {
+        System.out.println("\n "+n+"\n");
+        printPrimaryIdentifier(n.getNode(0), "SubscriptExpression");
+        currentPrinter.p("->__data[");
+        printPrimaryIdentifier(n.getNode(1), "SubscriptExpression");
+        currentPrinter.p("]");
+    }
     public void printCallExpression(Node n, String from) {
-        if(from.equals("SubscriptExpression")) {
-            currentPrinter.p("(*"+n.get(0).toString()+")");
-        } else if(n.getNode(0).hasName("PrimaryIdentifier")) {
+        if(n.getNode(0).hasName("PrimaryIdentifier")) {
             callExpPrim = n.getNode(0).getString(0);
         } else if(n.getNode(0).hasName("SelectionExpression")) {
             callExpPrim = n.getNode(0).getNode(0).getString(0);
@@ -339,10 +349,8 @@ public class JppPrinter extends Visitor {
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-        if(from.equals("SubscriptExpression")) {
-            currentPrinter.p("(*"+n.get(0).toString()+")");
-        } else if(from.equals("SelectionExpression")
-                  && n.getString(0).equals("System")) {}
+        if(from.equals("SelectionExpression")
+                && n.getString(0).equals("System")) {}
         else if(from.equals("ConstructorDeclaration")) {
             currentPrinter.p(n.get(0).toString()+" ");
         } else {
@@ -445,6 +453,17 @@ public class JppPrinter extends Visitor {
         System.out.println(n);
     }
 
+    public void printNewArrayExpression(Node n, String from) {
+        Node dim = n.getNode(1);
+        String typ = n.getNode(0).getString(0);
+        currentPrinter.p("new __rt::__Array<"+typ+">");
+        for(int i = 0; i < dim.size(); i++) {
+            currentPrinter.p("("+dim.getNode(i).get(0)+")");
+        }
+
+
+    }
+
 
     /**
      * TO:DO Fix the cheap solution for __this in field
@@ -470,9 +489,23 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("}");
     }
 
+    public void printArrayType(Node n, String from) {
+        System.out.println(n);
+        Node dim = n.getNode(1);
+        currentPrinter.p("__rt::Array");
+        for(int i = 0; i<dim.size(); i++) {
+            currentPrinter.p("<"+n.getNode(0).getString(0)+">");
+        }
+        currentPrinter.p(" ");
+    }
+
     public void printType(Node n, String from) {
-        for(int i =0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), from);
+        if(n.get(1) != null) {
+            printArrayType(n, from);
+        } else {
+            for (int i = 0; i < n.size(); i++) {
+                dispatchTopru(n.get(i), from);
+            }
         }
     }
     public void printQualifiedIdentifier(Node n, String from) {
@@ -614,7 +647,6 @@ public class JppPrinter extends Visitor {
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
-        System.out.println(n);
         constNum = 0;
         currentClassName = n.getString(1);
         currentClassNode = n;

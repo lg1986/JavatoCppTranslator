@@ -76,12 +76,12 @@ public class ContextualVisitor extends Visitor {
 
 
     public void visitBlock(GNode n) {
+        SymbolTable.Scope currentScope = table.current();
         SymbolTableUtil.enterScope(table, n);
         table.mark(n);
         visit(n);
-        SymbolTableUtil.exitScope(table, n);
+        table.setScope(currentScope);
     }
-
     public void visitForStatement(GNode n) {
         SymbolTableUtil.enterScope(table, n);
         table.mark(n);
