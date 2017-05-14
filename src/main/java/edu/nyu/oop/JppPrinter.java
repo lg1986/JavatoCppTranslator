@@ -444,7 +444,7 @@ public class JppPrinter extends Visitor {
 
     public String getParamStringForMethods(Node n, boolean isStatic) {
         String paramString = "(";
-        if(!isStatic) paramString += currentClassName;
+        if(!isStatic) paramString += currentClassName+" __this";
         for(int i = 0; i < n.size(); i++) {
             if(!isStatic && i == 0) paramString +=", ";
             Node paramNode = n.getNode(i);
@@ -501,7 +501,7 @@ public class JppPrinter extends Visitor {
 
         } else {
             dispatchTopru(n.get(2), "MethodDeclaration");
-            currentPrinter.p(n.getString(3)+getMangler(n.getNode(4)));
+            currentPrinter.p("__"+currentClassName+"::"+n.getString(3)+getMangler(n.getNode(4)));
             currentPrinter.pln(getParamStringForMethods(n.getNode(4), false));
             dispatchTopru(n.get(7), "MethodDeclaration");
         }

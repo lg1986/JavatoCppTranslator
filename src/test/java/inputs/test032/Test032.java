@@ -25,7 +25,7 @@ class A {
 public class Test032 {
     public static void main(String[] args) {
         A a = new A();
-        byte b = 1;
+        int b = 1;
         a.m(b);
         a.m(a);
         a.m(1.0);
