@@ -9,17 +9,17 @@ class A {
 
     }
 
-    public int val(double x){
+    public int val(double x) {
         return 10;
     }
 
-    public int val(double x, int y, int k){
+    public int val(double x, int y, int k) {
         return 11;
     }
 }
 
-class B extends A{
-    public int val(double x, double y, double z){
+class B extends A {
+    public int val(double x, double y, double z) {
         return 12;
     }
 }
