@@ -2,57 +2,84 @@
 #include "output.h"
 using namespace java::lang;
 namespace inputs{
-namespace test001{
+namespace test011{
 __A::__A() : __vptr(&__vtable){} 
 Class __A::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test001.A"), __Object::__class());
+    new __Class(__rt::literal("inputs.test011.A"), __Object::__class());
   return k;
 }
 __A_VT __A::__vtable;
-A __A::__init(A __this){
+A __A::__init(A __this) {
 __Object::__init(__this);
-return __this;
+return __this; 
+ }
+void __A::setA(A __this, String x)
+{__this->a=x; 
+}
+void __A::printOther(A __this, A other)
+{std::cout << other->a->__vptr->toString(other->a)<< std::endl; 
 }
 String __A::toString(A __this)
-{String a = __rt::literal("A"); 
-return a; 
+{return __this->a; 
 }
-String __A::myString(A __this, double i, int x)
-{return __rt::literal("i"); 
-}
-String __A::myString(A __this, int x)
-{return __rt::literal("s"); 
-}
-__B::__B() : __vptr(&__vtable){} 
-Class __B::__class() {
+__B1::__B1() : __vptr(&__vtable){} 
+Class __B1::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test001.B"),  __A::__class());
+    new __Class(__rt::literal("inputs.test011.B1"),  __A::__class());
   return k;
 }
-__B_VT __B::__vtable;
-B __B::__init(B __this) {
+__B1_VT __B1::__vtable;
+B1 __B1::__init(B1 __this) {
 __Object::__init(__this);
 return __this; 
  }
-String __B::myString(B __this, String s)
-{return __rt::literal("S"); 
-}
-__Test001::__Test001() : __vptr(&__vtable){} 
-Class __Test001::__class() {
+__B2::__B2() : __vptr(&__vtable){} 
+Class __B2::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test001.Test001"), __Object::__class());
+    new __Class(__rt::literal("inputs.test011.B2"),  __A::__class());
   return k;
 }
-__Test001_VT __Test001::__vtable;
-Test001 __Test001::__init(Test001 __this) {
+__B2_VT __B2::__vtable;
+B2 __B2::__init(B2 __this) {
 __Object::__init(__this);
 return __this; 
  }
-void __Test001::main(__rt::Array<String>args)
+__C::__C() : __vptr(&__vtable){} 
+Class __C::__class() {
+  static Class k = 
+    new __Class(__rt::literal("inputs.test011.C"),  __B1::__class());
+  return k;
+}
+__C_VT __C::__vtable;
+C __C::__init(C __this) {
+__Object::__init(__this);
+return __this; 
+ }
+__Test011::__Test011() : __vptr(&__vtable){} 
+Class __Test011::__class() {
+  static Class k = 
+    new __Class(__rt::literal("inputs.test011.Test011"), __Object::__class());
+  return k;
+}
+__Test011_VT __Test011::__vtable;
+Test011 __Test011::__init(Test011 __this) {
+__Object::__init(__this);
+return __this; 
+ }
+void __Test011::main(__rt::Array<String>args)
 {A a = __A::__init(new __A()); 
-String s = a->__vptr->toString(a); 
-std::cout << a->__vptr->toString(a)<< std::endl; 
+a->__vptr->setA__int(a, __rt::literal("A")); 
+B1 b1 = __B1::__init(new __B1()); 
+b1->__vptr->setA__int(b1, __rt::literal("B1")); 
+B2 b2 = __B2::__init(new __B2()); 
+b2->__vptr->setA__int(b2, __rt::literal("B2")); 
+C c = __C::__init(new __C()); 
+c->__vptr->setA__int(c, __rt::literal("C")); 
+a->__vptr->printOther__int(a, a); 
+a->__vptr->printOther__int(a, b1); 
+a->__vptr->printOther__int(a, b2); 
+a->__vptr->printOther__int(a, c); 
 }
 }
 }

@@ -29,6 +29,7 @@ public class Test001 {
     public static void main(String[] args) {
         A a = new A();
         String s = a.toString();
+        a.myString(1);
         System.out.println(a.toString());
     }
 }
