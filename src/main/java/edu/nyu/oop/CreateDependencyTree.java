@@ -264,7 +264,7 @@ public class CreateDependencyTree extends Visitor {
         retNode.add(currMethNode.get(2));
         retNode.add(currMethNode.get(3));
         if(name != null) retNode.add(name);
-        else retNode.add(currMethNode.add(4));
+        else retNode.add(currMethNode.get(4));
         return retNode;
     }
 

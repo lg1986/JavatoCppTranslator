@@ -376,8 +376,6 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
-        System.out.println(n);
-
         if(from.equals("ConstructorDeclaration")) {
 
         } else {

@@ -31,6 +31,7 @@ public class MemberAccessCompleter extends ContextualVisitor {
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
+        System.out.println(receiver);
         if (receiver == null &&
                 !"super".equals(methodName) &&
                 !"this".equals(methodName)) {
@@ -43,6 +44,7 @@ public class MemberAccessCompleter extends ContextualVisitor {
                 JavaEntities.typeDotMethod(table, classpath(), typeToSearch, true, methodName, actuals);
 
             if (method == null) return;
+
 
             // TODO: make 'this' access explicit
             if (!TypeUtil.isStaticType(method)) {

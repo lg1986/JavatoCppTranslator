@@ -26,7 +26,8 @@ public class JppTraversal extends Visitor {
         List<GNode> tree = visitor.getDependencyAsts(n);
         for(Node t: tree) {
             SymbolTable table = new SymbolTableBuilder(runtime).getTable(t);
-            new MemberAccessCompleter(runtime, table).dispatch(t);
+//            new MemberAccessCompleter(runtime, table).dispatch(t);
+            new OverloadingResolver(runtime, table).dispatch(t);
         }
         asts = new ArrayList<>();
         collect(tree);

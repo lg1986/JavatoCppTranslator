@@ -1,48 +1,74 @@
 package inputs.symboltable;
-import inputs.test004.Test004;
 
 class A {
-    static int x;
-    char y;
+    private char x;
+    protected char y;
 
-    static void s1() {}
+    public A(char x, char y) {
+        this.x = x;
+        this.y = y;
+        print();
+    }
+
+    public A(char x) {
+        this(x, (char) (x + 4));
+    }
+
+    public String toString() {
+        // see http://stackoverflow.com/a/1472105/34380 for translation approach
+        return "A(" + x + "," + y + ")";
+    }
+
+    public void overloaded(int i) {
+        System.out.println("overloaded(int)");
+    }
+
+    public void overloaded(byte b) {
+        System.out.println("overloaded(byte)");
+    }
+
+    public A overloaded(A a) {
+        System.out.println("overloaded(A)");
+        return a;
+    }
+
+    private void print() {
+        System.out.print(x);
+        System.out.print(",");
+        System.out.println(y);
+    }
 }
 
 class B extends A {
-    private String fld = "B";
+
+    private char z = 42;
 
     public B() {
-        super();
+        super('x');
     }
 
-    public B(char _y) {
-        y = _y;
+    public B(char z) {
+        super(z);
+        this.z = z;
+        overloaded(this.z);
     }
 
-    public static void s() {}
-
-    static public void m(int i) {}
-
-    static public void m(double i) {}
-
-    public String m(Object o) {
-        return fld;
+    public String toString() {
+        String s = super.toString();
+        return "B(" + z + ") extends " + s;
     }
 
-    public void test(String f, B b) {
-        String fld;
-        fld = f;
-        m(m(b));
-        s1();
-        x = 1;
-        y = 'a';
-        m(y);
+    public A overloaded(B b) {
+        System.out.println("overloaded(B)");
+        return b;
     }
+
 }
 
 public class Input {
     public static void main(String[] args) {
-        B b = new B();
-        b.test("a", b);
+        B b = new B('z');
+        System.out.println(b.toString());
+        b.overloaded(b).overloaded(b);
     }
 }
