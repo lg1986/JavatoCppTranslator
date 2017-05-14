@@ -91,7 +91,7 @@ public class jppTraversal extends Visitor {
             getCallExpression(n, currNode);
         } else if(n.hasName("ExpressionStatement")) {
             getExpressionStatement(n, currNode);
-        }else if(n.hasName("SubscriptExpression")){
+        } else if(n.hasName("SubscriptExpression")) {
             getSubscriptExpression(n,currNode);
         }
     }
@@ -104,19 +104,19 @@ public class jppTraversal extends Visitor {
     //================================================================================
 
     public void getExpressionStatement(Node n, GNode currNode) {
-/*        GNode expNode = GNode.create("ExpressionStatement");
-        for(int i = 0; i<n.size(); i++) {
-            if(n.get(i) != null && checkIfNode(n.get(i))) {
-                getCheckStatementNode(n.getNode(i), expNode);
-            } else {
-                expNode.add(n.get(i));
-            }
-        }
-        currNode.addNode(expNode);*/
+        /*        GNode expNode = GNode.create("ExpressionStatement");
+                for(int i = 0; i<n.size(); i++) {
+                    if(n.get(i) != null && checkIfNode(n.get(i))) {
+                        getCheckStatementNode(n.getNode(i), expNode);
+                    } else {
+                        expNode.add(n.get(i));
+                    }
+                }
+                currNode.addNode(expNode);*/
         classNode.addNode(n);
     }
 
-    public void getSubscriptExpression(Node n, GNode currNode){
+    public void getSubscriptExpression(Node n, GNode currNode) {
         classNode.addNode(n);
     }
 
@@ -173,12 +173,12 @@ public class jppTraversal extends Visitor {
      * @param currNode
      */
     public void getBlock(Node n, GNode currNode) {
-/*        GNode blockNode = GNode.create("Block");
-        int numStatements = n.size();
-        for(int i =0; i<numStatements; i+=1) {
-            getCheckStatementNode(n.getNode(i), blockNode);
-        }
-        currNode.addNode(blockNode);*/
+        /*        GNode blockNode = GNode.create("Block");
+                int numStatements = n.size();
+                for(int i =0; i<numStatements; i+=1) {
+                    getCheckStatementNode(n.getNode(i), blockNode);
+                }
+                currNode.addNode(blockNode);*/
         currNode.addNode(n);
     }
 
@@ -307,15 +307,13 @@ public class jppTraversal extends Visitor {
     //================================================================================
     public void visitFieldDeclaration(GNode n) {
         GNode classFieldDeclarationNode = GNode.create("ClassFieldDeclaration");
-        try
-        {
-        classFieldDeclarationNode.add(n.getNode(0).getNode(0).get(0).toString()); // visibility
-        classFieldDeclarationNode.add(n.getNode(1).getNode(0).get(0).toString()); // type
-        classFieldDeclarationNode.add(n.getNode(2).getNode(0).get(0).toString()); // varName
-        classFieldDeclarationNode.add(n.getNode(2).getNode(0).getNode(2).get(0).toString()); // value
-        classNode.getNode(2).addNode(classFieldDeclarationNode);
-        }
-        catch(Exception e){
+        try {
+            classFieldDeclarationNode.add(n.getNode(0).getNode(0).get(0).toString()); // visibility
+            classFieldDeclarationNode.add(n.getNode(1).getNode(0).get(0).toString()); // type
+            classFieldDeclarationNode.add(n.getNode(2).getNode(0).get(0).toString()); // varName
+            classFieldDeclarationNode.add(n.getNode(2).getNode(0).getNode(2).get(0).toString()); // value
+            classNode.getNode(2).addNode(classFieldDeclarationNode);
+        } catch(Exception e) {
             e.getMessage();
         }
     }
@@ -335,19 +333,19 @@ public class jppTraversal extends Visitor {
         classNode.getNode(1).addNode(methodNode);
     }
 
-    public void visitForStatement(GNode n){
+    public void visitForStatement(GNode n) {
         classNode.getNode(0).addNode(n);
         visit(n);
     }
 
 
-    public void visitWhileStatement(GNode n){
+    public void visitWhileStatement(GNode n) {
         classNode.getNode(0).addNode(n);
         visit(n);
 
     }
 
-    public void visitNewArrayExpression(GNode n){
+    public void visitNewArrayExpression(GNode n) {
         classNode.getNode(0).addNode(n);
     }
 

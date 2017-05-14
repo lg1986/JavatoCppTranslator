@@ -26,7 +26,7 @@ public class Test025 {
         Object[] as = new A[10];
         as[0] = 3;
         /*
-       for(int i = 0; i < as.length; i++) {
+        for(int i = 0; i < as.length; i++) {
             as[i] = new B(i);
         }*/
 

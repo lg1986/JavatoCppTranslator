@@ -32,6 +32,7 @@ public class jppPrinter extends Visitor {
      */
     private boolean arrayInitialization = false;
     private boolean arrayConstructor = false;
+    private boolean multiDimensional = false;
 
 
     private String callExpIdentifier;
@@ -51,7 +52,7 @@ public class jppPrinter extends Visitor {
         String varName;
         String value;
 
-        public void set(String a, String b, String c, String d){
+        public void set(String a, String b, String c, String d) {
             this.visibility = a;
             this.type = b;
             this.varName = c;
@@ -144,7 +145,7 @@ public class jppPrinter extends Visitor {
 
     public void printClassFieldInitializers(Node n) {
         try {
-            if (n.getNode(0).size() == 4){
+            if (n.getNode(0).size() == 4) {
                 fieldInitializer = true;
                 String visibility = n.getNode(0).get(0).toString();
                 String type = n.getNode(0).get(1).toString();
@@ -164,7 +165,7 @@ public class jppPrinter extends Visitor {
                 fieldObj field = new fieldObj();
                 field.set(null, type, varName, null);
             }
-        } catch (NullPointerException e){} catch(IndexOutOfBoundsException e) {}
+        } catch (NullPointerException e) {} catch(IndexOutOfBoundsException e) {}
 
 
     }
@@ -230,19 +231,19 @@ public class jppPrinter extends Visitor {
             printConstructorDeclaration(n, from);
         } else if(n.hasName("ThisExpression")) {
             printThisExpression(n, from);
-        }else if(n.hasName("NewArrayExpression")){
+        } else if(n.hasName("NewArrayExpression")) {
             printNewArrayExpression(n,from);
-        }else if(n.hasName("ForStatement")){
+        } else if(n.hasName("ForStatement")) {
             printForStatement(n,from);
-        }else if(n.hasName("WhileStatement")){
+        } else if(n.hasName("WhileStatement")) {
             printWhileStatement(n,from);
-        }else if(n.hasName("IntegerLiteral")){
+        } else if(n.hasName("IntegerLiteral")) {
             printIntegerLiteral(n,from);
-        }else if(n.hasName("AdditiveExpression")){
+        } else if(n.hasName("AdditiveExpression")) {
             printAdditiveExpression(n,from);
-        }else if(n.hasName("SubscriptExpression")){
+        } else if(n.hasName("SubscriptExpression")) {
             printSubscriptExpression(n,from);
-        } else if(n.hasName("Expression")){
+        } else if(n.hasName("Expression")) {
             printExpression(n,from);
         }
 
@@ -255,7 +256,7 @@ public class jppPrinter extends Visitor {
      */
     public void printPrimaryIdentifier(Node n, String from) {
 
-        if(from.equals("SubscriptExpression")){
+        if(from.equals("SubscriptExpression")) {
             printer.p("(*"+n.get(0).toString()+")");
         }
     }
@@ -268,7 +269,7 @@ public class jppPrinter extends Visitor {
             String classname = n.get(0).toString().replace("()", "").toString();
             // CHANGED HERE CHARLIE -- deleted comma right here ---
             // printer.p(classname+"__::init(new __"+classname + "(),");
-            if(arrayConstructor == false){
+            if(arrayConstructor == false) {
                 if(n.size() > 1) printer.p(classname+"__::init(new __"+classname + "(),");
                 else {
                     printer.p(classname+"__::init(new __"+classname + "()");
@@ -277,11 +278,15 @@ public class jppPrinter extends Visitor {
 
         }
         /*
-    * added this ---- looking now do not think this would be the best approach!!!
-    *
-     */
-        if(from.equals("printType")){
-            printer.p("__rt::Array<"+n.get(0).toString()+">");
+        * added this ---- looking now do not think this would be the best approach!!!
+        *
+        */
+        if(from.equals("printType")) {
+            if(multiDimensional) printer.p("__rt::Array<"+n.get(0).toString()+">Array<"+n.get(0).toString()+">");
+                else{
+                printer.p("__rt::Array<"+n.get(0).toString()+">");
+            }
+
 
         }
 
@@ -314,7 +319,7 @@ public class jppPrinter extends Visitor {
                 }
             }
             printer.p(")");
-            if(arrayConstructor){
+            if(arrayConstructor) {
                 printer.p(")");
             }
         }
@@ -325,10 +330,10 @@ public class jppPrinter extends Visitor {
     *
      */
     public void printNewClassExpression(Node n, String from) {
-        if(arrayConstructor){
+        if(arrayConstructor) {
             String constType = n.getNode(2).getString(0);
             printer.p("__rt::literal("+constType+"__::init(new __"+constType+"()");
-            if(n.getNode(3).getNode(0).getString(0) != null){
+            if(n.getNode(3).getNode(0).getString(0) != null) {
                 printer.p(",");
             }
 
@@ -343,18 +348,18 @@ public class jppPrinter extends Visitor {
     * ARRAY METHOD CHANGED BY CHARLIE
     *
      */
-    public void printExpression(Node n, String from){
-        if(n.toString().contains("SubscriptExpression") && n.toString().contains("NewClassExpression")){
+    public void printExpression(Node n, String from) {
+        if(n.toString().contains("SubscriptExpression") && n.toString().contains("NewClassExpression")) {
             arrayConstructor = true;
+
         }
-        for(int i = 0; i < n.size(); i++){
+        for(int i = 0; i < n.size(); i++) {
             if(checkIfNode(n.get(i)))
                 printCheckStatementNode(n.getNode(i),from);
-            else{
-                if(n.get(i) != null){
+            else {
+                if(n.get(i) != null) {
                     printer.p(" "+ n.get(i).toString() + " ");
-                }
-                else{
+                } else {
                     printer.p(";");
                 }
 
@@ -371,32 +376,33 @@ public class jppPrinter extends Visitor {
     public void printExpressionStatement(Node n, String from) {
         if(n.toString().contains("SubscriptExpression")) arrayInitialization = true;
         if(n.size() > 0) {
-                // this checks if the arugments has a call expression and if it does sets it to true
-                // so that we know when to print the ->__vptr->
-                if (n.get(0).toString().contains("Arguments(CallExpression")) {
-                    fieldMethod = true;}
+            // this checks if the arugments has a call expression and if it does sets it to true
+            // so that we know when to print the ->__vptr->
+            if (n.get(0).toString().contains("Arguments(CallExpression")) {
+                fieldMethod = true;
+            }
 
-                for (int i = 0; i < n.size(); i++) {
+            for (int i = 0; i < n.size(); i++) {
 
-                    if (n.get(i) != null && checkIfNode(n.getNode(i))) {
+                if (n.get(i) != null && checkIfNode(n.getNode(i))) {
 
-                        printCheckStatementNode(n.getNode(i), "ExpressionStatement");
-                    }
-
+                    printCheckStatementNode(n.getNode(i), "ExpressionStatement");
                 }
 
-                }
+            }
+
+        }
 
 
     }
 
     public void printFieldDeclaration(Node n, String from) {
 
-            for(int i = 0; i < n.size(); i++) {
-                if(n.get(i) != null && checkIfNode(n.get(i))) {
-                    printCheckStatementNode(n.getNode(i), "FieldDeclaration");
-                }
+        for(int i = 0; i < n.size(); i++) {
+            if(n.get(i) != null && checkIfNode(n.get(i))) {
+                printCheckStatementNode(n.getNode(i), "FieldDeclaration");
             }
+        }
 
 
     }
@@ -480,16 +486,16 @@ public class jppPrinter extends Visitor {
         printer.p(n.get(3).toString() + ")");
     }
 
-    public void printForStatement(Node n, String from){
+    public void printForStatement(Node n, String from) {
 
     }
 
-    public void printWhileStatement(Node n, String from){
+    public void printWhileStatement(Node n, String from) {
         //System.out.println("WHILE SUCCESS");
     }
 
-    public void printAdditiveExpression(Node n,String from){
-       // System.out.println("IN ADDITIVE"+n);
+    public void printAdditiveExpression(Node n,String from) {
+        // System.out.println("IN ADDITIVE"+n);
     }
 
     public void printType(Node n, String from) {
@@ -517,14 +523,13 @@ public class jppPrinter extends Visitor {
     *
      */
 
-    public void printIntegerLiteral(Node n, String from){
-        if(from.equals("SubscriptExpression")){
+    public void printIntegerLiteral(Node n, String from) {
+        if(from.equals("SubscriptExpression")) {
             String indexNumber = n.get(0).toString();
             printer.p("["+ indexNumber + "]");
-        }
-        else{
+        } else {
             if(from.equals("ExpressionStatement") && arrayInitialization) printer.p("__rt::literal("+n.get(0).toString()+")");
-            else{
+            else {
                 printer.p(n.get(0).toString());
             }
 
@@ -558,9 +563,9 @@ public class jppPrinter extends Visitor {
             printer.p(constructor);
             printFieldDeclaration(n,from);
 
-            if (fieldInitializer){
+            if (fieldInitializer) {
                 int counter = 0;
-                while (counter < classFields.size()){
+                while (counter < classFields.size()) {
                     printer.p(classFields.get(counter).visibility + " ");
                     printer.p(classFields.get(counter).type + " ");
                     printer.p(classFields.get(counter).varName);
@@ -580,20 +585,30 @@ public class jppPrinter extends Visitor {
     * ARRAY METHOD CHANGED BY CHARLIE
     *
      */
-    public void printNewArrayExpression(Node n,String from){
-        String arrayType = n.getNode(0).get(0).toString();
-        String arraySize = n.getNode(1).getNode(0).get(0).toString();
-        printer.p("new __rt::__Array<"+arrayType+">(" +  arraySize +")");
+    public void printNewArrayExpression(Node n,String from) {
+        if(n.getNode(1).size() == 2){
+            multiDimensional = true;
+            String arrayType = n.getNode(0).get(0).toString();
+            String arraySize = n.getNode(1).getNode(0).get(0).toString();
+            printer.p("new __rt::__Array<"+arrayType+">(" +  arraySize +")("
+                    +  arraySize + ")");
+        }
+        else{
+            String arrayType = n.getNode(0).get(0).toString();
+            String arraySize = n.getNode(1).getNode(0).get(0).toString();
+            printer.p("new __rt::__Array<"+arrayType+">(" +  arraySize +")");
+        }
+
     }
 
     /*
     * ARRAY METHOD CHANGED BY CHARLIE
     *
      */
-    public void printSubscriptExpression(Node n,String from){
+    public void printSubscriptExpression(Node n,String from) {
 
-        for(int i = 0; i < n.size(); i++){
-            if(checkIfNode(n.get(i))){
+        for(int i = 0; i < n.size(); i++) {
+            if(checkIfNode(n.get(i))) {
                 printCheckStatementNode(n.getNode(i),"SubscriptExpression");
             }
         }

@@ -15,29 +15,15 @@ __Object::__init((Object)__this);
 }
 int32_t __A::get(A __this ) { 
 return ; 
-__B::__B() : __vptr(&__vtable) Class __B::__class() {
+__Test030::__Test030() : __vptr(&__vtable) Class __Test030::__class() {
   static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.B"), __Object::__class());
+    new __Class(__rt::literal("nyu.edu.oop.Test030"), __Object::__class());
   return k;
 }
-__B_VT __B::__vtable;
-B::__init(new__B(),B __this , int i) { 
-super(); 
-}
-int32_t __B::get(B __this ) { 
-return ; 
-__Test025::__Test025() : __vptr(&__vtable) Class __Test025::__class() {
-  static Class k = 
-    new __Class(__rt::literal("nyu.edu.oop.Test025"), __Object::__class());
-  return k;
-}
-__Test025_VT __Test025::__vtable;
+__Test030_VT __Test030::__vtable;
 int main(){ 
-__rt::Array<Object> as = new __rt::_Array<A>(10); 
-(*as)[0] = __rt::literal(3); 
- k = 0; 
-; 
-__rt::checkNotNull();
-__rt::checkIndex();}
+__rt::Array<A> as = new __rt::__Array<A>(5)(5); 
+cout <<(getClass()toString()); 
+}
 }
 }

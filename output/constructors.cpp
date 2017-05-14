@@ -1,4 +1,4 @@
-A::__init(new__A(),A __this , String s)
+A::__init(new__A(),A __this, String s)
 {
 }
 A::__init(new__A(),A __this )
@@ -7,10 +7,10 @@ A::__init(new__A(),A __this )
 C::__init(new__C(),C __this )
 {
 }
-C::__init(new__C(),C __this , int i)
+C::__init(new__C(),C __this, int i)
 {
 }
-C::__init(new__C(),C __this , double d)
+C::__init(new__C(),C __this, double d)
 {
 }
 int main()
