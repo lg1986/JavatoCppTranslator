@@ -216,6 +216,18 @@ public class JppPrinter extends Visitor {
             printBooleanLiteral(n, from);
         } else if(n.hasName("CastExpression")) {
             printCastExpression(n, "from");
+        } else if(n.hasName("ForStatement")) {
+            printForStatement(n, "ForStatement");
+        } else if(n.hasName("WhileStatement")) {
+            printWhileStatement(n, "WhileStatement");
+        } else if(n.hasName("ExpressionList")) {
+            printExpressionList(n, from);
+        } else if(n.hasName("RelationalExpression")) {
+            printRelationalExpression(n, from);
+        } else if(n.hasName("PostfixExpression")) {
+            printPostfixExpression(n, from);
+        } else if(n.hasName("BasicForControl")) {
+            printBasicForControl(n, "BasicForControl");
         }
     }
 
@@ -369,6 +381,38 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    public void printRelationalExpression(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+    public void printBasicForControl(Node n, String from) {
+        currentPrinter.p("for(");
+        for(int i = 0; i<n.size(); i++) {
+            loopToDispatch(n.getNode(i), "BasicForControl");
+            if(i > 1 && i < n.size()-1)currentPrinter.p("; ");
+        }
+        currentPrinter.pln(")");
+    }
+
+    public void printExpressionList(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+    public void printPostfixExpression(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+
+    public void printForStatement(Node n, String from) {
+        loopToDispatch(n, "ForStatement");
+        System.out.println(n.getNode(0));
+    }
+
+    public void printWhileStatement(Node n, String from) {
+        System.out.println(n);
+    }
+
+
     /**
      * TO:DO Fix the cheap solution for __this in field
      * initializations
@@ -376,6 +420,7 @@ public class JppPrinter extends Visitor {
      * @param from
      */
     public void printBlock(Node n, String from) {
+        System.out.println(n);
         if(from.equals("ConstructorDeclaration")) {
 
         } else {
