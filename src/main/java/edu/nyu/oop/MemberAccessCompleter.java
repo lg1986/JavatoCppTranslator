@@ -44,6 +44,7 @@ public class MemberAccessCompleter extends ContextualVisitor {
 
             if (method == null) return;
 
+
             // TODO: make 'this' access explicit
             if (!TypeUtil.isStaticType(method)) {
                 n.set(0, makeThisExpression());

@@ -231,16 +231,18 @@ public class CreateDependencyTree extends Visitor {
      * @param stackParams
      * @param currParams
      * @return int --> 0 new method
-     * it is. int --> 1 overriden method
+     * it is. int --> 0 overriden method
      */
     public int checkAllParams(ArrayList<String> stackParams,
                               ArrayList<String> currParams) {
 
         if(stackParams.size() != currParams.size()) return 1;
         if(stackParams.size() == 0) return 0;
+
         for(int i = 0; i < stackParams.size(); i++) {
             if(!currParams.contains(stackParams.get(i))) return 2;
         }
+        if(!currParams.toString().equals(stackParams.toString())) return 2;
         return 0;
     }
 
@@ -289,7 +291,9 @@ public class CreateDependencyTree extends Visitor {
             String methName = currMethNode.getString(2).split("__")[0];
             if(methName.equals(stackMeth.getString(2))) {
                 int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
-                if(loadrid == 1) {
+                if(loadrid == 1 || loadrid == 2) {
+                    System.out.println(loadrid);
+                    System.out.println(stackMeth);
                     return makeDeepCopyMethNode(stackMeth, null);
                 } else if(loadrid == 0) {
                     currMethsNode.set(i,

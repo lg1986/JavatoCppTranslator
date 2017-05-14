@@ -100,6 +100,8 @@ public class JppPrinter extends Visitor {
     public void writeEndBaseLayout() {
         outputCppPrinter.pln("}");
         outputCppPrinter.pln("}");
+        getAllTemplateSpecializations();
+
     }
 
     public void writeStartBaseLayout(String packageName) {
@@ -128,6 +130,38 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("return k;");
         currentPrinter.pln("}");
         currentPrinter.pln("__"+currentClassName+"_VT __" +currentClassName+"::__vtable;");
+    }
+
+    public void printTemplateSpecialization(String className, String extender) {
+        currentPrinter.pln("template<>");
+        currentPrinter.pln("java::lang::Class __Array<inputs::"+this.packageName+"::"+className+">::__class(){");
+
+        currentPrinter.p("static java::lang::Class k =\n");
+        currentPrinter.p("new java::lang::__Class(__rt::literal(\"[Linputs."+packageName+"."+className+";\"), \n");
+        if(extender.equals("Object"))
+            currentPrinter.p("java::lang::__Object::__class(),\n");
+        else
+            currentPrinter.p("inputs::"+packageName+"::__"+extender+"::__class(), \n");
+        currentPrinter.p("inputs::"+packageName+"::__"+className+"::__class());");
+
+        currentPrinter.pln("return k;");
+        currentPrinter.pln("}");
+
+    }
+
+    public void getAllTemplateSpecializations() {
+        currentPrinter.pln("namespace __rt {");
+        for(Node s:asts) {
+            String className = s.getString(1);
+            String extender = "Object";
+            if(s.get(2)!=null) {
+
+                extender = s.getNode(2).getNode(0).getNode(0).getString(0);
+            }
+            printTemplateSpecialization(className, extender);
+
+        }
+        currentPrinter.pln("}");
     }
 
 
@@ -226,6 +260,22 @@ public class JppPrinter extends Visitor {
             printAdditiveExpression(n, "AdditiveExpression");
         } else if(n.hasName("FloatingPointLiteral")) {
             printFloatingPointLiteral(n, "FloatingPointLiteral");
+        } else if(n.hasName("ForStatement")) {
+            printForStatement(n, "ForStatement");
+        } else if(n.hasName("WhileStatement")) {
+            printWhileStatement(n, "WhileStatement");
+        } else if(n.hasName("ExpressionList")) {
+            printExpressionList(n, from);
+        } else if(n.hasName("RelationalExpression")) {
+            printRelationalExpression(n, from);
+        } else if(n.hasName("PostfixExpression")) {
+            printPostfixExpression(n, from);
+        } else if(n.hasName("BasicForControl")) {
+            printBasicForControl(n, "BasicForControl");
+        } else if(n.hasName("NewArrayExpression")) {
+            printNewArrayExpression(n, from);
+        } else if(n.hasName("SubscriptExpression")) {
+            printSubscriptExpression(n, from);
         }
     }
 
@@ -260,13 +310,16 @@ public class JppPrinter extends Visitor {
     }
 
 
-    public final List<File> classpath() {
-        return JavaEntities.classpath(runtime);
+
+    public void printSubscriptExpression(Node n, String from) {
+        printPrimaryIdentifier(n.getNode(0), "SubscriptExpression");
+        currentPrinter.p("->__data[");
+        printPrimaryIdentifier(n.getNode(1), "SubscriptExpression");
+        currentPrinter.p("]");
     }
+
     public void printCallExpression(Node n, String from) {
-        if(from.equals("SubscriptExpression")) {
-            currentPrinter.p("(*"+n.get(0).toString()+")");
-        } else if(n.getNode(0).hasName("PrimaryIdentifier")) {
+        if(n.getNode(0).hasName("PrimaryIdentifier")) {
             callExpPrim = n.getNode(0).getString(0);
         } else if(n.getNode(0).hasName("SelectionExpression")) {
             callExpPrim = n.getNode(0).getNode(0).getString(0);
@@ -312,10 +365,8 @@ public class JppPrinter extends Visitor {
 
 
     public void printPrimaryIdentifier(Node n, String from) {
-        if(from.equals("SubscriptExpression")) {
-            currentPrinter.p("(*"+n.get(0).toString()+")");
-        } else if(from.equals("SelectionExpression")
-                  && n.getString(0).equals("System")) {}
+        if(from.equals("SelectionExpression")
+                && n.getString(0).equals("System")) {}
         else if(from.equals("ConstructorDeclaration")) {
             currentPrinter.p(n.get(0).toString()+" ");
         } else {
@@ -388,6 +439,48 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    public void printRelationalExpression(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+    public void printBasicForControl(Node n, String from) {
+        currentPrinter.p("for(");
+        for(int i = 0; i<n.size(); i++) {
+            loopToDispatch(n.getNode(i), "BasicForControl");
+            if(i > 1 && i < n.size()-1)currentPrinter.p("; ");
+        }
+        currentPrinter.pln(")");
+    }
+
+    public void printExpressionList(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+    public void printPostfixExpression(Node n, String from) {
+        loopToDispatch(n, from);
+    }
+
+
+    public void printForStatement(Node n, String from) {
+        loopToDispatch(n, "ForStatement");
+    }
+
+    public void printWhileStatement(Node n, String from) {
+        System.out.println(n);
+    }
+
+    public void printNewArrayExpression(Node n, String from) {
+        Node dim = n.getNode(1);
+        String typ = n.getNode(0).getString(0);
+        currentPrinter.p("new __rt::__Array<"+typ+">");
+        for(int i = 0; i < dim.size(); i++) {
+            currentPrinter.p("("+dim.getNode(i).get(0)+")");
+        }
+
+
+    }
+
+
     /**
      * TO:DO Fix the cheap solution for __this in field
      * initializations
@@ -410,9 +503,22 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("}");
     }
 
+    public void printArrayType(Node n, String from) {
+        Node dim = n.getNode(1);
+        currentPrinter.p("__rt::Array");
+        for(int i = 0; i<dim.size(); i++) {
+            currentPrinter.p("<"+n.getNode(0).getString(0)+">");
+        }
+        currentPrinter.p(" ");
+    }
+
     public void printType(Node n, String from) {
-        for(int i =0; i<n.size(); i++) {
-            dispatchTopru(n.get(i), from);
+        if(n.get(1) != null) {
+            printArrayType(n, from);
+        } else {
+            for (int i = 0; i < n.size(); i++) {
+                dispatchTopru(n.get(i), from);
+            }
         }
     }
     public void printQualifiedIdentifier(Node n, String from) {

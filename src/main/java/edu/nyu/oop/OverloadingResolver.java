@@ -21,26 +21,11 @@ public class OverloadingResolver extends ContextualVisitor {
     protected Node t;
     protected SymbolTable oldtable;
     public OverloadingResolver(Runtime runtime, SymbolTable table, Node t) {
-
         super(runtime, table);
         this.t = t;
     }
 
-//    public void visitClassDeclaration(GNode n){
-//
-//    }
-
-    public Node getRecieverClass(String className) {
-        for(int i = 0; i<t.size(); i++) {
-            if(t.get(i) != null && t.getNode(i).hasName("ClassDeclaration")) {
-                if(t.getNode(i).get(1).equals(className)) return t.getNode(i);
-            }
-        }
-        return null;
-    }
-
     public void visitCallExpression(GNode n) {
-
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
@@ -67,7 +52,7 @@ public class OverloadingResolver extends ContextualVisitor {
                 over = over.split(", ")[0].toString().replace("param(", "");
                 overload_params += over;
             }
-            System.out.println(overload_params);
+            System.out.println(method);
             n.set(2, n.getString(2)+overload_params);
         }
 
