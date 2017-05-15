@@ -425,7 +425,6 @@ public class CreateDependencyTree extends Visitor {
 
         GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
-        System.out.println(inherit);
         if(inherit.size() == 1) {
             return (GNode)inherit.get(0).ast;
         } else {

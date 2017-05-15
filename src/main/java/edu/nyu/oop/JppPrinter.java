@@ -348,8 +348,6 @@ public class JppPrinter extends Visitor {
 
     public void printCallExpression(Node n, String from) {
         if(n.getNode(0).hasName("CastExpression")) {
-            System.out.println("\n \n here!");
-            System.out.println(n.getNode(0));
             currentPrinter.p("(");
             dispatchTopru(n.get(0), "CallExpression");
             currentPrinter.p(")");
@@ -590,7 +588,6 @@ public class JppPrinter extends Visitor {
         printType(n.getNode(0), "CastExpression");
         currentPrinter.p(")");
         currentPrinter.p(" ");
-        System.out.println(n);
         dispatchTopru(n.get(1), "CastExpression");
     }
 
