@@ -699,6 +699,7 @@ public class JppPrinter extends Visitor {
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
+        System.out.println(n);
         constNum = 0;
         currentClassName = n.getString(1);
         currentClassNode = n;
@@ -706,6 +707,12 @@ public class JppPrinter extends Visitor {
         printClassGenerics(n);
         visit(n);
     }
+
+//    public String getFieldInitializations(GNode n){
+//        for(int i = 0; i<n.size(); i++){
+//
+//        }
+//    }
 
 
     /**
