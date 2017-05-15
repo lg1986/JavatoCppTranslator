@@ -30,7 +30,7 @@ __Object::__init(__this);
 return __this; 
  }
 void __Test030::main(__rt::Array<String>args)
-{__rt::Array<A> as = new __rt::__Array<A>(5); 
+{__rt::Array<<A<<A>>> as = new __rt::__Array<<A<<A>>>(5)(5)(5); 
 std::cout << as->__vptr->getClass(as)->__vptr->toString(as)<< std::endl; 
 }
 }

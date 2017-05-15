@@ -41,6 +41,10 @@ public class JppPrinter extends Visitor {
 
     private String callExpPrim = "";
 
+    /*
+    * this method is used to print the main method of the program
+    *
+     */
     public void printMain() {
         Writer wMainCpp;
 
@@ -71,7 +75,10 @@ public class JppPrinter extends Visitor {
      * @throws IOException
      */
 
-
+    /*
+    * this method creates the output file to which we will be writing our output to
+    * and initilalizes our printers
+     */
     public JppPrinter(Runtime runtime, Node n, String packageName) throws IOException {
         this.packageName = packageName;
         Writer wMainCpp;
@@ -185,6 +192,12 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    /*
+    * this method is called form various method and serves the purpose of organizing
+    * where the node/object should go, to be handled by the corresponding node that is
+    * most specific to it, to add generality to the code and handle the cases
+     */
+
     public void dispatchTopru(Object n, String from) {
         if(n != null && checkIfNode(n)) {
             pru((Node)n, from);
@@ -211,6 +224,11 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    /*
+    * the method below also serves a similar purpose handles  the cases for nodes and
+    * not objects. each node has its corresponding print method, where the c++ code is
+    * being produced and printed to the output file
+     */
     public void pru(Node n, String from) {
         if(n.hasName("StringLiteral")) {
             printStringLiteral(n, from);
@@ -278,39 +296,72 @@ public class JppPrinter extends Visitor {
             printSubscriptExpression(n, from);
         }
     }
-
+    /*
+    * handles the case for if we are printing a boolean
+    * extracts the necessary section in the node and prints it to the output file
+     */
     public void printBooleanLiteral(Node n, String from) {
         currentPrinter.p(n.getString(0));
     }
 
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+     */
     public void printNewClassExpression(Node n, String from) {
         loopToDispatch(n, "NewClassExpression");
     }
 
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+     */
     public void printIntegerLiteral(Node n, String from) {
         loopToDispatch(n, "IntegerLiteral");
     }
 
-
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+    * here we also check if there is an assignment operator
+     */
     public void printDeclarator(Node n, String from) {
         if(n.get(2) == null) loopToDispatch(n, "DeclaratorNotAssign");
         else loopToDispatch(n, "Declarator");
     }
 
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+     */
     public void printDeclarators(Node n, String from) {
         loopToDispatch(n, "Declarators");
     }
 
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+     */
     public void printFieldDeclaration(Node n, String from) {
         loopToDispatch(n, "FieldDeclaration");
     }
 
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+     */
     public void printExpressionStatement(Node n, String from) {
         loopToDispatch(n, "ExpressionStatement");
     }
 
 
-
+    /*
+    * this calls the loop to dispatch method, with the string "from"
+    * to send the contents into more general cases for translating
+    * this method is used for the case of arrays and will print the brackets
+    * but the case for what types the indices could be and passes them to the
+    * corresponding methods that handle those specific cases
+     */
     public void printSubscriptExpression(Node n, String from) {
         printPrimaryIdentifier(n.getNode(0), "SubscriptExpression");
         currentPrinter.p("->__data[");
@@ -318,6 +369,15 @@ public class JppPrinter extends Visitor {
         currentPrinter.p("]");
     }
 
+    /*
+    * this method handles the call expression
+    * it handles the cases for when we have a print statement
+    * for primary identifiers and selectionexpressions the information
+    * is stored in callExpPrim which will be printed and modified further
+     * in other functions, like printArgumentsList
+     * If we come across a call expression this will be sent to the
+     * loopToDispatch method, for further handling
+     */
     public void printCallExpression(Node n, String from) {
         if(n.getNode(0).hasName("PrimaryIdentifier")) {
             callExpPrim = n.getNode(0).getString(0);
@@ -332,7 +392,10 @@ public class JppPrinter extends Visitor {
             loopToDispatch(n, "CallExpression");
         }
     }
-
+    /*
+    * this prints the arguments to the output file, but first checks to see if the callExpPrim saved above is null
+    * and if so sets it to __this, also checks the case for if parentheses need to surround the callexpr
+     */
     public void printArgumentsList(Node n, String from) {
         if(!from.equals("NewClassExpression")) {
             if(callExpPrim == null) callExpPrim = "__this";
@@ -344,10 +407,12 @@ public class JppPrinter extends Visitor {
             pru(n.getNode(i), "Arguments");
 
         }
-//        loopToDispatch(n, "Arguments");
         currentPrinter.p(")");
     }
-
+    /*
+    * this sets the call expression to the correct type with the correct access either "->" or __this
+    *
+     */
     public void printSelectionExpression(Node n, String from) {
         if(from.equals("CallExpression")) {
             if(n.getNode(0).getString(0) == null) {
@@ -472,7 +537,34 @@ public class JppPrinter extends Visitor {
     public void printNewArrayExpression(Node n, String from) {
         Node dim = n.getNode(1);
         String typ = n.getNode(0).getString(0);
-        currentPrinter.p("new __rt::__Array<"+typ+">");
+        currentPrinter.p("new __rt::__Array");
+        // printing the left parentheses
+        if(dim.size() == 1){
+            currentPrinter.p("<"+n.getNode(0).getString(0)+">");
+        }
+        else{
+            // printing the left side of the "<"
+            for(int i = 0; i < 2; i++){
+                currentPrinter.p("<");
+            }
+            //printing the middle part of the multidimensional array
+            for(int i = 0; i < dim.size()-1; i++){
+                if(i == 0){
+                    currentPrinter.p(n.getNode(0).getString(0));
+                }
+                if(dim.size() > 2){
+                    currentPrinter.p("<");
+                }
+                if(i == dim.size()-2 && dim.size() > 2){
+                    currentPrinter.p(n.getNode(0).getString(0));
+                }
+
+            }
+            //printing the right side of the ">"
+            for(int i = 0; i < dim.size();i++){
+                currentPrinter.p(">");
+            }
+        }
         for(int i = 0; i < dim.size(); i++) {
             currentPrinter.p("("+dim.getNode(i).get(0)+")");
         }
@@ -503,9 +595,11 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("}");
     }
 
-    // <A> 1D
-    // <<A>> 2D
-    // <<A<<A>>> 3D
+    /**
+     * this prints the correct syntax for initializing arrays
+     * @param n
+     * @param from
+     */
     public void printArrayType(Node n, String from) {
         Node dim = n.getNode(1);
         currentPrinter.p("__rt::Array");
