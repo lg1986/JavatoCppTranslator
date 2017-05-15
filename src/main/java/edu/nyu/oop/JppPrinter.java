@@ -191,6 +191,14 @@ public class JppPrinter extends Visitor {
         }
     }
 
+    /**
+     * This works in conjunction with the pru --- indirection
+     * pattern. This takes into consideration the different
+     * "from" decls and figures out what additional aspects need
+     * to be added.
+     * @param n
+     * @param from
+     */
     public void dispatchTopru(Object n, String from) {
         if(n != null && checkIfNode(n)) {
             pru((Node)n, from);
@@ -216,6 +224,15 @@ public class JppPrinter extends Visitor {
             }
         }
     }
+
+    /**
+     * The following is the indirection pattern. What this does is
+     * depending on where the Node is coming from it decides what the best
+     * action to perform would be. After taking that into consideration,
+     * it is able to delgate the work.
+     * @param n
+     * @param from
+     */
 
     public void pru(Node n, String from) {
         if(n.hasName("StringLiteral")) {
@@ -569,7 +586,6 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCastExpression(Node n, String from) {
-
         currentPrinter.p("(");
         printType(n.getNode(0), "CastExpression");
         currentPrinter.p(")");
@@ -594,6 +610,13 @@ public class JppPrinter extends Visitor {
     }
 
 
+    /**
+     * This method could have been easily avoided but
+     * we were just trying to get the first order.
+     * @param n
+     * @param isStatic
+     * @return
+     */
     public String getParamStringForMethods(Node n, boolean isStatic) {
         String paramString = "(";
         if(!isStatic) paramString += currentClassName+" __this";
@@ -619,6 +642,12 @@ public class JppPrinter extends Visitor {
         paramString +=")";
         return paramString;
     }
+
+    /**
+     * This does the name mangling for method calls.
+     * @param paramNodes
+     * @return
+     */
     public String getMangler(Node paramNodes) {
         ArrayList<String> paramsList = new ArrayList<>();
         for(int i = 0; i<paramNodes.size(); i++) {
@@ -646,6 +675,7 @@ public class JppPrinter extends Visitor {
             return true;
         return false;
     }
+
     public void visitMethodDeclaration(GNode n) {
         int consts = 0;
         if(n.getString(3).equals("main")) {
@@ -710,7 +740,9 @@ public class JppPrinter extends Visitor {
         printBlock(n.getNode(METHOD_BLOCK), "ConstructorDeclaration");
     }
 
-
+    /**
+     * Default constructor
+     */
     public void printDefaultConstructor() {
         currentPrinter.pln(
             currentClassName+" __"+currentClassName+"::__init("+
@@ -761,6 +793,12 @@ public class JppPrinter extends Visitor {
         return initVal;
     }
 
+    /**
+     * This is for the field initializations for every class. It takes
+     * care of both the static and the instance fields.
+     * @param n
+     * @return
+     */
     public String getFieldInitializations(Node n) {
 
         String initial = "";
@@ -801,6 +839,12 @@ public class JppPrinter extends Visitor {
             super.dispatch(n);
         }
     }
+
+    /**
+     * This is where the chain-of-responsibility pattern.
+     * @param runtime
+     * @param n
+     */
 
     public void getAllASTs(Runtime runtime, Node n) {
         CreateDependencyTree headerAST = new CreateDependencyTree();

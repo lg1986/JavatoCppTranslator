@@ -49,22 +49,29 @@ public class OverloadingResolver extends ContextualVisitor {
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
 
+        // Gets the type of the resciever
         Type typeToSearch = TypeUtil.getType(receiver);
+
+        // Makes sure that the call is not via the
+        // the method itself i.e., static method call
         if((typeToSearch.deannotate().isClass())) {
             n.set(2, n.getString(2) + "method");
         } else {
-
+            // Extracts the type if it is a VariableT
             if (checkMeth(methodName)) {
                 if (typeToSearch.isVariable()) {
                     VariableT vt = typeToSearch.toVariable();
                     typeToSearch = vt.getType();
                 }
-                // find type of called method
+
+                // Actuals gets the parameters
                 List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
                 MethodT method =
                     JavaEntities.typeDotMethod(table, classpath(), typeToSearch,
                                                true, methodName, actuals);
                 if(method == null) return;
+
+                // Just gets the parmeters
                 List<Type> params = method.getParameters();
                 String overload_params = "";
 
@@ -75,6 +82,7 @@ public class OverloadingResolver extends ContextualVisitor {
                     over = over.split(", ")[0].toString().replace("param(", "");
                     overload_params += over;
                 }
+                // Mangles the name
                 n.set(2, n.getString(2) + "method" + overload_params);
             }
         }

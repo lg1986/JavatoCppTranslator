@@ -299,7 +299,10 @@ public class CreateDependencyTree extends Visitor {
     }
 
     /**
-     * Check Meth -- This is what takes
+     * Check Meth -- This is what decides whether a method is being
+     * overloaded or is it being overriden and then performs the
+     * corresponding action accordingly.
+     *
      * @param stackMeth
      * @param currMethsNodes
      * @param className
