@@ -282,7 +282,12 @@ public class JppPrinter extends Visitor {
             printNewArrayExpression(n, from);
         } else if(n.hasName("SubscriptExpression")) {
             printSubscriptExpression(n, from);
+        } else if(n.hasName("NullLiteral")){
+            printNullLiteral(n, from);
         }
+    }
+    public void printNullLiteral(Node n, String from){
+        currentPrinter.p("__rt::null()");
     }
 
     public void printBooleanLiteral(Node n, String from) {
@@ -325,20 +330,31 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        if(TypeUtil.getType(n.getNode(0)).deannotate().isClass()) {
-            currentPrinter.p("__"+n.getNode(0).getString(0)+"::"+n.get(2)+"()");
-        } else {
-            if (n.getNode(0).hasName("PrimaryIdentifier")) {
-                callExpPrim = n.getNode(0).getString(0);
-            } else if (n.getNode(0).hasName("SelectionExpression")) {
-                callExpPrim = n.getNode(0).getNode(0).getString(0);
+        if(n.getNode(0).hasName("CastExpression")) {
+            System.out.println("\n \n here!");
+            System.out.println(n.getNode(0));
+            currentPrinter.p("(");
+            dispatchTopru(n.get(0), "CallExpression");
+            currentPrinter.p(")");
+            for(int i = 1; i<n.size(); i++){
+                dispatchTopru(n.get(i), "CallExpression");
             }
-            if (n.get(2).equals("println") || n.get(2).equals("print")) {
-                currentPrinter.p("std::cout << ");
-                loopToDispatch(n.getNode(3), "CallExpression");
-                if (n.get(2).equals("println")) currentPrinter.p("<< std::endl");
+        } else {
+            if (TypeUtil.getType(n.getNode(0)).deannotate().isClass()) {
+                currentPrinter.p("__" + n.getNode(0).getString(0) + "::" + n.get(2) + "()");
             } else {
-                loopToDispatch(n, "CallExpression");
+                if (n.getNode(0).hasName("PrimaryIdentifier")) {
+                    callExpPrim = n.getNode(0).getString(0);
+                } else if (n.getNode(0).hasName("SelectionExpression")) {
+                    callExpPrim = n.getNode(0).getNode(0).getString(0);
+                }
+                if (n.get(2).equals("println") || n.get(2).equals("print")) {
+                    currentPrinter.p("std::cout << ");
+                    loopToDispatch(n.getNode(3), "CallExpression");
+                    if (n.get(2).equals("println")) currentPrinter.p("<< std::endl");
+                } else {
+                    loopToDispatch(n, "CallExpression");
+                }
             }
         }
     }
@@ -374,7 +390,6 @@ public class JppPrinter extends Visitor {
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
         } else {
             if(TypeUtil.isStaticType(TypeUtil.getType(n))) {
-                System.out.println(n);
                 currentPrinter.p("__"+n.getNode(0).getString(0)+"::"+
                                  n.getString(1));
             } else {
@@ -430,6 +445,7 @@ public class JppPrinter extends Visitor {
     }
 
     public void printReturnStatement(Node n, String from) {
+
         if(n.size() > 0) {
             currentPrinter.p("return ");
             pru(n.getNode(0), "ReturnStatement");
@@ -487,7 +503,8 @@ public class JppPrinter extends Visitor {
     }
 
     public void printWhileStatement(Node n, String from) {
-        System.out.println(n);
+        loopToDispatch(n, "ForStatement");
+
     }
 
     public void printNewArrayExpression(Node n, String from) {
@@ -557,6 +574,7 @@ public class JppPrinter extends Visitor {
         printType(n.getNode(0), "CastExpression");
         currentPrinter.p(")");
         currentPrinter.p(" ");
+        System.out.println(n);
         dispatchTopru(n.get(1), "CastExpression");
     }
 
@@ -725,7 +743,7 @@ public class JppPrinter extends Visitor {
         visit(n);
     }
 
-    public String getInitVal(String typ){
+    public String getInitVal(String typ) {
         if(typ.equals("int32_t")) return "0";
         else if(typ.equals("double")) return "0";
         else if(typ.equals("char")) return "0";
@@ -733,9 +751,9 @@ public class JppPrinter extends Visitor {
         else return "0";
     }
 
-    public String getDeclForFieldInit(Node n, String typ){
+    public String getDeclForFieldInit(Node n, String typ) {
         String initVal = null;
-        if(n.getNode(2).getNode(0).get(2) != null){
+        if(n.getNode(2).getNode(0).get(2) != null) {
             initVal = n.getNode(2).getNode(0).getNode(2).getString(0);
         }
         if(initVal == null)initVal = getInitVal(typ);

@@ -179,7 +179,6 @@ public class HeaderFilePrinter extends Visitor {
                                     paramNode.getString(0)+">";
                 paramString += arrayParam;
             } else {
-                System.out.println(n+" "+isStatic);
                 String typ = paramNode.getString(0);
                 if(typ.equals("int")) typ = "int32_t";
                 if(isStatic && i == 0) {

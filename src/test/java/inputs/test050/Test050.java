@@ -14,7 +14,7 @@ class B extends A {
     void m() {
         System.out.println("B.m()");
     }
-    C m(B b) {
+    A m(B b) {
         System.out.println("B.m(B)");
         return new C();
     }

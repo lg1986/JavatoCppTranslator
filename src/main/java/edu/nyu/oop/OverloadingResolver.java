@@ -52,7 +52,7 @@ public class OverloadingResolver extends ContextualVisitor {
                 MethodT method =
                     JavaEntities.typeDotMethod(table, classpath(), typeToSearch,
                                                true, methodName, actuals);
-
+                if(method == null) return;
                 List<Type> params = method.getParameters();
                 String overload_params = "";
 
