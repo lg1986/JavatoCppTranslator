@@ -74,7 +74,6 @@ public class HeaderFilePrinter extends Visitor {
      * the class object
      * @param className
      */
-
     public void writeClassBase(String className) throws IOException {
         String v_ptr = "__"+className.replace("()", "")+"_VT* __vptr;";
         printer.pln(v_ptr);
@@ -90,7 +89,12 @@ public class HeaderFilePrinter extends Visitor {
     }
 
 
-
+    /** visitDataLayout takes in the GNode and prints class information in the data layout before passing
+     *  fields of the node into visitMethodDeclarations, visitFieldDeclarations and visitConstructorDeclarations to
+     *  finish printing the data layout.
+     *
+     * @param n is the entered GNode
+     */
     public void visitDataLayout(GNode n) {
         printer.pln("struct __"+currentClassName+" {");
         printer.pln("__"+currentClassName+"_VT*"+" __vptr;");
@@ -105,7 +109,10 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("};");
     }
 
-
+    /** visitVTableNode takes in the vtable node and uses its relevant fields to print the class vtable
+     *
+     * @param n is the entered GNode
+     */
     public void visitVTableNode(GNode n) {
         printer.pln("struct __"+currentClassName+"_VT {");
         printer.pln("Class __is_a;");
@@ -158,25 +165,37 @@ public class HeaderFilePrinter extends Visitor {
         return false;
     }
 
+    /** Method to return the parameter string including proper type of int32_t, or Array
+     *
+     * @param n is the entered node
+     * @param isStatic entered boolean of whether is static or not
+     * @return
+     */
     public String getParamString(Node n, boolean isStatic) {
         String paramString = "(";
-        if(!isStatic) paramString+=currentClassName;
+        if(!isStatic) paramString += currentClassName;
         for(int i = 0; i < n.size(); i++) {
             Node paramNode = n.getNode(i);
             if(paramNode.size() > 2 && paramNode.get(2) != null) {
-                if(!isStatic) paramString+=",";
+                if(!isStatic) paramString += ",";
                 String arrayParam = "__rt::Array<"+
                                     paramNode.getString(0)+">";
                 paramString += arrayParam;
             } else {
                 String typ = paramNode.getString(0);
                 if(typ.equals("int")) typ = "int32_t";
-                paramString += ","+typ;
+                paramString += "," + typ;
             }
         }
-        paramString +=")";
+        paramString += ")";
         return paramString;
     }
+
+    /** visitMethodDeclaration is used to access a method declaration, get return type and print the method headers
+     * including type and whether they are static or not
+     *
+     * @param n is the entered Node
+     */
     public void visitMethodDeclaration(Node n) {
         if (n.getString(4).equals(currentClassName)) {
             printer.p("static ");
@@ -196,6 +215,10 @@ public class HeaderFilePrinter extends Visitor {
         }
     }
 
+    /** Method to pass each method declaration to the singular visitMethodDeclaration function with appropriate nodes
+     *
+     * @param n is the entered Node
+     */
     public void visitMethodDeclarations(Node  n) {
         for(int i = 0; i <n.size(); i++) {
             visitMethodDeclaration(n.getNode(i));
@@ -266,11 +289,17 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("static "+n.getString(0)+" __init"+getParamConstructorString(n.getNode(1))+";");
     }
 
-
+    /** Used to print default constructor
+     *
+     */
     public void printDefaultConstructor() {
         printer.pln("static "+ currentClassName+" __init("+currentClassName+" __this);");
     }
 
+    /** Passes each constructor to visitConstructorDeclaration and calls for default constructor to be printed if
+     *  no additional constructors
+     *
+     */
     public void visitConstructorDeclarations(Node n) {
         if(n.size() == 0) {
             printDefaultConstructor();
@@ -298,6 +327,11 @@ public class HeaderFilePrinter extends Visitor {
         }
     }
 
+    /** Provides the return type of entered Node.
+     *
+     * @param n is the entered node N
+     * @return is the return type
+     */
     public String getReturnType(Node n) {
         String ret = n.getString(1);
         return ret;

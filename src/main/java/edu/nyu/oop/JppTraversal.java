@@ -15,6 +15,7 @@ public class JppTraversal extends Visitor {
     public GNode classNode;
     public List<GNode> asts;
 
+    // Constants to refer to indices of GNode to obtain relevant information
     private final int MODIFS = 0;
     private final int NAME = 1;
     private final int EXT = 2;
@@ -36,6 +37,11 @@ public class JppTraversal extends Visitor {
         return this.asts;
     }
 
+    /** checkIfNode used to determine if entered object is a node
+     *
+     * @param n entered object to be checked
+     * @return a boolean value determining if entered object is a node
+     */
     public boolean checkIfNode(Object n) {
         if(n instanceof String) {
             return false;
@@ -43,14 +49,17 @@ public class JppTraversal extends Visitor {
             return true;
         }
     }
-    public void visitBlockDeclaration(GNode n) {
-
-    }
 
     public void visitFieldDeclaration(GNode n) {
         classNode.getNode(FIELDS).addNode(n);
     }
 
+    /** createConstructorAndAdd method.
+     *  Used to iterate through entered GNode from Java AST, checking for constructor declarations to add to
+     *  a created constDec GNode to add to an augmented C++ AST.
+     *
+     * @param n is the entered GNode
+     */
     public void createConstructorAndAdd(GNode n) {
         GNode constDec = GNode.create("ConstructorDeclaration");
         for(int i = 0; i < n.size(); i++) {
@@ -59,6 +68,12 @@ public class JppTraversal extends Visitor {
         }
         classNode.getNode(CONSTRS).addNode(constDec);
     }
+
+    /** visitMethod for methods, that either passes n to the above createConstructorAndAdd if n has a null EXT field
+     * or adds n into the method space in classNode
+     *
+     * @param n is the entered GNode
+     */
     public void visitMethodDeclaration(GNode n) {
 
         if(n.get(2) == null) {
@@ -68,13 +83,24 @@ public class JppTraversal extends Visitor {
             classNode.getNode(METHOD).addNode(n);
         }
     }
+
+    /** Inserts the entered GNode n into the constructor field of classNode
+     *
+     * @param n is the entered GNode
+     */
     public void visitConstructorDeclaration(GNode n) {
         classNode.getNode(CONSTRS).addNode(n);
     }
 
+    /** visitClassDeclaration method used to create the ClassDeclaration node in the classNode.
+     *
+     *
+     * @param n is the entered GNode
+     */
     public void visitClassDeclaration(GNode n) {
         classNode = GNode.create("ClassDeclaration");
 
+        // Getting properties from the entered GNode
         classNode.addNode(n.getNode(0));
         classNode.add(n.getString(1));
 
@@ -84,9 +110,12 @@ public class JppTraversal extends Visitor {
             classNode.add(null);
         }
 
+        //GNodes created for fields, methods and cosntructors
         GNode fields = GNode.create("FieldDeclarations");
         GNode meths = GNode.create("MethodDeclarations");
         GNode consts = GNode.create("ConstructorDeclarations");
+
+        //Fields, methods and constructors nodes added to classNode
         classNode.addNode(fields);
         classNode.addNode(consts);
         classNode.addNode(meths);
@@ -94,6 +123,10 @@ public class JppTraversal extends Visitor {
         asts.add(classNode);
     }
 
+    /** Visit method that makes use of dispatch call from XTC library
+     *
+     * @param n is the entered Node
+     */
     public void visit(Node n) {
         for(Object o: n) {
             if(o instanceof Node) {
