@@ -503,11 +503,38 @@ public class JppPrinter extends Visitor {
         currentPrinter.pln("}");
     }
 
+    // <A> 1D
+    // <<A>> 2D
+    // <<A<<A>>> 3D
     public void printArrayType(Node n, String from) {
         Node dim = n.getNode(1);
         currentPrinter.p("__rt::Array");
-        for(int i = 0; i<dim.size(); i++) {
+        // printing the left parentheses
+        if(dim.size() == 1){
             currentPrinter.p("<"+n.getNode(0).getString(0)+">");
+        }
+        else{
+            // printing the left side of the "<"
+            for(int i = 0; i < 2; i++){
+                currentPrinter.p("<");
+            }
+            //printing the middle part of the multidimensional array
+            for(int i = 0; i < dim.size()-1; i++){
+                if(i == 0){
+                    currentPrinter.p(n.getNode(0).getString(0));
+                }
+                if(dim.size() > 2){
+                    currentPrinter.p("<");
+                }
+                if(i == dim.size()-2 && dim.size() > 2){
+                    currentPrinter.p(n.getNode(0).getString(0));
+                }
+
+            }
+            //printing the right side of the ">"
+            for(int i = 0; i < dim.size();i++){
+                currentPrinter.p(">");
+            }
         }
         currentPrinter.p(" ");
     }
