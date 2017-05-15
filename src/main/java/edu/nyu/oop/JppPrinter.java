@@ -118,8 +118,8 @@ public class JppPrinter extends Visitor {
         outputCppPrinter.pln("namespace "+packageName+"{");
     }
 
-    public void printClassGenerics(Node n) {
-        currentPrinter.p("__"+currentClassName+"::__"+currentClassName+"() : __vptr(&__vtable){} \n");
+    public void printClassGenerics(Node n, String initial) {
+        currentPrinter.p("__"+currentClassName+"::__"+currentClassName+"() : __vptr(&__vtable)"+initial);
         currentPrinter.pln("Class __"+currentClassName+"::__class() {");
         currentPrinter.indentMore();
         currentPrinter.pln("static Class k = ");
@@ -325,17 +325,21 @@ public class JppPrinter extends Visitor {
     }
 
     public void printCallExpression(Node n, String from) {
-        if(n.getNode(0).hasName("PrimaryIdentifier")) {
-            callExpPrim = n.getNode(0).getString(0);
-        } else if(n.getNode(0).hasName("SelectionExpression")) {
-            callExpPrim = n.getNode(0).getNode(0).getString(0);
-        }
-        if(n.get(2).equals("println") || n.get(2).equals("print")) {
-            currentPrinter.p("std::cout << ");
-            loopToDispatch(n.getNode(3), "CallExpression");
-            if(n.get(2).equals("println")) currentPrinter.p("<< std::endl");
+        if(TypeUtil.getType(n.getNode(0)).deannotate().isClass()) {
+            currentPrinter.p("__"+n.getNode(0).getString(0)+"::"+n.get(2)+"()");
         } else {
-            loopToDispatch(n, "CallExpression");
+            if (n.getNode(0).hasName("PrimaryIdentifier")) {
+                callExpPrim = n.getNode(0).getString(0);
+            } else if (n.getNode(0).hasName("SelectionExpression")) {
+                callExpPrim = n.getNode(0).getNode(0).getString(0);
+            }
+            if (n.get(2).equals("println") || n.get(2).equals("print")) {
+                currentPrinter.p("std::cout << ");
+                loopToDispatch(n.getNode(3), "CallExpression");
+                if (n.get(2).equals("println")) currentPrinter.p("<< std::endl");
+            } else {
+                loopToDispatch(n, "CallExpression");
+            }
         }
     }
 
@@ -369,7 +373,13 @@ public class JppPrinter extends Visitor {
         }
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {
         } else {
-            loopToDispatch(n, "SelectionExpression");
+            if(TypeUtil.isStaticType(TypeUtil.getType(n))) {
+                System.out.println(n);
+                currentPrinter.p("__"+n.getNode(0).getString(0)+"::"+
+                                 n.getString(1));
+            } else {
+                loopToDispatch(n, "SelectionExpression");
+            }
         }
     }
 
@@ -612,12 +622,20 @@ public class JppPrinter extends Visitor {
     public void printAdditiveExpression(Node n, String from) {
         loopToDispatch(n, "AdditiveExpression");
     }
+    public boolean checkMeth(String name) {
+        if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
+                !name.equals("equals") && !name.equals("getClass"))
+            return true;
+        return false;
+    }
     public void visitMethodDeclaration(GNode n) {
         int consts = 0;
         if(n.getString(3).equals("main")) {
             printMain();
         }
-        if(checkIfStatic(n)) {
+        if(TypeUtil.isStaticType(TypeUtil.getType(n))) {
+            if(checkMeth(n.getString(3)))
+                n.set(3, n.get(3)+getMangler(n.getNode(4)));
             dispatchTopru(n.get(2), "MethodDeclaration");
             dispatchTopru(n.get(3), "MethodDeclaration");
             currentPrinter.pln(getParamStringForMethods(n.getNode(4), true));
@@ -699,20 +717,30 @@ public class JppPrinter extends Visitor {
      * @param n
      */
     public void visitClassDeclaration(GNode n) {
-        System.out.println(n);
         constNum = 0;
         currentClassName = n.getString(1);
         currentClassNode = n;
         this.currentPrinter = this.outputCppPrinter;
-        printClassGenerics(n);
+        printClassGenerics(n,getFieldInitializations(n.getNode(3)) );
         visit(n);
     }
 
-//    public String getFieldInitializations(GNode n){
-//        for(int i = 0; i<n.size(); i++){
-//
-//        }
-//    }
+    public String getFieldInitializations(Node n) {
+        String initial = "";
+        String staticfields = "";
+        for(int i = 0; i<n.size(); i++) {
+            if(!TypeUtil.isStaticType(TypeUtil.getType(n.getNode(i).getNode(2).getNode(0)))) {
+                String decl = n.getNode(i).getNode(2).getNode(0).getString(0);
+                initial += "," + decl + "(0) ";
+            } else {
+                String decl = n.getNode(i).getNode(2).getNode(0).getString(0);
+                String typ = n.getNode(i).getNode(1).getNode(0).getString(0);
+                if(typ.equals("int")) typ = "int32_t";
+                staticfields += typ+" __"+currentClassName+"::"+decl+" = 0;\n";
+            }
+        }
+        return initial+"{}\n"+staticfields;
+    }
 
 
     /**

@@ -2,11 +2,12 @@
 #include "output.h"
 using namespace java::lang;
 namespace inputs{
-namespace test035{
-__A::__A() : __vptr(&__vtable){} 
+namespace test020{
+__A::__A() : __vptr(&__vtable){}
+int32_t __A::x = 0;
 Class __A::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test035.A"), __Object::__class());
+    new __Class(__rt::literal("inputs.test020.A"), __Object::__class());
   return k;
 }
 __A_VT __A::__vtable;
@@ -14,47 +15,40 @@ A __A::__init(A __this) {
 __Object::__init(__this);
 return __this; 
  }
-int32_t __A::mmethod__int(A __this, int32_t b)
-{std::cout << __rt::literal("A.m(byte)")<< std::endl; 
-return b; 
+int32_t __A::xmethod()
+{return 4; 
 }
-void __A::mmethod__double(A __this, double d)
-{std::cout << __rt::literal("A.m(double)")<< std::endl; 
-}
-__Test035::__Test035() : __vptr(&__vtable){} 
-Class __Test035::__class() {
+__Test020::__Test020() : __vptr(&__vtable){}
+Class __Test020::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test035.Test035"), __Object::__class());
+    new __Class(__rt::literal("inputs.test020.Test020"), __Object::__class());
   return k;
 }
-__Test035_VT __Test035::__vtable;
-Test035 __Test035::__init(Test035 __this) {
+__Test020_VT __Test020::__vtable;
+Test020 __Test020::__init(Test020 __this) {
 __Object::__init(__this);
 return __this; 
  }
-void __Test035::main(__rt::Array<String>args)
-{A a = __A::__init(new __A()); 
-int32_t b = 1; 
-double d = 1.0; 
-a->__vptr->mmethod__int(a,b); 
-a->__vptr->mmethod__int(a,b+b); 
-a->__vptr->mmethod__double(a,d); 
+void __Test020::main(__rt::Array<String>args)
+{int32_t x; 
+x=__A::x; 
+std::cout << __A::xmethod()<< std::endl; 
 }
 }
 }
 namespace __rt {
 template<>
-java::lang::Class __Array<inputs::test035::A>::__class(){
+java::lang::Class __Array<inputs::test020::A>::__class(){
 static java::lang::Class k =
-new java::lang::__Class(__rt::literal("[Linputs.test035.A;"), 
+new java::lang::__Class(__rt::literal("[Linputs.test020.A;"), 
 java::lang::__Object::__class(),
-inputs::test035::__A::__class());return k;
+inputs::test020::__A::__class());return k;
 }
 template<>
-java::lang::Class __Array<inputs::test035::Test035>::__class(){
+java::lang::Class __Array<inputs::test020::Test020>::__class(){
 static java::lang::Class k =
-new java::lang::__Class(__rt::literal("[Linputs.test035.Test035;"), 
+new java::lang::__Class(__rt::literal("[Linputs.test020.Test020;"), 
 java::lang::__Object::__class(),
-inputs::test035::__Test035::__class());return k;
+inputs::test020::__Test020::__class());return k;
 }
 }

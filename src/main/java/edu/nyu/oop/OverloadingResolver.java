@@ -26,41 +26,45 @@ public class OverloadingResolver extends ContextualVisitor {
     }
 
     public boolean checkMeth(String name) {
-        System.out.println(name);
         if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
                 !name.equals("equals") && !name.equals("getClass"))
             return true;
         return false;
     }
     public void visitCallExpression(GNode n) {
+
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
 
         Type typeToSearch = TypeUtil.getType(receiver);
-        System.out.println(checkMeth(methodName));
-        if(checkMeth(methodName)) {
-            if (typeToSearch.isVariable()) {
-                VariableT vt = typeToSearch.toVariable();
-                typeToSearch = vt.getType();
-            }
-            // find type of called method
-            List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
-            MethodT method =
-                JavaEntities.typeDotMethod(table, classpath(), typeToSearch,
-                                           true, methodName, actuals);
+        if((typeToSearch.deannotate().isClass())) {
+            n.set(2, n.getString(2) + "method");
+        } else {
 
-            List<Type> params = method.getParameters();
-            String overload_params = "";
+            if (checkMeth(methodName)) {
+                if (typeToSearch.isVariable()) {
+                    VariableT vt = typeToSearch.toVariable();
+                    typeToSearch = vt.getType();
+                }
+                // find type of called method
+                List<Type> actuals = JavaEntities.typeList((List) dispatch(n.getNode(3)));
+                MethodT method =
+                    JavaEntities.typeDotMethod(table, classpath(), typeToSearch,
+                                               true, methodName, actuals);
 
-            for (Type param : params) {
-                overload_params += "__";
-                String[] s = param.toString().split(", class");
-                String over =  (s[0].replace("param(alias(", ""));
-                over = over.split(", ")[0].toString().replace("param(", "");
-                overload_params += over;
+                List<Type> params = method.getParameters();
+                String overload_params = "";
+
+                for (Type param : params) {
+                    overload_params += "__";
+                    String[] s = param.toString().split(", class");
+                    String over = (s[0].replace("param(alias(", ""));
+                    over = over.split(", ")[0].toString().replace("param(", "");
+                    overload_params += over;
+                }
+                n.set(2, n.getString(2) + "method" + overload_params);
             }
-            n.set(2, n.getString(2)+"method"+overload_params);
         }
 
 

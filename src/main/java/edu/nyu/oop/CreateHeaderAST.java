@@ -103,7 +103,6 @@ public class CreateHeaderAST extends Visitor {
      * @param n
      */
     public void visitMethodDeclaration(GNode n) {
-        System.out.println(n);
         GNode methodDeclaration = GNode.create("MethodDeclaration");
         methodDeclaration.add(n.getNode(0));
         methodDeclaration.add(getType(n.getNode(2)));

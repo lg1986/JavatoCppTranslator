@@ -1,5 +1,6 @@
 package edu.nyu.oop;
 
+import edu.nyu.oop.util.TypeUtil;
 import xtc.tree.GNode;
 import xtc.tree.Node;
 import xtc.tree.Printer;
@@ -103,9 +104,10 @@ public class HeaderFilePrinter extends Visitor {
         printer.pln("__"+currentClassName+"_VT*"+" __vptr;");
 
         printer.pln("__" + currentClassName + "();");
-        visitMethodDeclarations(n.getNode(2));
+
         visitFieldDeclarations((GNode)n.getNode(0));
         visitConstructorDeclarations(n.getNode(1));
+        visitMethodDeclarations(n.getNode(2));
 
         printer.pln("static Class __class();");
         printer.pln("static __"+currentClassName+"_VT __vtable;");
@@ -170,38 +172,57 @@ public class HeaderFilePrinter extends Visitor {
         if(!isStatic) paramString+=currentClassName;
         for(int i = 0; i < n.size(); i++) {
             Node paramNode = n.getNode(i);
+
             if(paramNode.size() > 2 && paramNode.get(2) != null) {
                 if(!isStatic) paramString+=",";
                 String arrayParam = "__rt::Array<"+
                                     paramNode.getString(0)+">";
                 paramString += arrayParam;
             } else {
+                System.out.println(n+" "+isStatic);
                 String typ = paramNode.getString(0);
                 if(typ.equals("int")) typ = "int32_t";
-                paramString += ","+typ;
+                if(isStatic && i == 0) {
+                    paramString += typ;
+                } else {
+                    paramString += ","+typ;
+                }
             }
         }
         paramString +=")";
         return paramString;
     }
+
+    public boolean checkIfStaticOrPrivate(Node modifers) {
+        for(int i = 0; i < modifers.size(); i++) {
+            Node modif = modifers.getNode(i);
+            if(modif.getString(0).equals("static")) return true;
+            else if(modif.getString(0).equals("private")) return true;
+        }
+        return false;
+    }
     public void visitMethodDeclaration(Node n) {
-        System.out.println(n);
+
         if (n.getString(4).equals(currentClassName)) {
             printer.p("static ");
             if (checkIfNode(n.getNode(0))) {
                 String ret = getReturnType(n);
+                if(ret.equals("int")) ret = "int32_t";
                 printer.p(ret + " " + n.get(2).toString());
             } else {
                 printer.p(n.get(1).toString() + " " + n.get(2).toString());
             }
-            if (checkIfStatic(n)) {
-                printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+            boolean isstatic = checkIfStaticOrPrivate(n.getNode(0));
+            if (isstatic) {
+                printer.p(getParamString(n.getNode(3), isstatic));
             } else {
-                printer.p(getParamString(n.getNode(3), checkIfStatic(n)));
+                printer.p(getParamString(n.getNode(3), isstatic));
             }
 
             printer.pln(";");
         }
+
+
     }
 
     public void visitMethodDeclarations(Node  n) {
@@ -222,15 +243,17 @@ public class HeaderFilePrinter extends Visitor {
     }
 
     public void visitMethodDeclarationVTable(Node n) {
-        String methName = n.getString(2);
-        String ret;
-        if(checkIfNode(n.get(1))) ret = getReturnType(n);
-        else  ret = (n.get(1).toString());
-        if(ret.equals("int")) {
-            ret = "int32_t";
+        if(!checkIfStaticOrPrivate(n.getNode(0))) {
+            String methName = n.getString(2);
+            String ret;
+            if (checkIfNode(n.get(1))) ret = getReturnType(n);
+            else ret = (n.get(1).toString());
+            if (ret.equals("int")) {
+                ret = "int32_t";
+            }
+            String paramString = getParamString(n.getNode(3), false);
+            printer.pln(ret + " (*" + methName + ")" + paramString + ";");
         }
-        String paramString = getParamString(n.getNode(3), false);
-        printer.pln(ret + " (*" + methName + ")" + paramString + ";");
     }
 
     /**
@@ -246,18 +269,20 @@ public class HeaderFilePrinter extends Visitor {
 
 
     public void visitMethodDeclarationVTableMethod(Node n) {
-        printer.pln(",");
-        String methName = n.getString(2);
-        String ret;
-        if(checkIfNode(n.get(1))) ret = getReturnType(n);
-        else  ret = (n.get(1).toString());
-        if(ret.equals("int")) {
-            ret = "int32_t";
+        if(!checkIfStaticOrPrivate(n.getNode(0))) {
+            printer.pln(",");
+            String methName = n.getString(2);
+            String ret;
+            if (checkIfNode(n.get(1))) ret = getReturnType(n);
+            else ret = (n.get(1).toString());
+            if (ret.equals("int")) {
+                ret = "int32_t";
+            }
+            String paramString = getParamString(n.getNode(3), false);
+            if (!n.getString(4).equals(currentClassName))
+                printer.p(methName + "((" + ret + " (*)" + paramString + ")&__" + n.getString(4) + "::" + methName + ")");
+            else printer.p(methName + "(__" + currentClassName + "::" + methName + ")");
         }
-        String paramString = getParamString(n.getNode(3), false);
-        if(!n.getString(4).equals(currentClassName))
-            printer.p(methName+"(("+ret+" (*)"+paramString+")&__"+n.getString(4)+"::"+methName+")");
-        else printer.p(methName+"(__"+currentClassName+"::"+methName+")");
     }
 
     public String getParamConstructorString(Node n) {
@@ -297,7 +322,9 @@ public class HeaderFilePrinter extends Visitor {
         if(!modif.equals("static")) {
             modif = "";
         }
-        printer.pln(modif+" "+n.getString(1)+" "+n.getString(2)+";");
+        String typ = n.getString(1);
+        if(typ.equals("int")) typ = "int32_t";
+        printer.pln(modif+" "+typ+" "+n.getString(2)+";");
     }
 
 

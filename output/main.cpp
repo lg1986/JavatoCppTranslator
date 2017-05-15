@@ -6,6 +6,6 @@ int main(int argc, char* argv[]) {
   for (int32_t i = 1; i < argc; i++) {
     (*args)[i] = __rt::literal(argv[i]);
  }
-inputs::test035::__Test035::main(args);
+inputs::test020::__Test020::main(args);
 return 0;
 }
