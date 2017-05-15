@@ -181,6 +181,7 @@ public class HeaderFilePrinter extends Visitor {
             } else {
                 String typ = paramNode.getString(0);
                 if(typ.equals("int")) typ = "int32_t";
+                if(typ.equals("byte")) typ = "int8_t";
                 if(isStatic && i == 0) {
                     paramString += typ;
                 } else {
@@ -207,6 +208,7 @@ public class HeaderFilePrinter extends Visitor {
             if (checkIfNode(n.getNode(0))) {
                 String ret = getReturnType(n);
                 if(ret.equals("int")) ret = "int32_t";
+                if(ret.equals("byte")) ret = "int8_t";
                 printer.p(ret + " " + n.get(2).toString());
             } else {
                 printer.p(n.get(1).toString() + " " + n.get(2).toString());
@@ -249,6 +251,8 @@ public class HeaderFilePrinter extends Visitor {
             else ret = (n.get(1).toString());
             if (ret.equals("int")) {
                 ret = "int32_t";
+            } else if(ret.equals("byte")){
+                ret="int8_t";
             }
             String paramString = getParamString(n.getNode(3), false);
             printer.pln(ret + " (*" + methName + ")" + paramString + ";");
@@ -276,6 +280,8 @@ public class HeaderFilePrinter extends Visitor {
             else ret = (n.get(1).toString());
             if (ret.equals("int")) {
                 ret = "int32_t";
+            } else if(ret.equals("byte")){
+                ret ="int8_t";
             }
             String paramString = getParamString(n.getNode(3), false);
             if (!n.getString(4).equals(currentClassName))
@@ -288,6 +294,7 @@ public class HeaderFilePrinter extends Visitor {
         String paramString = "("+currentClassName+" __this";
         for(int i = 0; i < n.size(); i++) {
             if (n.getNode(i).getString(0).equals("int")) paramString += "," + "int32_t";
+            else if (n.getNode(i).getString(0).equals("byte")) paramString += "," + "int8_t";
             else paramString += "," + n.getNode(i).getString(0);
         }
         paramString +=")";
@@ -323,6 +330,7 @@ public class HeaderFilePrinter extends Visitor {
         }
         String typ = n.getString(1);
         if(typ.equals("int")) typ = "int32_t";
+        if(typ.equals("byte")) typ = "int8_t";
         printer.pln(modif+" "+typ+" "+n.getString(2)+";");
     }
 

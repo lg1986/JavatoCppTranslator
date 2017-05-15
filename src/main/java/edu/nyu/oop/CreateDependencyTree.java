@@ -289,7 +289,6 @@ public class CreateDependencyTree extends Visitor {
 
             if(methName.equals(stackMeth.getString(2))) {
                 if(checkParams(stackMeth.getNode(3), currMethNode.getNode(3)) == 0) {
-                    System.out.println("\n \n OVERRIDING"+stackMeth);
                     currMethsNodes.set(i,
                                        makeDeepCopyMethNode(stackMeth, stackMeth.getString(4)));
                     return true;
@@ -308,7 +307,6 @@ public class CreateDependencyTree extends Visitor {
                 if(currMethName.equals(stackMethName)) {
                     int loadrid = checkParams(stackMeth.getNode(3), currMethNode.getNode(3));
                     if(loadrid == 1 || loadrid == 2) {
-                        System.out.println("\n OVERLOADING"+stackMeth);
                         return makeDeepCopyMethNode(stackMeth, null);
                     } else if(loadrid == 0) return null;
                 }
@@ -332,9 +330,6 @@ public class CreateDependencyTree extends Visitor {
      */
 
     public void stackMethods(Node stackMeths, Node currNode, String className) {
-//        System.out.println("\n \n STACK \n"+stackMeths+"\n \n");
-//        System.out.println("\n \n CURRNET \n"+currNode+"\n \n");
-
         for(int i = 0; i<stackMeths.size(); i++) {
             Node stackMeth = stackMeths.getNode(i);
             Node toAdd = checkMeth(stackMeth, currNode.getNode(3).getNode(2), className);
@@ -420,6 +415,7 @@ public class CreateDependencyTree extends Visitor {
 
         GNode originalMeths = GNode.ensureVariable((GNode)orignal.getNode(3).getNode(2));
         List<TreeNode> inherit = reOrderChain(n);
+        System.out.println(inherit);
         if(inherit.size() == 1) {
             return (GNode)inherit.get(0).ast;
         } else {

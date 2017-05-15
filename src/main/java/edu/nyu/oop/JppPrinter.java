@@ -209,7 +209,7 @@ public class JppPrinter extends Visitor {
                     typ = "int32_t";
                 } else if(typ.equals("boolean")) {
                     typ = "bool";
-                }
+                } else if(typ.equals("byte")) typ="int8_t";
                 currentPrinter.p(typ+" ");
             } else {
                 currentPrinter.p(n.toString());
@@ -611,7 +611,7 @@ public class JppPrinter extends Visitor {
                 String typ = typeNode.getNode(0).getString(0);
                 if(typ.equals("int")) {
                     typ = "int32_t";
-                }
+                } else if(typ.equals("byte")) typ="int8_t";
                 paramString += typ+" "+paramNode.getString(3);
             }
             if(i != n.size()-1) paramString += ",";
@@ -745,6 +745,7 @@ public class JppPrinter extends Visitor {
 
     public String getInitVal(String typ) {
         if(typ.equals("int32_t")) return "0";
+        else if(typ.equals("int8_t")) return "0";
         else if(typ.equals("double")) return "0";
         else if(typ.equals("char")) return "0";
         else if(typ.equals("bool")) return "false";
