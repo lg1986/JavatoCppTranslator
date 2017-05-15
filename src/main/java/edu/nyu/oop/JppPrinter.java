@@ -40,6 +40,7 @@ public class JppPrinter extends Visitor {
     private int constNum;
 
     private String callExpPrim = "";
+    protected List<String> changedStrings = new ArrayList<>();
 
     public void printMain() {
         Writer wMainCpp;
@@ -87,6 +88,11 @@ public class JppPrinter extends Visitor {
         }
         getAllASTs(runtime, n);
         writeStartBaseLayout(this.packageName);
+
+//        for(Node s: asts) {
+//            ResolveDuplicatesOutput k = new ResolveDuplicatesOutput();
+//            changedStrings.addAll(k.resolveDups(s));
+//        }
         collect();
         writeEndBaseLayout();
         outputCppPrinter.flush();
@@ -194,7 +200,7 @@ public class JppPrinter extends Visitor {
             } else if(from.equals("SelectionExpression")) {
                 currentPrinter.p("->"+n.toString());
             } else if(from.equals("CallExpression")) {
-                currentPrinter.p("->__vptr->"+n.toString());
+                currentPrinter.p("->__vptr->" + n.toString());
             } else if(from.equals("Declarator")) {
                 currentPrinter.p(n.toString() +" = ");
             } else if(from.equals("PrimitiveType") || from.equals("Type")) {
@@ -353,7 +359,12 @@ public class JppPrinter extends Visitor {
             if(n.getNode(0).getString(0) == null) {
                 callExpPrim = "__this"+"->"+n.getString(1);
             } else {
-                callExpPrim = n.getNode(0).getString(0) + "->" + n.getString(1);
+                callExpPrim = n.getNode(0).getString(0) + "->";
+                if(changedStrings.contains(n.getString(1))) {
+                    callExpPrim += n.getString(1)+"mutate";
+                } else {
+                    callExpPrim += n.getString(1);
+                }
             }
         }
         if(n.getNode(0).get(0) != null && n.getNode(0).get(0).equals("System")) {

@@ -40,7 +40,9 @@ val formatj = TaskKey[Unit]("formatj", "Code formatter for Java. Run it regularl
 formatj <<= formatjtests map { (e) => """astyle --recursive --suffix=none --style=java src/main/java/* """.! }
 
 val compilec = TaskKey[Unit]("compilec", "Compile the generated C++.")
-compilec := """g++ output/java_lang.cpp output/main.cpp output/output.cpp -o output/a.out""".!
+compilec := """g++ -std=c++11 output/main.cpp output/java_lang.cpp output/output.cpp -o output/a.out """.!
+
+
 
 val execc = TaskKey[Unit]("execc", "Execute the generated C++.")
 execc := """output/a.out""".!

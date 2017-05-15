@@ -26,11 +26,18 @@ public class JppTraversal extends Visitor {
     public List<GNode> getModifiedAsts(Runtime runtime, Node n) {
         DependencyAstVisitor visitor = new DependencyAstVisitor();
         List<GNode> tree = visitor.getDependencyAsts(n);
+
+//        for(Node depNode:tree){
+//            ResolveDuplicates s = new ResolveDuplicates();
+//            s.resolveDups(depNode);
+//        }
+
         for(Node t: tree) {
             SymbolTable table = new SymbolTableBuilder(runtime).getTable(t);
             new MemberAccessCompleter(runtime, table).dispatch(t);
             new OverloadingResolver(runtime, table, t).dispatch(t);
         }
+
         asts = new ArrayList<>();
         collect(tree);
         return this.asts;
@@ -47,6 +54,13 @@ public class JppTraversal extends Visitor {
 
     }
 
+    public boolean checkMeth(String name) {
+        if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
+                !name.equals("equals") && !name.equals("getClass"))
+            return true;
+        return false;
+    }
+
     public void visitFieldDeclaration(GNode n) {
         classNode.getNode(FIELDS).addNode(n);
     }
@@ -59,12 +73,16 @@ public class JppTraversal extends Visitor {
         }
         classNode.getNode(CONSTRS).addNode(constDec);
     }
+
     public void visitMethodDeclaration(GNode n) {
 
         if(n.get(2) == null) {
             createConstructorAndAdd(n);
 
         } else {
+            if(checkMeth(n.getString(3))) {
+                n.set(3, n.getString(3)+"method");
+            }
             classNode.getNode(METHOD).addNode(n);
         }
     }

@@ -23,6 +23,13 @@ public class HeaderFilePrinter extends Visitor {
     private Printer printer;
     private String packageName;
     private static String currentClassName;
+    protected List<GNode> asts;
+
+    protected ArrayList<GNode> fields = new ArrayList<>();
+    protected ArrayList<GNode> methods = new ArrayList<>();
+    protected ArrayList<String> fieldNames = new ArrayList<>();
+    protected ArrayList<String> methodNames = new ArrayList<>();
+
 
     public HeaderFilePrinter(List<GNode> asts) throws IOException {
         Writer w;
@@ -178,6 +185,7 @@ public class HeaderFilePrinter extends Visitor {
         return paramString;
     }
     public void visitMethodDeclaration(Node n) {
+        System.out.println(n);
         if (n.getString(4).equals(currentClassName)) {
             printer.p("static ");
             if (checkIfNode(n.getNode(0))) {
@@ -255,7 +263,8 @@ public class HeaderFilePrinter extends Visitor {
     public String getParamConstructorString(Node n) {
         String paramString = "("+currentClassName+" __this";
         for(int i = 0; i < n.size(); i++) {
-            paramString += "," + n.getNode(i).getString(0);
+            if (n.getNode(i).getString(0).equals("int")) paramString += "," + "int32_t";
+            else paramString += "," + n.getNode(i).getString(0);
         }
         paramString +=")";
         return paramString;
@@ -288,7 +297,7 @@ public class HeaderFilePrinter extends Visitor {
         if(!modif.equals("static")) {
             modif = "";
         }
-        printer.pln(modif+n.getString(1)+" "+n.getString(2)+";");
+        printer.pln(modif+" "+n.getString(1)+" "+n.getString(2)+";");
     }
 
 

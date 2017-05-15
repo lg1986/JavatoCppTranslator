@@ -23,9 +23,12 @@ public class CreateHeaderAST extends Visitor {
         DependencyAstVisitor visitor = new DependencyAstVisitor();
         List<GNode> dependencyAsts = visitor.getDependencyAsts(n);
 
+
         for(Node dependencyNode:dependencyAsts) {
             super.dispatch(dependencyNode);
         }
+
+
         return this.headerASTs;
     }
 
@@ -86,17 +89,29 @@ public class CreateHeaderAST extends Visitor {
         }
         return false;
     }
+
+    public boolean checkMeth(String name) {
+        if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
+                !name.equals("equals") && !name.equals("getClass"))
+            return true;
+        return false;
+    }
+
     /**
      * MethodDeclaratioNode --
      *  Return Type, Name, FormalParams(), className
      * @param n
      */
     public void visitMethodDeclaration(GNode n) {
-//        System.out.println(n);
+        System.out.println(n);
         GNode methodDeclaration = GNode.create("MethodDeclaration");
         methodDeclaration.add(n.getNode(0));
         methodDeclaration.add(getType(n.getNode(2)));
-        methodDeclaration.add(n.getString(3));
+        if(checkMeth(n.getString(3))) {
+            methodDeclaration.add(n.getString(3)+"method");
+        } else {
+            methodDeclaration.add(n.getString(3));
+        }
         methodDeclaration.addNode(getFormalParameters(n.getNode(4)));
         methodDeclaration.add(className);
         if(!checkIfStatic(n.getNode(0))) {

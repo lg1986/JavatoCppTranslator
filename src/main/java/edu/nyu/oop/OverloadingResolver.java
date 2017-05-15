@@ -25,13 +25,21 @@ public class OverloadingResolver extends ContextualVisitor {
         this.t = t;
     }
 
+    public boolean checkMeth(String name) {
+        System.out.println(name);
+        if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
+                !name.equals("equals") && !name.equals("getClass"))
+            return true;
+        return false;
+    }
     public void visitCallExpression(GNode n) {
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
 
         Type typeToSearch = TypeUtil.getType(receiver);
-        if(!methodName.equals("println") && !methodName.equals("main")) {
+        System.out.println(checkMeth(methodName));
+        if(checkMeth(methodName)) {
             if (typeToSearch.isVariable()) {
                 VariableT vt = typeToSearch.toVariable();
                 typeToSearch = vt.getType();
@@ -52,8 +60,7 @@ public class OverloadingResolver extends ContextualVisitor {
                 over = over.split(", ")[0].toString().replace("param(", "");
                 overload_params += over;
             }
-            System.out.println(method);
-            n.set(2, n.getString(2)+overload_params);
+            n.set(2, n.getString(2)+"method"+overload_params);
         }
 
 
