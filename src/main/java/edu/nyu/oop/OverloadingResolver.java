@@ -1,3 +1,7 @@
+/**
+ *
+ */
+
 package edu.nyu.oop;
 
 import edu.nyu.oop.util.*;
@@ -14,25 +18,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Created by rishabh on 13/05/17.
- */
+
 public class OverloadingResolver extends ContextualVisitor {
     protected Node t;
-    protected SymbolTable oldtable;
     public OverloadingResolver(Runtime runtime, SymbolTable table, Node t) {
         super(runtime, table);
         this.t = t;
     }
 
+    /**
+     * Methods that we do not want to mangle.
+     * @param name
+     * @return
+     */
     public boolean checkMeth(String name) {
         if(!name.equals("println") && !name.equals("main") && !name.equals("toString") &&
                 !name.equals("equals") && !name.equals("getClass"))
             return true;
         return false;
     }
-    public void visitCallExpression(GNode n) {
 
+    /**
+     * VisitCallExpressions -- This is similar to Member Access Completer.
+     * The following will take a call exprssion, get the best candidate method
+     * and change the name of the method to the appropriate mangled name.
+     * @param n
+     */
+    public void visitCallExpression(GNode n) {
         visit(n);
         Node receiver = n.getNode(0);
         String methodName = n.getString(2);
@@ -66,8 +78,6 @@ public class OverloadingResolver extends ContextualVisitor {
                 n.set(2, n.getString(2) + "method" + overload_params);
             }
         }
-
-
     }
 
     public List<Type> visitArguments(final GNode n) {

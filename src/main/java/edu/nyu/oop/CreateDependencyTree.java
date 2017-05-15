@@ -298,6 +298,13 @@ public class CreateDependencyTree extends Visitor {
         return false;
     }
 
+    /**
+     * Check Meth -- This is what takes
+     * @param stackMeth
+     * @param currMethsNodes
+     * @param className
+     * @return
+     */
     public Node checkMeth(Node stackMeth, Node currMethsNodes, String className) {
         if(!checkIfOverriden(stackMeth, currMethsNodes, className)) {
             for(int i =0; i<currMethsNodes.size(); i++) {

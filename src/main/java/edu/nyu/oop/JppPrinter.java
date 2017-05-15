@@ -282,11 +282,11 @@ public class JppPrinter extends Visitor {
             printNewArrayExpression(n, from);
         } else if(n.hasName("SubscriptExpression")) {
             printSubscriptExpression(n, from);
-        } else if(n.hasName("NullLiteral")){
+        } else if(n.hasName("NullLiteral")) {
             printNullLiteral(n, from);
         }
     }
-    public void printNullLiteral(Node n, String from){
+    public void printNullLiteral(Node n, String from) {
         currentPrinter.p("__rt::null()");
     }
 
@@ -336,7 +336,7 @@ public class JppPrinter extends Visitor {
             currentPrinter.p("(");
             dispatchTopru(n.get(0), "CallExpression");
             currentPrinter.p(")");
-            for(int i = 1; i<n.size(); i++){
+            for(int i = 1; i<n.size(); i++) {
                 dispatchTopru(n.get(i), "CallExpression");
             }
         } else {

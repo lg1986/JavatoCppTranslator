@@ -251,7 +251,7 @@ public class HeaderFilePrinter extends Visitor {
             else ret = (n.get(1).toString());
             if (ret.equals("int")) {
                 ret = "int32_t";
-            } else if(ret.equals("byte")){
+            } else if(ret.equals("byte")) {
                 ret="int8_t";
             }
             String paramString = getParamString(n.getNode(3), false);
@@ -280,7 +280,7 @@ public class HeaderFilePrinter extends Visitor {
             else ret = (n.get(1).toString());
             if (ret.equals("int")) {
                 ret = "int32_t";
-            } else if(ret.equals("byte")){
+            } else if(ret.equals("byte")) {
                 ret ="int8_t";
             }
             String paramString = getParamString(n.getNode(3), false);
