@@ -13,7 +13,7 @@ class A {
 
 public class Test030 {
     public static void main(String[] args) {
-        A[] as = new A[5];
+        A[][][] as = new A[5][5][5];
 
         System.out.println(as.getClass().toString());
     }
