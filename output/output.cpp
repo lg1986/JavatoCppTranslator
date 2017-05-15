@@ -2,12 +2,12 @@
 #include "output.h"
 using namespace java::lang;
 namespace inputs{
-namespace test020{
+namespace test021{
 __A::__A() : __vptr(&__vtable){}
-int32_t __A::x = 0 ;
+int32_t __A::x = 4 ;
 Class __A::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test020.A"), __Object::__class());
+    new __Class(__rt::literal("inputs.test021.A"), __Object::__class());
   return k;
 }
 __A_VT __A::__vtable;
@@ -15,40 +15,37 @@ A __A::__init(A __this) {
 __Object::__init(__this);
 return __this; 
  }
-int32_t __A::xmethod()
-{return 4; 
-}
-__Test020::__Test020() : __vptr(&__vtable){}
-Class __Test020::__class() {
+__Test021::__Test021() : __vptr(&__vtable){}
+Class __Test021::__class() {
   static Class k = 
-    new __Class(__rt::literal("inputs.test020.Test020"), __Object::__class());
+    new __Class(__rt::literal("inputs.test021.Test021"), __Object::__class());
   return k;
 }
-__Test020_VT __Test020::__vtable;
-Test020 __Test020::__init(Test020 __this) {
+__Test021_VT __Test021::__vtable;
+Test021 __Test021::__init(Test021 __this) {
 __Object::__init(__this);
 return __this; 
  }
-void __Test020::main(__rt::Array<String>args)
+void __Test021::main(__rt::Array<String>args)
 {int32_t x; 
-x=__A::x; 
-std::cout << __A::xmethod()<< std::endl; 
+x=3; 
+std::cout << __A::x<< std::endl; 
 }
 }
 }
 namespace __rt {
 template<>
-java::lang::Class __Array<inputs::test020::A>::__class(){
+java::lang::Class __Array<inputs::test021::A>::__class(){
 static java::lang::Class k =
-new java::lang::__Class(__rt::literal("[Linputs.test020.A;"), 
+new java::lang::__Class(__rt::literal("[Linputs.test021.A;"), 
 java::lang::__Object::__class(),
-inputs::test020::__A::__class());return k;
+inputs::test021::__A::__class());return k;
 }
 template<>
-java::lang::Class __Array<inputs::test020::Test020>::__class(){
+java::lang::Class __Array<inputs::test021::Test021>::__class(){
 static java::lang::Class k =
-new java::lang::__Class(__rt::literal("[Linputs.test020.Test020;"), 
+new java::lang::__Class(__rt::literal("[Linputs.test021.Test021;"), 
 java::lang::__Object::__class(),
-inputs::test020::__Test020::__class());return k;
+inputs::test021::__Test021::__class());return k;
 }
 }
