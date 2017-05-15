@@ -725,18 +725,38 @@ public class JppPrinter extends Visitor {
         visit(n);
     }
 
+    public String getInitVal(String typ){
+        if(typ.equals("int32_t")) return "0";
+        else if(typ.equals("double")) return "0";
+        else if(typ.equals("char")) return "0";
+        else if(typ.equals("bool")) return "false";
+        else return "0";
+    }
+
+    public String getDeclForFieldInit(Node n, St){
+        String initVal = null;
+        if(n.getNode(i).getNode(2).getNode(0).get(2) != null){
+            initVal = n.getNode(i).getNode(2).getNode(0).getNode(2).getString(0);
+        }
+        if(initVal == null)initVal = getInitVal(typ);
+    }
+
     public String getFieldInitializations(Node n) {
+
         String initial = "";
         String staticfields = "";
         for(int i = 0; i<n.size(); i++) {
             if(!TypeUtil.isStaticType(TypeUtil.getType(n.getNode(i).getNode(2).getNode(0)))) {
                 String decl = n.getNode(i).getNode(2).getNode(0).getString(0);
+
                 initial += "," + decl + "(0) ";
             } else {
-                String decl = n.getNode(i).getNode(2).getNode(0).getString(0);
                 String typ = n.getNode(i).getNode(1).getNode(0).getString(0);
                 if(typ.equals("int")) typ = "int32_t";
-                staticfields += typ+" __"+currentClassName+"::"+decl+" = 0;\n";
+                String decl = n.getNode(i).getNode(2).getNode(0).getString(0);
+                staticfields += typ+" __"+currentClassName+"::"+decl+" = ";
+
+                staticfields += initVal + " ;\n";
             }
         }
         return initial+"{}\n"+staticfields;

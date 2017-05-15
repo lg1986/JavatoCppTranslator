@@ -4,7 +4,7 @@ using namespace java::lang;
 namespace inputs{
 namespace test020{
 __A::__A() : __vptr(&__vtable){}
-int32_t __A::x = 0;
+int32_t __A::x = 0 ;
 Class __A::__class() {
   static Class k = 
     new __Class(__rt::literal("inputs.test020.A"), __Object::__class());
